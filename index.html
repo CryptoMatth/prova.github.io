@@ -4,603 +4,630 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario dell'Avvento delle Costellazioni</title>
-    <!-- Utilizzo di Tailwind CSS per uno stile pulito e moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d1117;
-            color: #c9d1d9;
-            overflow-x: hidden;
+            background-color: #1a202c;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
+
         .container {
-            max-width: 800px;
+            max-width: 900px;
+            width: 100%;
         }
-        .card {
-            background-color: #161b22;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+        }
+
+        .door {
+            position: relative;
+            background-color: #2d3748;
+            border: 2px solid #4a5568;
+            border-radius: 12px;
+            overflow: hidden;
             cursor: pointer;
-            border: 1px solid #30363d;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1 / 1;
         }
-        .card:hover {
+
+        .door.closed:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
         }
-        .card.unlocked {
-            filter: none;
-            cursor: pointer;
-        }
-        .card.locked {
-            filter: grayscale(100%) brightness(50%);
+
+        .door.disabled {
+            opacity: 0.5;
             cursor: not-allowed;
         }
-        .answer-input {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-        }
-        .button {
-            transition: background-color 0.3s ease, transform 0.1s ease;
-        }
-        .button:hover {
-            transform: translateY(-1px);
-        }
-        .correct-answer {
-            animation: fadeIn 1s ease-in-out;
-        }
-        .incorrect-answer {
-            animation: shake 0.5s;
-        }
-        .text-shadow {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        .star {
-            position: absolute;
-            background-color: #fff;
-            border-radius: 50%;
-            opacity: 0;
-            animation: twinkle 5s infinite;
+        
+        .door-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #cbd5e0;
+            transition: color 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .door-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            text-align: center;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
+        .door.open .door-content {
+            display: block;
         }
 
-        @keyframes twinkle {
-            0%, 100% { opacity: 0; transform: scale(0.5); }
-            50% { opacity: 1; transform: scale(1); }
+        .door.open .door-number {
+            display: none;
         }
 
-        /* Genera stelle in background */
-        .star-container {
-            position: absolute;
+        .modal-overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: -1;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: #2d3748;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            color: #e2e8f0;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #a0aec0;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #e2e8f0;
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-content {
+            text-align: left;
+        }
+        
+        .modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #48bb78; /* Verde per il titolo */
+        }
+        
+        .modal-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .question-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .question-form label {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .question-form input {
+            background-color: #4a5568;
+            border: 1px solid #718096;
+            padding: 10px;
+            border-radius: 8px;
+            color: #e2e8f0;
+            outline: none;
+        }
+        
+        .question-form input:focus {
+            border-color: #4299e1;
+        }
+        
+        .question-form button {
+            background-color: #4299e1;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        .question-form button:hover {
+            background-color: #3182ce;
+        }
+        
+        .message-box {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .message-box.success {
+            background-color: #38a169;
+            color: white;
+        }
+        
+        .message-box.error {
+            background-color: #e53e3e;
+            color: white;
+        }
+        
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-10 px-4">
-    <div class="star-container"></div>
+<body class="bg-gray-900 text-gray-100">
+    <div class="container mx-auto p-4">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">Calendario dell'Avvento</h1>
+            <h2 class="text-2xl md:text-3xl text-green-400">Le Meraviglie del Cielo Stellato</h2>
+            <p class="text-lg text-gray-400 mt-2">Scopri una nuova costellazione ogni giorno fino a Natale!</p>
+        </header>
+        
+        <div id="calendar-grid" class="calendar-grid">
+            <!-- Le caselle del calendario verranno generate qui dal JavaScript -->
+        </div>
+    </div>
 
-    <!-- Modale per le domande -->
-    <div id="modal" class="fixed inset-0 z-50 bg-black bg-opacity-80 hidden flex justify-center items-center p-4">
-        <div class="bg-[#161b22] rounded-lg p-6 w-full max-w-2xl border border-[#30363d] shadow-lg">
-            <div class="flex justify-end">
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+    <!-- Modal per le domande e risposte -->
+    <div id="question-modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <span id="question-modal-close" class="modal-close">&times;</span>
+            <div id="question-modal-content" class="modal-content">
+                <!-- Il contenuto verrà inserito dinamicamente -->
             </div>
-            <h2 id="modal-title" class="text-2xl font-bold mb-4 text-center text-[#58a6ff]"></h2>
-            <p id="modal-date" class="text-sm text-gray-400 mb-4 text-center"></p>
-            <div class="flex flex-col md:flex-row items-center md:items-start mb-6">
-                <img id="modal-image" src="" alt="Immagine costellazione" class="w-full md:w-1/2 rounded-lg mb-4 md:mb-0 md:mr-6 border border-[#30363d]">
-                <div class="w-full md:w-1/2">
-                    <p id="modal-question" class="text-xl mb-4 font-semibold"></p>
-                    <div id="modal-hint-area" class="mb-4">
-                        <p id="modal-hint-text" class="text-gray-400 italic hidden"></p>
-                    </div>
-                    <input type="text" id="answer-input" placeholder="La tua risposta..." class="answer-input w-full p-2 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-[#58a6ff]">
-                    <p id="modal-score" class="text-lg font-bold mb-4">Punti attuali: 3</p>
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0">
-                        <button id="submit-answer-btn" onclick="checkAnswer()" class="button w-full md:w-1/2 bg-[#238636] text-white p-2 rounded font-semibold hover:bg-[#2ea043]">Invia risposta</button>
-                        <button id="get-hint-btn" onclick="getHint()" class="button w-full md:w-1/2 bg-gray-500 text-white p-2 rounded font-semibold hover:bg-gray-600">Ottieni un indizio</button>
-                    </div>
-                </div>
-            </div>
-            <div id="modal-result" class="mt-4 text-center hidden">
-                <p id="result-message" class="text-xl font-bold"></p>
-                <div id="additional-info" class="mt-4 p-4 bg-[#0d1117] rounded-lg border border-[#30363d] hidden">
-                    <h3 class="text-xl font-bold mb-2">Curiosità sulla costellazione</h3>
-                    <p id="info-text"></p>
-                </div>
-                <button onclick="closeModal()" class="button bg-[#58a6ff] text-white p-2 rounded mt-4 font-semibold hover:bg-[#79b8ff]">Chiudi</button>
+        </div>
+    </div>
+    
+    <!-- Modal per la risposta corretta -->
+    <div id="success-modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <span id="success-modal-close" class="modal-close">&times;</span>
+            <div class="modal-content">
+                <img id="success-modal-image" class="modal-image" src="" alt="Immagine della costellazione">
+                <h3 id="success-modal-title"></h3>
+                <p id="success-modal-info"></p>
             </div>
         </div>
     </div>
 
-    <!-- Intestazione -->
-    <header class="text-center mb-10">
-        <h1 class="text-5xl md:text-6xl font-extrabold text-[#58a6ff] mb-2 text-shadow">Calendario dell'Avvento Stellare</h1>
-        <p class="text-xl md:text-2xl text-gray-400">Scopri una costellazione al giorno</p>
-    </header>
-
-    <!-- Griglia del calendario -->
-    <div id="calendar-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 p-4">
-        <!-- Le card verranno generate qui dal JavaScript -->
-    </div>
-
-    <!-- Script JavaScript -->
     <script>
-        // Funzione per generare le stelle in background
-        function createStars() {
-            const starContainer = document.querySelector('.star-container');
-            for (let i = 0; i < 150; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                const size = Math.random() * 3;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.animationDelay = `${Math.random() * 5}s`;
-                starContainer.appendChild(star);
-            }
-        }
-        createStars();
+        // Funzione per copiare il testo negli appunti
+        const copyToClipboard = (text) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        };
 
-        // Dati del calendario: 25 giorni di domande
-        const calendarData = [
+        // Dati delle costellazioni, domande e risposte
+        const constellations = [
             {
-                day: 1,
-                constellation: 'Orione',
-                image: 'https://placehold.co/600x400/000/fff?text=Orione',
-                question: 'Qual è la costellazione più famosa e facilmente riconoscibile nel cielo invernale, caratterizzata da tre stelle luminose che formano la sua "cintura"?',
-                answer: 'Orione',
-                hints: [
-                    'Prende il nome da un cacciatore della mitologia greca.',
-                    'Contiene la supergigante rossa Betelgeuse e la supergigante blu Rigel.',
-                    'È visibile da tutto il mondo e si trova vicino al Toro e ai Gemelli.'
-                ],
-                info: 'Orione è una delle costellazioni più celebri. Le sue tre stelle principali, Alnitak, Alnilam e Mintaka, formano la "Cintura di Orione". Contiene anche la Nebulosa di Orione, un sito di formazione stellare molto studiato.',
+                name: "Orione",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Orione",
+                question: "Quale costellazione è famosa per la sua cintura di tre stelle?",
+                answer: "Orione",
+                info: "La costellazione di Orione è una delle più famose e riconoscibili nel cielo notturno, visibile in tutto il mondo. Le sue tre stelle luminose, Alnitak, Alnilam e Mintaka, formano la 'Cintura di Orione'.",
+                day: 1
             },
             {
-                day: 2,
-                constellation: 'Orsa Maggiore',
-                image: 'https://placehold.co/600x400/000/fff?text=Orsa+Maggiore',
-                question: 'Quale costellazione a forma di mestolo è nota anche come "Grande Carro" e fa parte di un gruppo più grande di stelle?',
-                answer: 'Orsa Maggiore',
-                hints: [
-                    'Contiene la stella polare, che si trova nella "coda" dell\'Orsa Minore.',
-                    'È una delle costellazioni più antiche e nominate.',
-                    'È visibile nell\'emisfero settentrionale tutto l\'anno.'
-                ],
-                info: 'L\'Orsa Maggiore è una delle costellazioni più grandi e riconoscibili del cielo notturno. Le sette stelle che compongono il "Grande Carro" sono solo una parte della costellazione più estesa.',
+                name: "Orsa Maggiore",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Orsa+Maggiore",
+                question: "Quale costellazione è nota per la sua forma a 'Grande Carro'?",
+                answer: "Orsa Maggiore",
+                info: "L'Orsa Maggiore è una delle più grandi costellazioni. Sette delle sue stelle più luminose formano un asterismo a forma di mestolo, noto come il 'Grande Carro' o 'Aratro'.",
+                day: 2
             },
             {
-                day: 3,
-                constellation: 'Cassiopea',
-                image: 'https://placehold.co/600x400/000/fff?text=Cassiopea',
-                question: 'Quale costellazione a forma di "W" o "M" è visibile nell\'emisfero settentrionale e rappresenta la regina della mitologia greca?',
-                answer: 'Cassiopea',
-                hints: [
-                    'Si trova nel cielo settentrionale, vicino alla stella polare.',
-                    'Le sue stelle più luminose formano una figura a zig-zag.',
-                    'È la moglie del re Cefeo e la madre di Andromeda.'
-                ],
-                info: 'Cassiopea è facilmente riconoscibile grazie alla sua forma distintiva. Si trova nella Via Lattea settentrionale e contiene molti ammassi aperti e nebulose.',
+                name: "Cassiopea",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Cassiopea",
+                question: "Quale costellazione ha una forma a 'W' o 'M'?",
+                answer: "Cassiopea",
+                info: "La costellazione di Cassiopea è riconoscibile per le sue cinque stelle principali che formano una figura a 'W' o 'M', a seconda dell'orientamento. Prende il nome dalla regina mitologica Cassiopea.",
+                day: 3
             },
             {
-                day: 4,
-                constellation: 'Cigno',
-                image: 'https://placehold.co/600x400/000/fff?text=Cigno',
-                question: 'Quale costellazione a forma di croce è conosciuta anche come la "Croce del Nord" e rappresenta un uccello in volo?',
-                answer: 'Cigno',
-                hints: [
-                    'La sua stella più luminosa è Deneb.',
-                    'Fa parte del Triangolo Estivo, un famoso asterismo.',
-                    'È una costellazione molto grande e si trova nella Via Lattea.'
-                ],
-                info: 'Il Cigno è una delle costellazioni più importanti del cielo estivo e autunnale. La sua stella più luminosa, Deneb, è una delle stelle più brillanti visibili dalla Terra.',
+                name: "Leone",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Leone",
+                question: "La stella Regolo è la più luminosa di quale costellazione?",
+                answer: "Leone",
+                info: "La costellazione del Leone è una delle costellazioni dello zodiaco. Regolo, la sua stella più luminosa, si trova al 'cuore' del Leone, ed è una delle stelle più brillanti nel cielo notturno.",
+                day: 4
             },
             {
-                day: 5,
-                constellation: 'Leone',
-                image: 'https://placehold.co/600x400/000/fff?text=Leone',
-                question: 'Quale costellazione dello zodiaco è riconoscibile per la sua forma che assomiglia a un leone accovacciato?',
-                answer: 'Leone',
-                hints: [
-                    'La sua stella più luminosa è Regolo.',
-                    'Si trova nell\'emisfero settentrionale.',
-                    'Contiene la famosa stella a forma di "punto interrogativo" capovolto.'
-                ],
-                info: 'Il Leone è una delle costellazioni più antiche dello zodiaco. Contiene molte stelle brillanti e si trova vicino alla costellazione della Vergine.',
+                name: "Cigno",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Cigno",
+                question: "Quale costellazione è conosciuta anche come la 'Croce del Nord'?",
+                answer: "Cigno",
+                info: "Il Cigno è una costellazione ben visibile nei mesi estivi e autunnali. L'asterismo principale, noto come la 'Croce del Nord', è formato dalle sue stelle più luminose, con Deneb che rappresenta la 'coda' del Cigno.",
+                day: 5
             },
             {
-                day: 6,
-                constellation: 'Toro',
-                image: 'https://placehold.co/600x400/000/fff?text=Toro',
-                question: 'Quale costellazione dello zodiaco è nota per contenere il famoso ammasso di stelle "Le Pleiadi" e la supergigante rossa Aldebaran?',
-                answer: 'Toro',
-                hints: [
-                    'Rappresenta un toro selvaggio della mitologia greca.',
-                    'È una delle costellazioni più antiche e si trova vicino a Orione.',
-                    'Le sue due stelle più luminose, Aldebaran e l\'Ammasso del Toro, formano la figura a forma di "V" capovolta.'
-                ],
-                info: 'Il Toro è una delle costellazioni più importanti dello zodiaco. Oltre alle Pleiadi, contiene l\'ammasso stellare Hyades, che forma il volto del Toro.',
+                name: "Gemelli",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Gemelli",
+                question: "Quale costellazione prende il nome da due gemelli mitologici, Castore e Polluce?",
+                answer: "Gemelli",
+                info: "I Gemelli sono una costellazione dello zodiaco. Le sue due stelle più luminose, Castore e Polluce, sono considerate i 'gemelli' e sono le stelle più facili da trovare nella costellazione.",
+                day: 6
             },
             {
-                day: 7,
-                constellation: 'Pesci',
-                image: 'https://placehold.co/600x400/000/fff?text=Pesci',
-                question: 'Quale costellazione dello zodiaco è composta da due pesci legati insieme da una corda?',
-                answer: 'Pesci',
-                hints: [
-                    'È la dodicesima e ultima costellazione dello zodiaco.',
-                    'Si trova vicino alla costellazione dell\'Acquario.',
-                    'Non contiene stelle molto brillanti.'
-                ],
-                info: 'I Pesci sono una costellazione zodiacale che si trova nel cielo settentrionale. È una delle costellazioni più grandi, ma le sue stelle sono relativamente deboli.',
+                name: "Scorpione",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Scorpione",
+                question: "Quale costellazione ha una forma a 'amo da pesca' e la stella rossa Antares?",
+                answer: "Scorpione",
+                info: "Lo Scorpione è una costellazione dello zodiaco, la sua forma assomiglia a un grande amo da pesca. Antares, la sua stella più luminosa, è una supergigante rossa che si trova nel 'cuore' dello Scorpione.",
+                day: 7
             },
             {
-                day: 8,
-                constellation: 'Gemelli',
-                image: 'https://placehold.co/600x400/000/fff?text=Gemelli',
-                question: 'Quale costellazione dello zodiaco è nota per le sue due stelle principali, Castore e Polluce, che rappresentano due fratelli gemelli?',
-                answer: 'Gemelli',
-                hints: [
-                    'È una costellazione invernale.',
-                    'Si trova vicino a Orione e al Toro.',
-                    'È una delle dodici costellazioni dello zodiaco.'
-                ],
-                info: 'I Gemelli sono una costellazione zodiacale che si trova nel cielo settentrionale. Le sue due stelle più luminose, Castore e Polluce, sono associate a due fratelli gemelli nella mitologia greca.',
+                name: "Toro",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Toro",
+                question: "Quale costellazione contiene le Pleiadi e Aldebaran?",
+                answer: "Toro",
+                info: "La costellazione del Toro è una delle più antiche conosciute. Contiene l'ammasso stellare delle Pleiadi (le 'Sette Sorelle') e la stella gigante rossa Aldebaran, che forma l'occhio del Toro.",
+                day: 8
             },
             {
-                day: 9,
-                constellation: 'Scorpione',
-                image: 'https://placehold.co/600x400/000/fff?text=Scorpione',
-                question: 'Quale costellazione dello zodiaco ha una forma che ricorda un gancio o un uncino e contiene la stella supergigante rossa Antares?',
-                answer: 'Scorpione',
-                hints: [
-                    'Si trova nella Via Lattea meridionale.',
-                    'È una delle costellazioni più antiche.',
-                    'La sua stella principale, Antares, è spesso confusa con il pianeta Marte.'
-                ],
-                info: 'Lo Scorpione è una costellazione zodiacale che si trova nel cielo meridionale. La sua stella più luminosa, Antares, è una supergigante rossa molto grande e brillante.',
+                name: "Lira",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Lira",
+                question: "Quale costellazione è piccola ma facilmente riconoscibile per la sua stella Vega?",
+                answer: "Lira",
+                info: "La Lira è una piccola costellazione. La sua stella più luminosa, Vega, è la seconda stella più brillante dell'emisfero boreale ed è una delle tre stelle che formano il 'Triangolo Estivo'.",
+                day: 9
             },
             {
-                day: 10,
-                constellation: 'Sagittario',
-                image: 'https://placehold.co/600x400/000/fff?text=Sagittario',
-                question: 'Quale costellazione dello zodiaco è nota per la sua forma a "teiera" e si trova nella stessa direzione del centro della Via Lattea?',
-                answer: 'Sagittario',
-                hints: [
-                    'Rappresenta una creatura mitologica metà uomo e metà cavallo.',
-                    'Si trova nel cielo meridionale, vicino allo Scorpione.',
-                    'È una costellazione estiva.'
-                ],
-                info: 'Il Sagittario è una costellazione zodiacale che si trova nella Via Lattea meridionale. Il centro della nostra galassia, la Via Lattea, si trova nella direzione di questa costellazione.',
+                name: "Grande Cane",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Grande+Cane",
+                question: "Quale costellazione ospita Sirio, la stella più luminosa del cielo notturno?",
+                answer: "Grande Cane",
+                info: "La costellazione del Grande Cane è famosa per la presenza di Sirio, la stella più brillante del cielo. Sirio, una stella binaria, è visibile in gran parte del mondo e fa parte del 'Triangolo Invernale'.",
+                day: 10
             },
             {
-                day: 11,
-                constellation: 'Andromeda',
-                image: 'https://placehold.co/600x400/000/fff?text=Andromeda',
-                question: 'Quale costellazione è nota per contenere una famosa galassia a spirale, la "Galassia di Andromeda", che è la più vicina alla nostra Via Lattea?',
-                answer: 'Andromeda',
-                hints: [
-                    'Prende il nome da una principessa della mitologia greca.',
-                    'Si trova vicino alla costellazione di Pegaso.',
-                    'È una costellazione autunnale.'
-                ],
-                info: 'Andromeda è una costellazione autunnale. La sua stella più luminosa, Alpheratz, fa parte del Triangolo d\'Autunno. Contiene anche la famosa Galassia di Andromeda, l\'oggetto più lontano visibile a occhio nudo dalla Terra.',
+                name: "Boote",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Boote",
+                question: "Arcturus è la stella principale di quale costellazione, a forma di 'aquilone'?",
+                answer: "Boote",
+                info: "Il Boote è una costellazione facilmente riconoscibile per la sua forma a 'aquilone' o 'imbuto'. Arcturus, la sua stella più luminosa, è una delle stelle più brillanti del cielo notturno.",
+                day: 11
             },
             {
-                day: 12,
-                constellation: 'Lira',
-                image: 'https://placehold.co/600x400/000/fff?text=Lira',
-                question: 'Quale costellazione, che rappresenta uno strumento musicale, contiene la stella Vega, una delle più luminose del cielo estivo?',
-                answer: 'Lira',
-                hints: [
-                    'È una piccola costellazione estiva.',
-                    'Vega, la sua stella più luminosa, fa parte del Triangolo Estivo.',
-                    'Rappresenta la lira di Orfeo, un musico mitologico.'
-                ],
-                info: 'La Lira è una piccola costellazione estiva. La sua stella più luminosa, Vega, è la quinta stella più luminosa del cielo notturno ed è una delle tre stelle che compongono il Triangolo Estivo.',
+                name: "Bilancia",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Bilancia",
+                question: "Quale costellazione dello zodiaco rappresenta un oggetto inanimato?",
+                answer: "Bilancia",
+                info: "La Bilancia è una costellazione dello zodiaco. È l'unica costellazione zodiacale a rappresentare un oggetto inanimato, simboleggiando la bilancia di Astrea, dea della giustizia.",
+                day: 12
             },
             {
-                day: 13,
-                constellation: 'Acquario',
-                image: 'https://placehold.co/600x400/000/fff?text=Acquario',
-                question: 'Quale costellazione zodiacale, che rappresenta un portatore d\'acqua, si trova tra i Pesci e il Capricorno?',
-                answer: 'Acquario',
-                hints: [
-                    'È una costellazione molto grande ma le sue stelle sono deboli.',
-                    'Il suo nome deriva dal latino "aquarius".',
-                    'Si trova vicino alla costellazione della Balena.'
-                ],
-                info: 'L\'Acquario è una delle costellazioni zodiacali. È una costellazione molto grande, ma le sue stelle sono relativamente deboli, rendendola difficile da individuare.',
+                name: "Sagittario",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Sagittario",
+                question: "Quale costellazione è famosa per la sua forma a 'teiera'?",
+                answer: "Sagittario",
+                info: "Il Sagittario è una costellazione zodiacale. Molte delle sue stelle formano un asterismo noto come la 'Teiera', che è facilmente visibile nel cielo estivo.",
+                day: 13
             },
             {
-                day: 14,
-                constellation: 'Bilancia',
-                image: 'https://placehold.co/600x400/000/fff?text=Bilancia',
-                question: 'Quale costellazione dello zodiaco, che rappresenta le bilance della giustizia, si trova tra la Vergine e lo Scorpione?',
-                answer: 'Bilancia',
-                hints: [
-                    'Non ha stelle molto luminose.',
-                    'È la settima costellazione dello zodiaco.',
-                    'Si trova nel cielo meridionale.'
-                ],
-                info: 'La Bilancia è una costellazione zodiacale. È una costellazione di dimensioni medie, ma le sue stelle sono deboli e non molto luminose.',
+                name: "Pegaso",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Pegaso",
+                question: "Quale costellazione è riconoscibile per il suo 'Grande Quadrato'?",
+                answer: "Pegaso",
+                info: "La costellazione di Pegaso è famosa per l'asterismo noto come il 'Grande Quadrato di Pegaso', formato da quattro delle sue stelle più luminose, che rappresenta il corpo del cavallo alato.",
+                day: 14
             },
             {
-                day: 15,
-                constellation: 'Capricorno',
-                image: 'https://placehold.co/600x400/000/fff?text=Capricorno',
-                question: 'Quale costellazione dello zodiaco, che rappresenta una creatura mitologica metà capra e metà pesce, si trova tra il Sagittario e l\'Acquario?',
-                answer: 'Capricorno',
-                hints: [
-                    'Il suo nome significa "capra con le corna".',
-                    'È una delle costellazioni più antiche dello zodiaco.',
-                    'Si trova nel cielo meridionale.'
-                ],
-                info: 'Il Capricorno è una costellazione zodiacale che si trova nel cielo meridionale. È una costellazione di dimensioni medie ma le sue stelle sono deboli.',
+                name: "Andromeda",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Andromeda",
+                question: "La galassia di Andromeda è visibile in quale costellazione?",
+                answer: "Andromeda",
+                info: "La costellazione di Andromeda prende il nome dalla principessa mitologica. Ospita la Galassia di Andromeda (M31), la galassia a spirale più vicina alla Via Lattea, visibile a occhio nudo in condizioni ottimali.",
+                day: 15
             },
             {
-                day: 16,
-                constellation: 'Corona Boreale',
-                image: 'https://placehold.co/600x400/000/fff?text=Corona+Boreale',
-                question: 'Quale costellazione a forma di semicerchio, che rappresenta una corona, si trova vicino alla costellazione di Ercole?',
-                answer: 'Corona Boreale',
-                hints: [
-                    'È una piccola costellazione dell\'emisfero settentrionale.',
-                    'La sua stella più luminosa è Alphecca.',
-                    'Rappresenta la corona della principessa Arianna nella mitologia greca.'
-                ],
-                info: 'La Corona Boreale è una piccola costellazione dell\'emisfero settentrionale. Le sue stelle formano un semicerchio riconoscibile.',
+                name: "Acquario",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Acquario",
+                question: "Quale costellazione dello zodiaco rappresenta una figura che versa acqua?",
+                answer: "Acquario",
+                info: "L'Acquario è una costellazione dello zodiaco. Rappresenta un uomo che versa acqua da un'urna e si trova in una regione del cielo nota come il 'Mare del Cielo'.",
+                day: 16
             },
             {
-                day: 17,
-                constellation: 'Idra',
-                image: 'https://placehold.co/600x400/000/fff?text=Idra',
-                question: 'Quale costellazione è la più grande del cielo notturno e rappresenta un serpente d\'acqua?',
-                answer: 'Idra',
-                hints: [
-                    'È una costellazione molto lunga e sottile.',
-                    'Si estende per quasi un quarto del cielo.',
-                    'Prende il nome da un mostro mitologico con più teste.'
-                ],
-                info: 'L\'Idra è la costellazione più grande in termini di area. Si estende per oltre 95 gradi nel cielo e rappresenta l\'Idra di Lerna, un mostro mitologico con più teste.',
+                name: "Pesci",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Pesci",
+                question: "Quale costellazione è formata da due pesci legati da una corda?",
+                answer: "Pesci",
+                info: "La costellazione dei Pesci è una costellazione zodiacale. È composta da due pesci che nuotano in direzioni opposte, ma sono legati da una corda.",
+                day: 17
             },
             {
-                day: 18,
-                constellation: 'Vergine',
-                image: 'https://placehold.co/600x400/000/fff?text=Vergine',
-                question: 'Quale costellazione dello zodiaco, la più grande dello zodiaco, rappresenta una fanciulla o una dea?',
-                answer: 'Vergine',
-                hints: [
-                    'La sua stella più luminosa è Spica.',
-                    'Si trova tra la Bilancia e il Leone.',
-                    'È una costellazione estiva.'
-                ],
-                info: 'La Vergine è la seconda costellazione più grande del cielo notturno. È una costellazione zodiacale che contiene la stella luminosa Spica, una delle stelle più brillanti del cielo notturno.',
+                name: "Ariete",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Ariete",
+                question: "Quale costellazione zodiacale si distingue per la sua forma a 'corna'?",
+                answer: "Ariete",
+                info: "L'Ariete è una costellazione zodiacale. Le sue stelle principali formano un arco che rappresenta le corna dell'ariete mitologico dal Vello d'Oro.",
+                day: 18
             },
             {
-                day: 19,
-                constellation: 'Cane Maggiore',
-                image: 'https://placehold.co/600x400/000/fff?text=Cane+Maggiore',
-                question: 'Quale costellazione contiene la stella più luminosa del cielo notturno, Sirio?',
-                answer: 'Cane Maggiore',
-                hints: [
-                    'Rappresenta un cane che segue il cacciatore Orione.',
-                    'È una costellazione invernale.',
-                    'Sirio è una stella molto brillante e vicina alla Terra.'
-                ],
-                info: 'Il Cane Maggiore è una costellazione invernale. La sua stella più luminosa, Sirio, è la stella più brillante del cielo notturno. È nota anche come la "Stella del Cane".',
+                name: "Capricorno",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Capricorno",
+                question: "Quale costellazione dello zodiaco rappresenta una creatura con il corpo di capra e la coda di pesce?",
+                answer: "Capricorno",
+                info: "Il Capricorno è una costellazione zodiacale. Rappresenta una creatura mitologica, una capra con la coda di pesce, nota anche come 'capra di mare'.",
+                day: 19
             },
             {
-                day: 20,
-                constellation: 'Piccolo Carro',
-                image: 'https://placehold.co/600x400/000/fff?text=Piccolo+Carro',
-                question: 'Quale costellazione, che rappresenta un piccolo orso, contiene la stella polare, Polaris?',
-                answer: 'Piccolo Carro',
-                hints: [
-                    'È una costellazione polare.',
-                    'Si trova nel cielo settentrionale, vicino all\'Orsa Maggiore.',
-                    'È spesso usata per l\'orientamento notturno.'
-                ],
-                info: 'Il Piccolo Carro è una costellazione che si trova nel cielo settentrionale. La sua stella più luminosa, Polaris, è molto vicina al polo nord celeste, rendendola utile per l\'orientamento.',
+                name: "Cancro",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Cancro",
+                question: "Quale costellazione zodiacale è nota per essere molto debole e difficile da vedere?",
+                answer: "Cancro",
+                info: "Il Cancro è una costellazione zodiacale. È una delle costellazioni più deboli e difficili da individuare nel cielo, ma ospita l'ammasso stellare 'Praesepe', anche noto come 'M44'.",
+                day: 20
             },
             {
-                day: 21,
-                constellation: 'Acquario',
-                image: 'https://placehold.co/600x400/000/fff?text=Acquario',
-                question: 'Quale costellazione zodiacale, che rappresenta un portatore d\'acqua, si trova tra i Pesci e il Capricorno?',
-                answer: 'Acquario',
-                hints: [
-                    'È una costellazione molto grande ma le sue stelle sono deboli.',
-                    'Il suo nome deriva dal latino "aquarius".',
-                    'Si trova vicino alla costellazione della Balena.'
-                ],
-                info: 'L\'Acquario è una delle costellazioni zodiacali. È una costellazione molto grande, ma le sue stelle sono relativamente deboli, rendendola difficile da individuare.',
+                name: "Vergine",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Vergine",
+                question: "Quale costellazione è la seconda più grande del cielo e ha la stella Spica?",
+                answer: "Vergine",
+                info: "La Vergine è la seconda costellazione più grande del cielo. La sua stella più luminosa, Spica, è una delle stelle più brillanti visibili dall'emisfero boreale.",
+                day: 21
             },
             {
-                day: 22,
-                constellation: 'Lince',
-                image: 'https://placehold.co/600x400/000/fff?text=Lince',
-                question: 'Quale costellazione, nota per la sua scarsità di stelle brillanti, è stata chiamata così perché è necessaria la vista di una lince per vederla?',
-                answer: 'Lince',
-                hints: [
-                    'È una costellazione dell\'emisfero settentrionale.',
-                    'Si trova tra l\'Orsa Maggiore e l\'Auriga.',
-                    'Non ha stelle particolarmente luminose.'
-                ],
-                info: 'La Lince è una costellazione dell\'emisfero settentrionale, nota per la sua scarsità di stelle luminose. Il suo nome è stato scelto per indicare che è difficile da individuare.',
+                name: "Pesce Australe",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Pesce+Australe",
+                question: "Fomalhaut è la stella principale di quale costellazione, visibile a sud?",
+                answer: "Pesce Australe",
+                info: "Il Pesce Australe è una costellazione che si trova nell'emisfero celeste australe. La sua stella più luminosa, Fomalhaut, è la stella di prima grandezza più meridionale che si possa vedere dall'Europa.",
+                day: 22
             },
             {
-                day: 23,
-                constellation: 'Ercole',
-                image: 'https://placehold.co/600x400/000/fff?text=Ercole',
-                question: 'Quale costellazione, che rappresenta un eroe mitologico, contiene il famoso ammasso globulare M13?',
-                answer: 'Ercole',
-                hints: [
-                    'È una delle costellazioni più grandi del cielo.',
-                    'Si trova vicino alla Corona Boreale e alla Lira.',
-                    'È una costellazione estiva.'
-                ],
-                info: 'Ercole è una grande costellazione dell\'emisfero settentrionale. È la quinta costellazione più grande del cielo e contiene il famoso ammasso globulare M13.',
+                name: "Delfino",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Delfino",
+                question: "Quale piccola costellazione estiva ha una forma che ricorda un delfino che salta?",
+                answer: "Delfino",
+                info: "La costellazione del Delfino è una piccola ma riconoscibile costellazione. Le sue stelle principali formano un piccolo diamante che assomiglia a un delfino che salta fuori dall'acqua.",
+                day: 23
             },
             {
-                day: 24,
-                constellation: 'Balena',
-                image: 'https://placehold.co/600x400/000/fff?text=Balena',
-                question: 'Quale costellazione, che rappresenta un mostro marino, si trova vicino all\'Acquario e ai Pesci?',
-                answer: 'Balena',
-                hints: [
-                    'Il suo nome deriva dal greco "Ketos".',
-                    'È una costellazione autunnale.',
-                    'Non ha stelle molto brillanti.'
-                ],
-                info: 'La Balena è una costellazione autunnale. Non ha stelle molto luminose, ma è stata una costellazione importante per gli antichi greci.',
-            },
-            {
-                day: 25,
-                constellation: 'Sestante',
-                image: 'https://placehold.co/600x400/000/fff?text=Sestante',
-                question: 'Quale costellazione, che rappresenta uno strumento di navigazione, si trova sotto la costellazione del Leone?',
-                answer: 'Sestante',
-                hints: [
-                    'È una costellazione molto debole.',
-                    'Si trova vicino all\'Idra e al Leone.',
-                    'Non ha stelle molto luminose.'
-                ],
-                info: 'Il Sestante è una costellazione molto debole e difficile da individuare. Il suo nome deriva da uno strumento di navigazione che veniva utilizzato per misurare l\'altezza delle stelle.',
+                name: "Auroniga",
+                image: "https://placehold.co/600x400/2a52be/ffffff?text=Auroniga",
+                question: "Capella, la sesta stella più luminosa del cielo, appartiene a quale costellazione?",
+                answer: "Auroniga",
+                info: "L'Auroniga è una costellazione visibile nell'emisfero settentrionale. La sua stella più luminosa, Capella, è la sesta stella più brillante del cielo notturno, spesso chiamata 'stella capra'.",
+                day: 24
             }
         ];
 
-        // Variabili globali per la gestione del gioco
-        let currentDay = null;
-        let score = 3;
-        let hintsUsed = 0;
-
-        // Funzione per ottenere il giorno corrente
-        function getCurrentDay() {
-            const today = new Date();
-            // Per testare tutti i giorni, sblocchiamo tutto.
-            // PER IL TUO REGALO, COMMENTA LA RIGA SOTTO per abilitare il calendario dell'avvento reale.
-            return 25; // Sblocca tutti i giorni per il test
-            // return today.getDate(); // Per un uso reale del calendario dell'avvento
+        // Se l'utente non ha visitato il sito prima, inizializza le impostazioni
+        if (!localStorage.getItem('unlockedDays')) {
+            localStorage.setItem('unlockedDays', '[]');
+            localStorage.setItem('openedDoors', '[]');
         }
 
-        // Funzione per generare la griglia del calendario
-        function createCalendar() {
+        const unlockedDays = JSON.parse(localStorage.getItem('unlockedDays'));
+        const openedDoors = JSON.parse(localStorage.getItem('openedDoors'));
+        
+        const calendarGrid = document.getElementById('calendar-grid');
+        const questionModalOverlay = document.getElementById('question-modal-overlay');
+        const questionModalClose = document.getElementById('question-modal-close');
+        const questionModalContent = document.getElementById('question-modal-content');
+        const successModalOverlay = document.getElementById('success-modal-overlay');
+        const successModalClose = document.getElementById('success-modal-close');
+        const successModalImage = document.getElementById('success-modal-image');
+        const successModalTitle = document.getElementById('success-modal-title');
+        const successModalInfo = document.getElementById('success-modal-info');
+        
+        const today = new Date();
+        const currentDay = today.getDate(); // Per il mese di dicembre, questo numero va da 1 a 31
+        const currentMonth = today.getMonth(); // 0 per Gennaio, 11 per Dicembre
+        
+        const isChristmasSeason = currentMonth === 11 && currentDay <= 24;
+
+        // Funzione per generare le caselle del calendario
+        const generateCalendar = () => {
             const calendarGrid = document.getElementById('calendar-grid');
-            const today = getCurrentDay();
-            calendarData.forEach(dayData => {
-                const dayDiv = document.createElement('div');
-                const isLocked = dayData.day > today;
-                const cardClass = isLocked ? 'locked' : 'unlocked';
+            calendarGrid.innerHTML = '';
+            
+            for (let i = 1; i <= 24; i++) {
+                const door = document.createElement('div');
+                door.classList.add('door');
+                door.dataset.day = i;
                 
-                dayDiv.className = `card relative flex flex-col justify-center items-center p-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 ${cardClass}`;
-                dayDiv.style.minHeight = '150px';
-
-                dayDiv.innerHTML = `
-                    <p class="absolute top-2 left-2 text-sm font-bold text-gray-400">Giorno ${dayData.day}</p>
-                    <img src="${isLocked ? 'https://placehold.co/100x100/30363d/c9d1d9?text=Lock' : dayData.image}" alt="Giorno ${dayData.day}" class="w-24 h-24 object-contain mb-2 ${isLocked ? 'p-4' : ''}">
-                    <p class="text-lg font-bold text-center">${dayData.constellation}</p>
-                `;
-
-                if (!isLocked) {
-                    dayDiv.onclick = () => openDay(dayData);
+                const isOpened = openedDoors.includes(i);
+                const isUnlocked = isChristmasSeason ? (i <= currentDay) : true;
+                
+                if (isOpened) {
+                    door.classList.add('open');
+                } else {
+                    door.classList.add('closed');
                 }
                 
-                calendarGrid.appendChild(dayDiv);
+                if (!isUnlocked && !isOpened) {
+                    door.classList.add('disabled');
+                }
+                
+                door.innerHTML = `<span class="door-number">${i}</span>`;
+                
+                if (isOpened) {
+                    const constellation = constellations.find(c => c.day === i);
+                    if (constellation) {
+                        const content = `
+                            <div class="door-content p-2 md:p-4 flex flex-col items-center">
+                                <img src="${constellation.image}" alt="${constellation.name}" class="w-full h-auto rounded-lg mb-2 shadow-md">
+                                <p class="text-sm font-semibold text-center text-green-300">${constellation.name}</p>
+                            </div>
+                        `;
+                        door.innerHTML = content;
+                    }
+                }
+                
+                calendarGrid.appendChild(door);
+            }
+        };
+
+        // Funzione per mostrare il modal della domanda
+        const showQuestionModal = (constellation) => {
+            questionModalContent.innerHTML = `
+                <img src="${constellation.image}" alt="${constellation.name}" class="modal-image">
+                <form id="question-form" class="question-form">
+                    <label for="answer-input" class="text-lg md:text-xl font-semibold">${constellation.question}</label>
+                    <input type="text" id="answer-input" class="p-2 rounded-lg" placeholder="La tua risposta..." required>
+                    <button type="submit">Invia Risposta</button>
+                    <div id="message-box" class="message-box hidden"></div>
+                </form>
+            `;
+            questionModalOverlay.classList.add('active');
+            
+            const form = document.getElementById('question-form');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                checkAnswer(constellation);
             });
-        }
+        };
 
-        // Funzione per aprire la modale del giorno selezionato
-        function openDay(dayData) {
-            currentDay = dayData;
-            score = 3;
-            hintsUsed = 0;
+        // Funzione per mostrare il modal di successo
+        const showSuccessModal = (constellation) => {
+            successModalImage.src = constellation.image;
+            successModalImage.alt = constellation.name;
+            successModalTitle.textContent = constellation.name;
+            successModalInfo.textContent = constellation.info;
+            successModalOverlay.classList.add('active');
+        };
 
-            // Reset della modale
-            document.getElementById('modal-title').textContent = `${dayData.constellation}`;
-            document.getElementById('modal-date').textContent = `Giorno ${dayData.day}`;
-            document.getElementById('modal-image').src = dayData.image;
-            document.getElementById('modal-question').textContent = dayData.question;
-            document.getElementById('answer-input').value = '';
-            document.getElementById('modal-score').textContent = `Punti attuali: 3`;
-            document.getElementById('modal-hint-text').classList.add('hidden');
-            document.getElementById('modal-result').classList.add('hidden');
-            document.getElementById('additional-info').classList.add('hidden');
-            document.getElementById('submit-answer-btn').classList.remove('hidden');
-            document.getElementById('get-hint-btn').classList.remove('hidden');
-
-            document.getElementById('modal').classList.remove('hidden');
-        }
-
-        // Funzione per chiudere la modale
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
+        // Funzione per nascondere i modal
+        const hideModals = () => {
+            questionModalOverlay.classList.remove('active');
+            successModalOverlay.classList.remove('active');
+        };
 
         // Funzione per controllare la risposta
-        function checkAnswer() {
-            const userAnswer = document.getElementById('answer-input').value.trim().toLowerCase();
-            const correctAnswer = currentDay.answer.trim().toLowerCase();
-            const resultMessage = document.getElementById('result-message');
-            const additionalInfo = document.getElementById('additional-info');
-            const infoText = document.getElementById('info-text');
+        const checkAnswer = (constellation) => {
+            const answerInput = document.getElementById('answer-input').value.trim();
+            const messageBox = document.getElementById('message-box');
             
-            // Nasconde l'input e i pulsanti
-            document.getElementById('submit-answer-btn').classList.add('hidden');
-            document.getElementById('get-hint-btn').classList.add('hidden');
+            if (answerInput.toLowerCase() === constellation.answer.toLowerCase()) {
+                messageBox.textContent = "Risposta esatta! Congratulazioni!";
+                messageBox.classList.remove('hidden', 'error');
+                messageBox.classList.add('success');
+                
+                // Aggiorna lo stato della porta a "aperta" e salvalo nel localStorage
+                if (!openedDoors.includes(constellation.day)) {
+                    openedDoors.push(constellation.day);
+                    localStorage.setItem('openedDoors', JSON.stringify(openedDoors));
+                }
 
-            if (userAnswer === correctAnswer) {
-                resultMessage.textContent = `Risposta esatta! Hai guadagnato ${score} punti.`;
-                resultMessage.className = 'text-xl font-bold text-[#238636] correct-answer';
-                infoText.textContent = currentDay.info;
-                additionalInfo.classList.remove('hidden');
+                // Chiudi il modal della domanda e mostra il modal di successo dopo un breve ritardo
+                setTimeout(() => {
+                    hideModals();
+                    showSuccessModal(constellation);
+                    generateCalendar(); // Rigenera il calendario per mostrare la porta aperta
+                }, 1000);
+                
             } else {
-                resultMessage.textContent = 'Risposta errata. Riprova!';
-                resultMessage.className = 'text-xl font-bold text-red-500 incorrect-answer';
-                document.getElementById('submit-answer-btn').classList.remove('hidden');
-                document.getElementById('get-hint-btn').classList.remove('hidden');
+                messageBox.textContent = "Risposta errata. Riprova.";
+                messageBox.classList.remove('hidden', 'success');
+                messageBox.classList.add('error');
             }
-            document.getElementById('modal-result').classList.remove('hidden');
-        }
+        };
 
-        // Funzione per ottenere un indizio
-        function getHint() {
-            if (hintsUsed < 3) {
-                const hintText = document.getElementById('modal-hint-text');
-                hintText.textContent = currentDay.hints[hintsUsed];
-                hintText.classList.remove('hidden');
-                hintsUsed++;
-                score = Math.max(0, 3 - hintsUsed);
-                document.getElementById('modal-score').textContent = `Punti attuali: ${score}`;
+        // Aggiungi un gestore di eventi per il click sulle caselle
+        document.getElementById('calendar-grid').addEventListener('click', (e) => {
+            const door = e.target.closest('.door');
+            if (door && !door.classList.contains('disabled')) {
+                const day = parseInt(door.dataset.day);
+                const constellation = constellations.find(c => c.day === day);
+                
+                if (constellation) {
+                    if (openedDoors.includes(day)) {
+                        // Se la porta è già aperta, mostra direttamente le informazioni
+                        showSuccessModal(constellation);
+                    } else {
+                        // Se la porta è bloccata o chiusa, mostra la domanda
+                        showQuestionModal(constellation);
+                    }
+                }
             }
-            if (hintsUsed >= 3) {
-                document.getElementById('get-hint-btn').disabled = true;
-                document.getElementById('get-hint-btn').textContent = 'Indizi esauriti';
-                document.getElementById('get-hint-btn').classList.remove('bg-gray-500');
-                document.getElementById('get-hint-btn').classList.add('bg-red-800', 'cursor-not-allowed');
+        });
+
+        // Aggiungi gestori di eventi per chiudere i modal
+        questionModalClose.addEventListener('click', hideModals);
+        successModalClose.addEventListener('click', hideModals);
+        questionModalOverlay.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                hideModals();
             }
-        }
-
-        // Inizializza il calendario quando la pagina è caricata
-        window.onload = createCalendar;
-
+        });
+        successModalOverlay.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                hideModals();
+            }
+        });
+        
+        // Genera il calendario al caricamento della pagina
+        generateCalendar();
     </script>
 </body>
 </html>
