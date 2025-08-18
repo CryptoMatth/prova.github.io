@@ -1,633 +1,721 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario dell'Avvento delle Costellazioni</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #1a202c;
-            color: #e2e8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+import React, { useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
+/**
+ * Calendario dell'Avvento – Costellazioni (single-file React component)
+ * --------------------------------------------------------------
+ * ✔ 24 caselle (1–24) sbloccate giorno per giorno a dicembre
+ * ✔ Ogni giorno: 1 immagine (SVG) di una costellazione + 4 opzioni (multiple choice)
+ * ✔ Punteggio: 3 punti se indovina al primo tentativo; -1 per ogni tentativo sbagliato; -1 per ogni indizio usato
+ * ✔ 3 indizi disponibili; usare un indizio costa 1 punto potenziale
+ * ✔ Blocca i giorni futuri; giorni passati sempre rigiocabili/consultabili
+ * ✔ Dopo la risposta corretta compaiono informazioni extra sulla costellazione
+ * ✔ Stato e punteggi persistenti in localStorage
+ * ✔ Modalità demo: aggiungi ?demo=1 all’URL per sbloccare tutte le caselle
+ *
+ * NOTE:
+ * - Tutto in un unico file: pronto per essere pubblicato su GitHub Pages (es. Vite/CRA/Next static).
+ * - Le immagini sono SVG generate da coordinate (nessuna dipendenza esterna).
+ * - Per aggiungere costellazioni: vedi CONSTELLATIONS sotto.
+ */
 
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 16px;
-        }
+// =============== Utility: data & helpers =====================
 
-        .door {
-            position: relative;
-            background-color: #2d3748;
-            border: 2px solid #4a5568;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            aspect-ratio: 1 / 1;
-        }
+type Point = { x: number; y: number; mag?: number };
 
-        .door.closed:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
-        }
+type Constellation = {
+  id: string; // unique
+  name: string; // risposta corretta
+  day: number; // 1..24
+  // punti (0..100 box), lines come indici in points (a,b)
+  points: Point[];
+  lines: [number, number][];
+  hints: string[]; // max 3
+  info: {
+    description: string;
+    bestMonths: string;
+    hemisphere: string;
+    myth: string;
+  };
+  // 3 distrattori per multiple choice
+  distractors: string[];
+};
 
-        .door.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .door-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #cbd5e0;
-            transition: color 0.3s ease;
-        }
+// Alcune costellazioni (schema molto semplificato per l’SVG)
+const CONSTELLATIONS: Constellation[] = [
+  {
+    id: "orion",
+    name: "Orione",
+    day: 1,
+    points: [
+      { x: 20, y: 20 }, // Betelgeuse (sempl.)
+      { x: 80, y: 30 }, // Bellatrix
+      { x: 40, y: 55 }, // Alnitak
+      { x: 50, y: 50 }, // Alnilam
+      { x: 60, y: 45 }, // Mintaka
+      { x: 25, y: 85 }, // Saiph
+      { x: 85, y: 80 }, // Rigel
+    ],
+    lines: [
+      [0, 1],
+      [0, 2],
+      [1, 4],
+      [2, 3],
+      [3, 4], // cintura
+      [2, 5],
+      [4, 6],
+    ],
+    hints: [
+      "È ben visibile invernale nell'emisfero nord.",
+      "La sua 'cintura' è formata da tre stelle allineate.",
+      "Include Rigel e Betelgeuse.",
+    ],
+    info: {
+      description:
+        "Orione è una delle costellazioni più riconoscibili, con tre stelle in fila che formano la cintura.",
+      bestMonths: "Dicembre–Febbraio",
+      hemisphere: "Nord e Sud (equatoriale)",
+      myth: "Rappresenta il cacciatore Orione della mitologia greca.",
+    },
+    distractors: ["Toro", "Cigno", "Cassiopea"],
+  },
+  {
+    id: "ursa_major",
+    name: "Orsa Maggiore",
+    day: 2,
+    points: [
+      { x: 10, y: 40 },
+      { x: 25, y: 35 },
+      { x: 40, y: 30 },
+      { x: 55, y: 35 },
+      { x: 70, y: 45 },
+      { x: 60, y: 60 },
+      { x: 40, y: 65 },
+    ],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+      [5, 6],
+    ],
+    hints: [
+      "Include l'asterismo del Grande Carro.",
+      "Aiuta a trovare la Polare (tramite l'Orsa Minore).",
+      "Molto alta nel cielo boreale.",
+    ],
+    info: {
+      description:
+        "Costellazione ampia dell'emisfero nord, famosa per il Grande Carro.",
+      bestMonths: "Marzo–Maggio",
+      hemisphere: "Nord",
+      myth: "Ninfa Callisto trasformata in orsa (mitologia greca).",
+    },
+    distractors: ["Lira", "Ariete", "Scorpione"],
+  },
+  {
+    id: "cassiopeia",
+    name: "Cassiopea",
+    day: 3,
+    points: [
+      { x: 15, y: 20 },
+      { x: 35, y: 35 },
+      { x: 55, y: 25 },
+      { x: 75, y: 40 },
+      { x: 90, y: 25 },
+    ],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+    ],
+    hints: [
+      "Ha la forma di una 'W' o 'M' a seconda dell'orientamento.",
+      "Costellazione circumpolare nell'emisfero nord.",
+      "È opposta all'Orsa Maggiore rispetto alla Polare.",
+    ],
+    info: {
+      description: "Facile da riconoscere per la caratteristica forma a W.",
+      bestMonths: "Tutto l'anno alle alte latitudini nord",
+      hemisphere: "Nord (circumpolare)",
+      myth: "Prende il nome dalla regina Cassiopea.",
+    },
+    distractors: ["Perseo", "Cefeo", "Andromeda"],
+  },
+  {
+    id: "taurus",
+    name: "Toro",
+    day: 4,
+    points: [
+      { x: 20, y: 40 },
+      { x: 35, y: 35 },
+      { x: 50, y: 30 },
+      { x: 65, y: 35 },
+      { x: 80, y: 50 },
+      { x: 60, y: 60 },
+    ],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [3, 5],
+    ],
+    hints: [
+      "Ospita l'ammasso stellare delle Iadi.",
+      "La brillante Aldebaran segna l'occhio.",
+      "Vicino alle Pleiadi (M45).",
+    ],
+    info: {
+      description:
+        "Costellazione zodiacale invernale che contiene le Iadi e le Pleiadi (adiacenti).",
+      bestMonths: "Novembre–Gennaio",
+      hemisphere: "Entrambi (zodiacale)",
+      myth: "Il toro in cui Zeus si trasformò per rapire Europa.",
+    },
+    distractors: ["Orione", "Gemelli", "Ercole"],
+  },
+  {
+    id: "gemini",
+    name: "Gemelli",
+    day: 5,
+    points: [
+      { x: 25, y: 25 },
+      { x: 35, y: 20 },
+      { x: 45, y: 35 },
+      { x: 55, y: 30 },
+      { x: 65, y: 45 },
+      { x: 75, y: 40 },
+    ],
+    lines: [
+      [0, 2],
+      [2, 4],
+      [1, 3],
+      [3, 5],
+    ],
+    hints: [
+      "Include Castore e Polluce.",
+      "È una costellazione zodiacale.",
+      "Vicina al Toro e al Cancro.",
+    ],
+    info: {
+      description:
+        "Zodiacale invernale, riconoscibile per le due stelle brillanti Castore e Polluce.",
+      bestMonths: "Dicembre–Febbraio",
+      hemisphere: "Entrambi (zodiacale)",
+      myth: "I gemelli mitologici di Leda.",
+    },
+    distractors: ["Lira", "Aquila", "Cigno"],
+  },
+  {
+    id: "lyra",
+    name: "Lira",
+    day: 6,
+    points: [
+      { x: 60, y: 20 }, // Vega (sempl.)
+      { x: 80, y: 35 },
+      { x: 65, y: 50 },
+      { x: 45, y: 45 },
+      { x: 55, y: 30 },
+    ],
+    lines: [
+      [0, 4],
+      [4, 3],
+      [3, 2],
+      [2, 1],
+      [1, 0],
+    ],
+    hints: [
+      "La stella più brillante è Vega.",
+      "Fa parte del Triangolo Estivo.",
+      "Piccola costellazione estiva nell'emisfero nord.",
+    ],
+    info: {
+      description:
+        "Piccola costellazione dominata da Vega, con M57 (Nebulosa Anello) al suo interno.",
+      bestMonths: "Giugno–Agosto",
+      hemisphere: "Nord",
+      myth: "Rappresenta una lira (strumento musicale).",
+    },
+    distractors: ["Cefeo", "Orsa Minore", "Ariete"],
+  },
+  {
+    id: "cygnus",
+    name: "Cigno",
+    day: 7,
+    points: [
+      { x: 50, y: 15 },
+      { x: 50, y: 35 },
+      { x: 50, y: 55 },
+      { x: 30, y: 45 },
+      { x: 70, y: 45 },
+    ],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [1, 3],
+      [1, 4],
+    ],
+    hints: [
+      "Chiamata anche Croce del Nord.",
+      "Deneb è la stella più brillante.",
+      "Attraversata dalla Via Lattea.",
+    ],
+    info: {
+      description: "Grande croce che taglia la Via Lattea estiva.",
+      bestMonths: "Luglio–Settembre",
+      hemisphere: "Nord",
+      myth: "Rappresenta un cigno in volo.",
+    },
+    distractors: ["Aquila", "Pegaso", "Orione"],
+  },
+  {
+    id: "scorpius",
+    name: "Scorpione",
+    day: 8,
+    points: [
+      { x: 15, y: 60 },
+      { x: 25, y: 55 },
+      { x: 35, y: 50 },
+      { x: 45, y: 55 },
+      { x: 55, y: 65 },
+      { x: 65, y: 75 },
+      { x: 75, y: 85 },
+    ],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+      [5, 6],
+    ],
+    hints: [
+      "Antares è la stella rossa più brillante.",
+      "Costellazione zodiacale estiva nell'emisfero nord.",
+      "Ha forma arcuata simile a una coda.",
+    ],
+    info: {
+      description:
+        "Zodiacale prominente nel cielo estivo meridionale, riconoscibile per Antares.",
+      bestMonths: "Giugno–Agosto",
+      hemisphere: "Entrambi (vicina all'equatore celeste sud)",
+      myth: "Lo scorpione che uccise Orione nella mitologia.",
+    },
+    distractors: ["Sagittario", "Capricorno", "Leone"],
+  },
+  // --- Aggiungi qui fino a day:24 seguendo lo schema ---
+];
 
-        .door-content {
-            display: none;
-            width: 100%;
-            height: 100%;
-            padding: 1rem;
-            text-align: center;
-        }
+const DAYS_TOTAL = 24;
 
-        .door.open .door-content {
-            display: block;
-        }
+// =============== Local Storage helpers =====================
+const LS_KEY = "advent_constellations_v1";
 
-        .door.open .door-number {
-            display: none;
-        }
+type DayState = {
+  solved: boolean;
+  attempts: number; // conteggio tentativi *sbagliati* effettuati prima della soluzione
+  hintsUsed: number;
+  score: number; // punti assegnati al momento della soluzione
+  selectedOption?: string; // ultima selezione
+};
 
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
+type SavedState = {
+  days: Record<number, DayState>;
+  totalScore: number;
+};
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+function loadState(): SavedState {
+  const raw = localStorage.getItem(LS_KEY);
+  if (!raw) return { days: {}, totalScore: 0 };
+  try {
+    const parsed = JSON.parse(raw) as SavedState;
+    return parsed ?? { days: {}, totalScore: 0 };
+  } catch {
+    return { days: {}, totalScore: 0 };
+  }
+}
 
-        .modal {
-            background-color: #2d3748;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            color: #e2e8f0;
-            animation: slideIn 0.5s ease-out;
-            position: relative;
-        }
+function saveState(state: SavedState) {
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
 
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+// =============== SVG Renderer =====================
+function ConstellationSVG({ points, lines }: { points: Point[]; lines: [number, number][] }) {
+  return (
+    <svg viewBox="0 0 100 100" className="w-full h-48 md:h-56 lg:h-64">
+      <rect x="0" y="0" width="100" height="100" rx="8" className="fill-black" />
+      {/* stelle */}
+      {points.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={1.6} className="fill-white" />
+      ))}
+      {/* linee */}
+      {lines.map(([a, b], i) => (
+        <line
+          key={i}
+          x1={points[a].x}
+          y1={points[a].y}
+          x2={points[b].x}
+          y2={points[b].y}
+          stroke="white"
+          strokeWidth={0.4}
+          strokeOpacity={0.7}
+        />
+      ))}
+      {/* stelle più luminose (leggero alone) */}
+      {points.map((p, i) => (
+        <circle key={`glow-${i}`} cx={p.x} cy={p.y} r={0.8} className="fill-white" />
+      ))}
+    </svg>
+  );
+}
 
-        .modal-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #a0aec0;
-            transition: color 0.2s;
-        }
+// =============== Main Component =====================
+export default function AdventConstellationsApp() {
+  // Calcolo giorno sbloccato
+  const now = new Date();
+  const url = new URL(window.location.href);
+  const demo = url.searchParams.get("demo") === "1";
 
-        .modal-close:hover {
-            color: #e2e8f0;
-        }
-        
-        .modal-image {
-            max-width: 100%;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .modal-content {
-            text-align: left;
-        }
-        
-        .modal-content h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #48bb78; /* Verde per il titolo */
-        }
-        
-        .modal-content p {
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        
-        .question-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .question-form label {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-        
-        .question-form input {
-            background-color: #4a5568;
-            border: 1px solid #718096;
-            padding: 10px;
-            border-radius: 8px;
-            color: #e2e8f0;
-            outline: none;
-        }
-        
-        .question-form input:focus {
-            border-color: #4299e1;
-        }
-        
-        .question-form button {
-            background-color: #4299e1;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-        
-        .question-form button:hover {
-            background-color: #3182ce;
-        }
-        
-        .message-box {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .message-box.success {
-            background-color: #38a169;
-            color: white;
-        }
-        
-        .message-box.error {
-            background-color: #e53e3e;
-            color: white;
-        }
-        
-    </style>
-</head>
-<body class="bg-gray-900 text-gray-100">
-    <div class="container mx-auto p-4">
-        <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold mb-2">Calendario dell'Avvento</h1>
-            <h2 class="text-2xl md:text-3xl text-green-400">Le Meraviglie del Cielo Stellato</h2>
-            <p class="text-lg text-gray-400 mt-2">Scopri una nuova costellazione ogni giorno fino a Natale!</p>
-        </header>
-        
-        <div id="calendar-grid" class="calendar-grid">
-            <!-- Le caselle del calendario verranno generate qui dal JavaScript -->
+  const isDecember = now.getMonth() === 11; // 0-based; 11 = Dicembre
+  const todayDay = isDecember ? now.getDate() : 1; // fuori da dicembre: sblocca solo 1 per default
+  const unlockedDay = demo ? DAYS_TOTAL : Math.min(DAYS_TOTAL, todayDay);
+
+  const [saved, setSaved] = useState<SavedState>(() => loadState());
+
+  useEffect(() => {
+    saveState(saved);
+  }, [saved]);
+
+  const totalScore = useMemo(() => saved.totalScore, [saved.totalScore]);
+
+  const dataByDay: Record<number, Constellation | undefined> = useMemo(() => {
+    const map: Record<number, Constellation | undefined> = {};
+    CONSTELLATIONS.forEach((c) => (map[c.day] = c));
+    return map;
+  }, []);
+
+  function getDayState(day: number): DayState {
+    return saved.days[day] ?? { solved: false, attempts: 0, hintsUsed: 0, score: 0 };
+  }
+
+  function setDayState(day: number, partial: Partial<DayState>) {
+    setSaved((prev) => {
+      const current = getDayState(day);
+      const nextDay = { ...current, ...partial } as DayState;
+      const nextDays = { ...prev.days, [day]: nextDay };
+      return { ...prev, days: nextDays };
+    });
+  }
+
+  function awardScore(day: number, points: number) {
+    setSaved((prev) => {
+      const current = getDayState(day);
+      const nextDay = { ...current, solved: true, score: points };
+      const alreadyCounted = current.solved ? current.score : 0;
+      const delta = points - alreadyCounted;
+      return { days: { ...prev.days, [day]: nextDay }, totalScore: prev.totalScore + delta };
+    });
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-slate-100">
+      <header className="max-w-5xl mx-auto px-4 py-6 flex items-center justify-between">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+          Calendario dell'Avvento – Costellazioni
+        </h1>
+        <div className="flex items-center gap-3">
+          <div className="px-3 py-1 rounded-2xl bg-slate-700/60 backdrop-blur text-sm">
+            Punteggio totale: <span className="font-semibold">{totalScore}</span>
+          </div>
+          <a
+            className="px-3 py-1 rounded-2xl bg-emerald-600 hover:bg-emerald-500 transition text-sm"
+            href={demo ? window.location.pathname : `${window.location.pathname}?demo=1`}
+          >
+            {demo ? "Modalità normale" : "Demo (sblocca tutto)"}
+          </a>
         </div>
-    </div>
+      </header>
 
-    <!-- Modal per le domande e risposte -->
-    <div id="question-modal-overlay" class="modal-overlay">
-        <div class="modal">
-            <span id="question-modal-close" class="modal-close">&times;</span>
-            <div id="question-modal-content" class="modal-content">
-                <!-- Il contenuto verrà inserito dinamicamente -->
+      <main className="max-w-5xl mx-auto px-4 pb-16">
+        <p className="text-slate-300 mb-6">
+          Ogni giorno di dicembre si sblocca una nuova costellazione. Indovina il nome: 3 punti
+          al primo colpo; ogni errore e ogni indizio consumano 1 punto potenziale. Dopo la
+          risposta corretta, scopri curiosità e informazioni utili ✨
+        </p>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {Array.from({ length: DAYS_TOTAL }).map((_, i) => {
+            const day = i + 1;
+            const c = dataByDay[day];
+            const locked = day > unlockedDay;
+            const state = getDayState(day);
+            return (
+              <motion.div
+                layout
+                key={day}
+                className={`rounded-2xl p-3 bg-slate-800/70 border border-slate-700 ${
+                  locked ? "opacity-60" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-slate-300">Giorno {day}</div>
+                  {state.solved && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-600/80">+{state.score}</span>
+                  )}
+                </div>
+
+                {locked ? (
+                  <div className="h-48 flex items-center justify-center">
+                    <span className="text-slate-400 text-sm">Bloccato fino al giorno {day}</span>
+                  </div>
+                ) : c ? (
+                  <DayCard
+                    day={day}
+                    data={c}
+                    state={state}
+                    onState={(partial) => setDayState(day, partial)}
+                    onAward={awardScore}
+                  />
+                ) : (
+                  <div className="h-48 flex items-center justify-center text-center text-slate-400 text-sm">
+                    <div>
+                      <div className="font-semibold mb-1">In arrivo</div>
+                      <div>Aggiungi la costellazione per questo giorno in CONSTELLATIONS.</div>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+
+        <FooterNotes />
+      </main>
+    </div>
+  );
+}
+
+function DayCard({
+  day,
+  data,
+  state,
+  onState,
+  onAward,
+}: {
+  day: number;
+  data: Constellation;
+  state: DayState;
+  onState: (partial: Partial<DayState>) => void;
+  onAward: (day: number, points: number) => void;
+}) {
+  const [revealedHintCount, setRevealedHintCount] = useState(state.hintsUsed);
+
+  useEffect(() => {
+    // allinea con localStorage
+    if (revealedHintCount !== state.hintsUsed) setRevealedHintCount(state.hintsUsed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Prepara opzioni (1 corretta + 3 distrattori), mescolate
+  const options = useMemo(() => {
+    const arr = [data.name, ...data.distractors];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [data]);
+
+  // Punteggio potenziale residuo: 3 – tentativi sbagliati – indizi usati (min 0)
+  const potential = Math.max(3 - state.attempts - revealedHintCount, 0);
+
+  function submit(answer: string) {
+    if (state.solved) return;
+    const correct = answer === data.name;
+    onState({ selectedOption: answer });
+    if (correct) {
+      onAward(day, potential);
+    } else {
+      onState({ attempts: state.attempts + 1 });
+    }
+  }
+
+  function useHint() {
+    if (state.solved) return;
+    if (revealedHintCount >= 3) return;
+    const next = revealedHintCount + 1;
+    setRevealedHintCount(next);
+    onState({ hintsUsed: next });
+  }
+
+  return (
+    <div>
+      <ConstellationSVG points={data.points} lines={data.lines} />
+
+      {/* Punteggio potenziale e indizi */}
+      <div className="flex items-center justify-between mt-2">
+        <div className="text-xs text-slate-300">Punti possibili: {potential}</div>
+        <button
+          onClick={useHint}
+          disabled={state.solved || revealedHintCount >= 3}
+          className="text-xs px-2 py-1 rounded-lg bg-sky-700/70 hover:bg-sky-600 disabled:opacity-50"
+        >
+          Indizio ({3 - revealedHintCount} rimasti)
+        </button>
+      </div>
+
+      {/* Sezione indizi */}
+      <AnimatePresence initial={false}>
+        {revealedHintCount > 0 && (
+          <motion.ul
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-2 text-xs text-slate-300 list-disc list-inside space-y-1"
+          >
+            {data.hints.slice(0, revealedHintCount).map((h, idx) => (
+              <li key={idx}>{h}</li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+
+      {/* Opzioni risposta */}
+      <div className="mt-3 grid grid-cols-1 gap-2">
+        {options.map((opt) => {
+          const isSelected = state.selectedOption === opt;
+          const isCorrect = state.solved && opt === data.name;
+          const isWrongChoice = state.solved && isSelected && !isCorrect;
+          return (
+            <button
+              key={opt}
+              onClick={() => submit(opt)}
+              disabled={state.solved}
+              className={`w-full text-left px-3 py-2 rounded-xl border transition ${
+                isCorrect
+                  ? "bg-emerald-700/70 border-emerald-500"
+                  : isWrongChoice
+                  ? "bg-rose-800/60 border-rose-600"
+                  : isSelected && !state.solved
+                  ? "bg-slate-700/70 border-slate-500"
+                  : "bg-slate-700/40 border-slate-600 hover:bg-slate-700/60"
+              }`}
+            >
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Messaggi e informazioni extra */}
+      <div className="mt-3 min-h-10">
+        {!state.solved ? (
+          state.attempts > 0 ? (
+            <div className="text-sm text-amber-300">Ritenta! ({state.attempts} errore/i)</div>
+          ) : (
+            <div className="text-sm text-slate-300">Scegli la risposta corretta 👇</div>
+          )
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-sm"
+          >
+            <div className="font-semibold text-emerald-300 mb-1">
+              Corretto! Hai guadagnato {state.score} punto{state.score !== 1 ? "i" : ""}.
             </div>
-        </div>
-    </div>
-    
-    <!-- Modal per la risposta corretta -->
-    <div id="success-modal-overlay" class="modal-overlay">
-        <div class="modal">
-            <span id="success-modal-close" class="modal-close">&times;</span>
-            <div class="modal-content">
-                <img id="success-modal-image" class="modal-image" src="" alt="Immagine della costellazione">
-                <h3 id="success-modal-title"></h3>
-                <p id="success-modal-info"></p>
+            <div className="text-slate-200">
+              <div className="mb-2">
+                <span className="font-semibold">{data.name}</span>: {data.info.description}
+              </div>
+              <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                <li>
+                  <span className="font-semibold text-slate-200">Mesi migliori:</span> {data.info.bestMonths}
+                </li>
+                <li>
+                  <span className="font-semibold text-slate-200">Emisfero:</span> {data.info.hemisphere}
+                </li>
+                <li>
+                  <span className="font-semibold text-slate-200">Mitologia:</span> {data.info.myth}
+                </li>
+              </ul>
             </div>
-        </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Azioni supplementari */}
+      <div className="mt-3 flex items-center justify-between text-xs">
+        <button
+          onClick={() => onState({ attempts: 0, hintsUsed: 0, selectedOption: undefined, solved: false })}
+          className="px-2 py-1 rounded-lg bg-slate-700/60 hover:bg-slate-600"
+        >
+          Resetta tentativa
+        </button>
+        <button
+          onClick={() => {
+            // Forza risolto senza punti (per studio della mappa)
+            if (!state.solved) {
+              onAward(day, 0);
+            }
+          }}
+          className="px-2 py-1 rounded-lg bg-slate-700/60 hover:bg-slate-600"
+        >
+          Mostra info senza punti
+        </button>
+      </div>
     </div>
+  );
+}
 
-    <script>
-        // Funzione per copiare il testo negli appunti
-        const copyToClipboard = (text) => {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        };
+function FooterNotes() {
+  return (
+    <div className="mt-10 text-xs text-slate-400 space-y-2">
+      <details className="bg-slate-900/40 border border-slate-700 rounded-xl p-4">
+        <summary className="cursor-pointer font-semibold text-slate-200">Come personalizzare</summary>
+        <ul className="list-disc list-inside mt-2 space-y-1">
+          <li>
+            Aggiungi altre costellazioni nell'array <code>CONSTELLATIONS</code> (fino al giorno 24).
+            Ogni oggetto include: <code>name</code>, <code>day</code>, <code>points</code>, <code>lines</code>,
+            <code>hints</code>, <code>info</code> e <code>distractors</code>.
+          </li>
+          <li>
+            Le coordinate dei punti sono in un box 100×100. Usa <code>lines</code> per unire i punti.
+          </li>
+          <li>
+            Vuoi immagini reali? Sostituisci il componente <code>ConstellationSVG</code> con un
+            <code>&lt;img src=... /&gt;</code> usando file locali o URL (ad es. in <code>/public/</code>),
+            mantenendo il resto invariato.
+          </li>
+          <li>
+            Modalità demo per test: aggiungi <code>?demo=1</code> all'URL per sbloccare tutte le caselle.
+          </li>
+          <li>
+            Per azzerare i progressi, cancella il <code>localStorage</code> o usa gli strumenti del browser.
+          </li>
+        </ul>
+      </details>
 
-        // Dati delle costellazioni, domande e risposte
-        const constellations = [
-            {
-                name: "Orione",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Orione",
-                question: "Quale costellazione è famosa per la sua cintura di tre stelle?",
-                answer: "Orione",
-                info: "La costellazione di Orione è una delle più famose e riconoscibili nel cielo notturno, visibile in tutto il mondo. Le sue tre stelle luminose, Alnitak, Alnilam e Mintaka, formano la 'Cintura di Orione'.",
-                day: 1
-            },
-            {
-                name: "Orsa Maggiore",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Orsa+Maggiore",
-                question: "Quale costellazione è nota per la sua forma a 'Grande Carro'?",
-                answer: "Orsa Maggiore",
-                info: "L'Orsa Maggiore è una delle più grandi costellazioni. Sette delle sue stelle più luminose formano un asterismo a forma di mestolo, noto come il 'Grande Carro' o 'Aratro'.",
-                day: 2
-            },
-            {
-                name: "Cassiopea",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Cassiopea",
-                question: "Quale costellazione ha una forma a 'W' o 'M'?",
-                answer: "Cassiopea",
-                info: "La costellazione di Cassiopea è riconoscibile per le sue cinque stelle principali che formano una figura a 'W' o 'M', a seconda dell'orientamento. Prende il nome dalla regina mitologica Cassiopea.",
-                day: 3
-            },
-            {
-                name: "Leone",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Leone",
-                question: "La stella Regolo è la più luminosa di quale costellazione?",
-                answer: "Leone",
-                info: "La costellazione del Leone è una delle costellazioni dello zodiaco. Regolo, la sua stella più luminosa, si trova al 'cuore' del Leone, ed è una delle stelle più brillanti nel cielo notturno.",
-                day: 4
-            },
-            {
-                name: "Cigno",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Cigno",
-                question: "Quale costellazione è conosciuta anche come la 'Croce del Nord'?",
-                answer: "Cigno",
-                info: "Il Cigno è una costellazione ben visibile nei mesi estivi e autunnali. L'asterismo principale, noto come la 'Croce del Nord', è formato dalle sue stelle più luminose, con Deneb che rappresenta la 'coda' del Cigno.",
-                day: 5
-            },
-            {
-                name: "Gemelli",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Gemelli",
-                question: "Quale costellazione prende il nome da due gemelli mitologici, Castore e Polluce?",
-                answer: "Gemelli",
-                info: "I Gemelli sono una costellazione dello zodiaco. Le sue due stelle più luminose, Castore e Polluce, sono considerate i 'gemelli' e sono le stelle più facili da trovare nella costellazione.",
-                day: 6
-            },
-            {
-                name: "Scorpione",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Scorpione",
-                question: "Quale costellazione ha una forma a 'amo da pesca' e la stella rossa Antares?",
-                answer: "Scorpione",
-                info: "Lo Scorpione è una costellazione dello zodiaco, la sua forma assomiglia a un grande amo da pesca. Antares, la sua stella più luminosa, è una supergigante rossa che si trova nel 'cuore' dello Scorpione.",
-                day: 7
-            },
-            {
-                name: "Toro",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Toro",
-                question: "Quale costellazione contiene le Pleiadi e Aldebaran?",
-                answer: "Toro",
-                info: "La costellazione del Toro è una delle più antiche conosciute. Contiene l'ammasso stellare delle Pleiadi (le 'Sette Sorelle') e la stella gigante rossa Aldebaran, che forma l'occhio del Toro.",
-                day: 8
-            },
-            {
-                name: "Lira",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Lira",
-                question: "Quale costellazione è piccola ma facilmente riconoscibile per la sua stella Vega?",
-                answer: "Lira",
-                info: "La Lira è una piccola costellazione. La sua stella più luminosa, Vega, è la seconda stella più brillante dell'emisfero boreale ed è una delle tre stelle che formano il 'Triangolo Estivo'.",
-                day: 9
-            },
-            {
-                name: "Grande Cane",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Grande+Cane",
-                question: "Quale costellazione ospita Sirio, la stella più luminosa del cielo notturno?",
-                answer: "Grande Cane",
-                info: "La costellazione del Grande Cane è famosa per la presenza di Sirio, la stella più brillante del cielo. Sirio, una stella binaria, è visibile in gran parte del mondo e fa parte del 'Triangolo Invernale'.",
-                day: 10
-            },
-            {
-                name: "Boote",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Boote",
-                question: "Arcturus è la stella principale di quale costellazione, a forma di 'aquilone'?",
-                answer: "Boote",
-                info: "Il Boote è una costellazione facilmente riconoscibile per la sua forma a 'aquilone' o 'imbuto'. Arcturus, la sua stella più luminosa, è una delle stelle più brillanti del cielo notturno.",
-                day: 11
-            },
-            {
-                name: "Bilancia",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Bilancia",
-                question: "Quale costellazione dello zodiaco rappresenta un oggetto inanimato?",
-                answer: "Bilancia",
-                info: "La Bilancia è una costellazione dello zodiaco. È l'unica costellazione zodiacale a rappresentare un oggetto inanimato, simboleggiando la bilancia di Astrea, dea della giustizia.",
-                day: 12
-            },
-            {
-                name: "Sagittario",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Sagittario",
-                question: "Quale costellazione è famosa per la sua forma a 'teiera'?",
-                answer: "Sagittario",
-                info: "Il Sagittario è una costellazione zodiacale. Molte delle sue stelle formano un asterismo noto come la 'Teiera', che è facilmente visibile nel cielo estivo.",
-                day: 13
-            },
-            {
-                name: "Pegaso",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Pegaso",
-                question: "Quale costellazione è riconoscibile per il suo 'Grande Quadrato'?",
-                answer: "Pegaso",
-                info: "La costellazione di Pegaso è famosa per l'asterismo noto come il 'Grande Quadrato di Pegaso', formato da quattro delle sue stelle più luminose, che rappresenta il corpo del cavallo alato.",
-                day: 14
-            },
-            {
-                name: "Andromeda",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Andromeda",
-                question: "La galassia di Andromeda è visibile in quale costellazione?",
-                answer: "Andromeda",
-                info: "La costellazione di Andromeda prende il nome dalla principessa mitologica. Ospita la Galassia di Andromeda (M31), la galassia a spirale più vicina alla Via Lattea, visibile a occhio nudo in condizioni ottimali.",
-                day: 15
-            },
-            {
-                name: "Acquario",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Acquario",
-                question: "Quale costellazione dello zodiaco rappresenta una figura che versa acqua?",
-                answer: "Acquario",
-                info: "L'Acquario è una costellazione dello zodiaco. Rappresenta un uomo che versa acqua da un'urna e si trova in una regione del cielo nota come il 'Mare del Cielo'.",
-                day: 16
-            },
-            {
-                name: "Pesci",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Pesci",
-                question: "Quale costellazione è formata da due pesci legati da una corda?",
-                answer: "Pesci",
-                info: "La costellazione dei Pesci è una costellazione zodiacale. È composta da due pesci che nuotano in direzioni opposte, ma sono legati da una corda.",
-                day: 17
-            },
-            {
-                name: "Ariete",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Ariete",
-                question: "Quale costellazione zodiacale si distingue per la sua forma a 'corna'?",
-                answer: "Ariete",
-                info: "L'Ariete è una costellazione zodiacale. Le sue stelle principali formano un arco che rappresenta le corna dell'ariete mitologico dal Vello d'Oro.",
-                day: 18
-            },
-            {
-                name: "Capricorno",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Capricorno",
-                question: "Quale costellazione dello zodiaco rappresenta una creatura con il corpo di capra e la coda di pesce?",
-                answer: "Capricorno",
-                info: "Il Capricorno è una costellazione zodiacale. Rappresenta una creatura mitologica, una capra con la coda di pesce, nota anche come 'capra di mare'.",
-                day: 19
-            },
-            {
-                name: "Cancro",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Cancro",
-                question: "Quale costellazione zodiacale è nota per essere molto debole e difficile da vedere?",
-                answer: "Cancro",
-                info: "Il Cancro è una costellazione zodiacale. È una delle costellazioni più deboli e difficili da individuare nel cielo, ma ospita l'ammasso stellare 'Praesepe', anche noto come 'M44'.",
-                day: 20
-            },
-            {
-                name: "Vergine",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Vergine",
-                question: "Quale costellazione è la seconda più grande del cielo e ha la stella Spica?",
-                answer: "Vergine",
-                info: "La Vergine è la seconda costellazione più grande del cielo. La sua stella più luminosa, Spica, è una delle stelle più brillanti visibili dall'emisfero boreale.",
-                day: 21
-            },
-            {
-                name: "Pesce Australe",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Pesce+Australe",
-                question: "Fomalhaut è la stella principale di quale costellazione, visibile a sud?",
-                answer: "Pesce Australe",
-                info: "Il Pesce Australe è una costellazione che si trova nell'emisfero celeste australe. La sua stella più luminosa, Fomalhaut, è la stella di prima grandezza più meridionale che si possa vedere dall'Europa.",
-                day: 22
-            },
-            {
-                name: "Delfino",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Delfino",
-                question: "Quale piccola costellazione estiva ha una forma che ricorda un delfino che salta?",
-                answer: "Delfino",
-                info: "La costellazione del Delfino è una piccola ma riconoscibile costellazione. Le sue stelle principali formano un piccolo diamante che assomiglia a un delfino che salta fuori dall'acqua.",
-                day: 23
-            },
-            {
-                name: "Auroniga",
-                image: "https://placehold.co/600x400/2a52be/ffffff?text=Auroniga",
-                question: "Capella, la sesta stella più luminosa del cielo, appartiene a quale costellazione?",
-                answer: "Auroniga",
-                info: "L'Auroniga è una costellazione visibile nell'emisfero settentrionale. La sua stella più luminosa, Capella, è la sesta stella più brillante del cielo notturno, spesso chiamata 'stella capra'.",
-                day: 24
-            }
-        ];
-
-        // Se l'utente non ha visitato il sito prima, inizializza le impostazioni
-        if (!localStorage.getItem('unlockedDays')) {
-            localStorage.setItem('unlockedDays', '[]');
-            localStorage.setItem('openedDoors', '[]');
-        }
-
-        const unlockedDays = JSON.parse(localStorage.getItem('unlockedDays'));
-        const openedDoors = JSON.parse(localStorage.getItem('openedDoors'));
-        
-        const calendarGrid = document.getElementById('calendar-grid');
-        const questionModalOverlay = document.getElementById('question-modal-overlay');
-        const questionModalClose = document.getElementById('question-modal-close');
-        const questionModalContent = document.getElementById('question-modal-content');
-        const successModalOverlay = document.getElementById('success-modal-overlay');
-        const successModalClose = document.getElementById('success-modal-close');
-        const successModalImage = document.getElementById('success-modal-image');
-        const successModalTitle = document.getElementById('success-modal-title');
-        const successModalInfo = document.getElementById('success-modal-info');
-        
-        const today = new Date();
-        const currentDay = today.getDate(); // Per il mese di dicembre, questo numero va da 1 a 31
-        const currentMonth = today.getMonth(); // 0 per Gennaio, 11 per Dicembre
-        
-        const isChristmasSeason = currentMonth === 11 && currentDay <= 24;
-
-        // Funzione per generare le caselle del calendario
-        const generateCalendar = () => {
-            const calendarGrid = document.getElementById('calendar-grid');
-            calendarGrid.innerHTML = '';
-            
-            for (let i = 1; i <= 24; i++) {
-                const door = document.createElement('div');
-                door.classList.add('door');
-                door.dataset.day = i;
-                
-                const isOpened = openedDoors.includes(i);
-                const isUnlocked = isChristmasSeason ? (i <= currentDay) : true;
-                
-                if (isOpened) {
-                    door.classList.add('open');
-                } else {
-                    door.classList.add('closed');
-                }
-                
-                if (!isUnlocked && !isOpened) {
-                    door.classList.add('disabled');
-                }
-                
-                door.innerHTML = `<span class="door-number">${i}</span>`;
-                
-                if (isOpened) {
-                    const constellation = constellations.find(c => c.day === i);
-                    if (constellation) {
-                        const content = `
-                            <div class="door-content p-2 md:p-4 flex flex-col items-center">
-                                <img src="${constellation.image}" alt="${constellation.name}" class="w-full h-auto rounded-lg mb-2 shadow-md">
-                                <p class="text-sm font-semibold text-center text-green-300">${constellation.name}</p>
-                            </div>
-                        `;
-                        door.innerHTML = content;
-                    }
-                }
-                
-                calendarGrid.appendChild(door);
-            }
-        };
-
-        // Funzione per mostrare il modal della domanda
-        const showQuestionModal = (constellation) => {
-            questionModalContent.innerHTML = `
-                <img src="${constellation.image}" alt="${constellation.name}" class="modal-image">
-                <form id="question-form" class="question-form">
-                    <label for="answer-input" class="text-lg md:text-xl font-semibold">${constellation.question}</label>
-                    <input type="text" id="answer-input" class="p-2 rounded-lg" placeholder="La tua risposta..." required>
-                    <button type="submit">Invia Risposta</button>
-                    <div id="message-box" class="message-box hidden"></div>
-                </form>
-            `;
-            questionModalOverlay.classList.add('active');
-            
-            const form = document.getElementById('question-form');
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                checkAnswer(constellation);
-            });
-        };
-
-        // Funzione per mostrare il modal di successo
-        const showSuccessModal = (constellation) => {
-            successModalImage.src = constellation.image;
-            successModalImage.alt = constellation.name;
-            successModalTitle.textContent = constellation.name;
-            successModalInfo.textContent = constellation.info;
-            successModalOverlay.classList.add('active');
-        };
-
-        // Funzione per nascondere i modal
-        const hideModals = () => {
-            questionModalOverlay.classList.remove('active');
-            successModalOverlay.classList.remove('active');
-        };
-
-        // Funzione per controllare la risposta
-        const checkAnswer = (constellation) => {
-            const answerInput = document.getElementById('answer-input').value.trim();
-            const messageBox = document.getElementById('message-box');
-            
-            if (answerInput.toLowerCase() === constellation.answer.toLowerCase()) {
-                messageBox.textContent = "Risposta esatta! Congratulazioni!";
-                messageBox.classList.remove('hidden', 'error');
-                messageBox.classList.add('success');
-                
-                // Aggiorna lo stato della porta a "aperta" e salvalo nel localStorage
-                if (!openedDoors.includes(constellation.day)) {
-                    openedDoors.push(constellation.day);
-                    localStorage.setItem('openedDoors', JSON.stringify(openedDoors));
-                }
-
-                // Chiudi il modal della domanda e mostra il modal di successo dopo un breve ritardo
-                setTimeout(() => {
-                    hideModals();
-                    showSuccessModal(constellation);
-                    generateCalendar(); // Rigenera il calendario per mostrare la porta aperta
-                }, 1000);
-                
-            } else {
-                messageBox.textContent = "Risposta errata. Riprova.";
-                messageBox.classList.remove('hidden', 'success');
-                messageBox.classList.add('error');
-            }
-        };
-
-        // Aggiungi un gestore di eventi per il click sulle caselle
-        document.getElementById('calendar-grid').addEventListener('click', (e) => {
-            const door = e.target.closest('.door');
-            if (door && !door.classList.contains('disabled')) {
-                const day = parseInt(door.dataset.day);
-                const constellation = constellations.find(c => c.day === day);
-                
-                if (constellation) {
-                    if (openedDoors.includes(day)) {
-                        // Se la porta è già aperta, mostra direttamente le informazioni
-                        showSuccessModal(constellation);
-                    } else {
-                        // Se la porta è bloccata o chiusa, mostra la domanda
-                        showQuestionModal(constellation);
-                    }
-                }
-            }
-        });
-
-        // Aggiungi gestori di eventi per chiudere i modal
-        questionModalClose.addEventListener('click', hideModals);
-        successModalClose.addEventListener('click', hideModals);
-        questionModalOverlay.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-overlay')) {
-                hideModals();
-            }
-        });
-        successModalOverlay.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-overlay')) {
-                hideModals();
-            }
-        });
-        
-        // Genera il calendario al caricamento della pagina
-        generateCalendar();
-    </script>
-</body>
-</html>
+      <details className="bg-slate-900/40 border border-slate-700 rounded-xl p-4">
+        <summary className="cursor-pointer font-semibold text-slate-200">Deploy rapido su GitHub Pages</summary>
+        <ol className="list-decimal list-inside mt-2 space-y-1">
+          <li>Crea un nuovo repository su GitHub (pubblico).</li>
+          <li>
+            Inizia un progetto con Vite (<code>npm create vite@latest</code> • React + TS), sostituisci il
+            componente <code>App.tsx</code> con questo file e aggiungi Tailwind (guida ufficiale).
+          </li>
+          <li>
+            Installa dipendenze: <code>npm i framer-motion</code> (Tailwind già configurato nel progetto).
+          </li>
+          <li>
+            Build: <code>npm run build</code> e pubblica con GitHub Pages (impostazioni del repo → Pages →
+            branch <code>gh-pages</code> oppure usa <code>gh-pages</code> package).
+          </li>
+        </ol>
+      </details>
+    </div>
+  );
+}
