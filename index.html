@@ -1,159 +1,221 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calendario dell'Avvento - Costellazioni</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      .full-screen-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.95);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        z-index: 50;
-        padding: 2rem;
-        overflow-y: auto;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendario dell'Avvento - Costellazioni</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+      background-size: cover;
+      overflow: hidden;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: -1;
+    }
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    .full-screen-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 50;
+      padding: 2rem;
+      overflow-y: auto;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .close-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+      transition: transform 0.2s ease;
+    }
+    .close-button:hover {
+      transform: scale(1.2);
+      color: #f87171;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-content {
+      animation: slideUp 0.3s ease-in-out;
+      max-width: 700px;
+      width: 100%;
+      background: #1f2937;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+    .option-button {
+      transition: all 0.2s ease;
+    }
+    .option-button:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen flex flex-col items-center p-4 overflow-y-auto relative">
+  <div class="overlay"></div>
+  <div class="stars" id="stars"></div>
+
+  <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg relative z-10">🎄 Calendario dell'Avvento - Costellazioni ✨</h1>
+  <div id="app" class="w-full max-w-6xl relative z-10"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script>
+    // Generazione stelle scintillanti
+    const starContainer = document.getElementById('stars');
+    for (let i = 0; i < 150; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * 100 + '%';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.animationDuration = 1.5 + Math.random() * 2 + 's';
+      starContainer.appendChild(star);
+    }
+
+    const { useState, useEffect } = React;
+
+    const CONSTELLATIONS = Array.from({ length: 31 }, (_, i) => ({
+      name: `Costellazione ${i + 1}`,
+      options: [`Costellazione ${i + 1}`, "Altro 1", "Altro 2", "Altro 3"],
+      description: `Descrizione della costellazione ${i + 1}`,
+      hints: ["Indizio 1", "Indizio 2", "Indizio 3"]
+    }));
+
+    function App() {
+      const [day, setDay] = useState(18);
+      const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
+      const [activeModal, setActiveModal] = useState(null);
+
+      useEffect(() => {
+        localStorage.setItem("progress", JSON.stringify(progress));
+      }, [progress]);
+
+      function handleAnswer(index, choice) {
+        const correct = CONSTELLATIONS[index].name;
+        setProgress(prev => {
+          const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+          if (entry.solved) return prev;
+          entry.attempts += 1;
+          if (choice === correct) entry.solved = true;
+          else entry.score = Math.max(0, entry.score - 1);
+          return { ...prev, [index]: entry };
+        });
       }
-      .close-button {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        font-size: 1.5rem;
-        cursor: pointer;
-        background: none;
-        border: none;
-        color: white;
+
+      function useHint(index) {
+        setProgress(prev => {
+          const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+          if (entry.solved || entry.usedHints >= 3) return prev;
+          entry.usedHints += 1;
+          entry.score = Math.max(0, entry.score - 1);
+          return { ...prev, [index]: entry };
+        });
       }
-    </style>
-  </head>
-  <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4 overflow-y-auto">
-    <h1 class="text-3xl font-bold mb-4">Calendario dell'Avvento - Costellazioni</h1>
-    <div id="app" class="w-full max-w-6xl"></div>
 
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+      return React.createElement(
+        "div",
+        { className: "grid grid-cols-2 md:grid-cols-4 gap-6 w-full" },
+        CONSTELLATIONS.map((c, i) => {
+          const index = i + 1;
+          const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+          const locked = index > day;
 
-    <script>
-      const { useState, useEffect } = React;
+          function openModal() {
+            if (!locked) setActiveModal(i);
+          }
 
-      const CONSTELLATIONS = Array.from({ length: 31 }, (_, i) => ({
-        name: `Costellazione ${i + 1}`,
-        options: [`Costellazione ${i + 1}`, `Altro 1`, `Altro 2`, `Altro 3`],
-        description: `Descrizione della costellazione ${i + 1}`,
-        hints: [`Indizio 1`, `Indizio 2`, `Indizio 3`]
-      }));
-
-      function App() {
-        const [day, setDay] = useState(18);
-        const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
-        const [activeModal, setActiveModal] = useState(null);
-
-        useEffect(() => {
-          localStorage.setItem("progress", JSON.stringify(progress));
-        }, [progress]);
-
-        function handleAnswer(index, choice) {
-          const correct = CONSTELLATIONS[index].name;
-          setProgress(prev => {
-            const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
-            if (entry.solved) return prev;
-            entry.attempts += 1;
-            if (choice === correct) entry.solved = true;
-            else entry.score = Math.max(0, entry.score - 1);
-            return { ...prev, [index]: entry };
-          });
-        }
-
-        function useHint(index) {
-          setProgress(prev => {
-            const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
-            if (entry.solved || entry.usedHints >= 3) return prev;
-            entry.usedHints += 1;
-            entry.score = Math.max(0, entry.score - 1);
-            return { ...prev, [index]: entry };
-          });
-        }
-
-        return React.createElement(
-          "div",
-          { className: "grid grid-cols-2 md:grid-cols-4 gap-4 w-full" },
-          CONSTELLATIONS.map((c, i) => {
-            const index = i + 1;
-            const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
-            const locked = index > day;
-
-            function openModal() {
-              if (!locked) setActiveModal(i);
-            }
-
-            return React.createElement(
-              "div",
-              { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg cursor-pointer", onClick: openModal },
-              React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
-              locked ? React.createElement("p", { className: "text-gray-500" }, `🔒 Bloccato fino al giorno ${index}`)
-                     : React.createElement("p", { className: "text-green-400" }, entry.solved ? `✅ Completato!` : `🔹 Clicca per vedere`) 
-            );
-          }),
-
-          activeModal !== null && React.createElement(
+          return React.createElement(
             "div",
-            { className: "full-screen-modal" },
-            React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "×"),
-            React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `Giorno ${activeModal + 1}`),
-            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg`, alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-96 object-contain" }),
-            React.createElement("p", { className: "mb-2" }, `Quale costellazione è questa?`),
-            React.createElement(
-              "div",
-              { className: "flex flex-col gap-2" },
-              CONSTELLATIONS[activeModal].options.map((opt, j) => 
-                React.createElement(
-                  "button",
-                  {
-                    key: j,
-                    onClick: () => handleAnswer(activeModal, opt),
-                    className: "px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
-                  },
-                  opt
-                )
+            {
+              key: i,
+              className: `p-6 rounded-2xl shadow-xl cursor-pointer transform transition hover:scale-105 ${locked ? 'bg-gray-700 bg-opacity-70' : 'bg-gradient-to-br from-indigo-600 to-purple-700 bg-opacity-90'}`,
+              onClick: openModal
+            },
+            React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+            locked
+              ? React.createElement("p", { className: "text-gray-300" }, `🔒 Bloccato fino al giorno ${index}`)
+              : React.createElement("p", { className: "text-green-300 font-semibold" }, entry.solved ? "✅ Completato!" : "🔹 Clicca per vedere")
+          );
+        }),
+        activeModal !== null && React.createElement(
+          "div",
+          { className: "full-screen-modal" },
+          React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "×"),
+          React.createElement("div", { className: "modal-content" },
+            React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `✨ Giorno ${activeModal + 1}`),
+            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg`, alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-80 mx-auto rounded-lg shadow-lg" }),
+            React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
+            React.createElement("div", { className: "flex flex-col gap-3" },
+              CONSTELLATIONS[activeModal].options.map((opt, j) =>
+                React.createElement("button", {
+                  key: j,
+                  onClick: () => handleAnswer(activeModal, opt),
+                  className: "option-button px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow"
+                }, opt)
               )
             ),
-            React.createElement(
-              "div",
-              { className: "mt-2" },
-              React.createElement(
-                "button",
-                { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" },
-                `Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`
-              ),
-              progress[activeModal]?.usedHints > 0 && React.createElement(
-                "p",
-                { className: "mt-1 italic" },
-                `Indizio: ${CONSTELLATIONS[activeModal].hints[progress[activeModal].usedHints - 1]}`
-              )
+            React.createElement("div", { className: "mt-4" },
+              React.createElement("button", { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`),
+              progress[activeModal]?.usedHints > 0 && React.createElement("p", { className: "mt-2 italic" }, `Indizio: ${CONSTELLATIONS[activeModal].hints[progress[activeModal].usedHints - 1]}`)
             ),
-            React.createElement(
-              "p",
-              { className: "mt-2 text-sm" },
-              `Punti: ${progress[activeModal]?.score || 3}`
-            ),
-            progress[activeModal]?.solved && React.createElement(
-              React.Fragment,
-              null,
-              React.createElement("p", { className: "mt-4 text-lg" }, CONSTELLATIONS[activeModal].description)
-            )
+            React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score || 3}`),
+            progress[activeModal]?.solved && React.createElement("p", { className: "mt-6 text-lg" }, CONSTELLATIONS[activeModal].description)
           )
-        );
-      }
+        )
+      );
+    }
 
-      ReactDOM.createRoot(document.getElementById("app")).render(React.createElement(App));
-    </script>
-  </body>
+    ReactDOM.createRoot(document.getElementById("app")).render(React.createElement(App));
+  </script>
+</body>
 </html>
