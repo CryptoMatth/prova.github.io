@@ -146,6 +146,126 @@
 
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <!-- resto dello script invariato -->
+  <script>
+    // 🔥 Ripristino dello script React per rendere visibili le domande
+    const { useState, useEffect } = React;
+
+    const CONSTELLATIONS = Array.from({ length: 31 }, (_, i) => ({
+      name: `Costellazione ${i + 1}`,
+      options: [`Costellazione ${i + 1}`, "Altro 1", "Altro 2", "Altro 3"],
+      description: `Descrizione della costellazione ${i + 1}`,
+      hints: ["Indizio 1", "Indizio 2", "Indizio 3"]
+    }));
+
+    function App() {
+      const [day, setDay] = useState(18);
+      const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
+      const [activeModal, setActiveModal] = useState(null);
+      const [feedback, setFeedback] = useState("");
+      const [totalScore, setTotalScore] = useState(0);
+
+      useEffect(() => {
+        localStorage.setItem("progress", JSON.stringify(progress));
+        let score = 0;
+        Object.values(progress).forEach(entry => { score += entry.score || 0; });
+        setTotalScore(score);
+      }, [progress]);
+
+      useEffect(() => {
+        document.getElementById("total-score").innerText = `⭐ Punteggio Totale: ${totalScore}`;
+      }, [totalScore]);
+
+      function handleAnswer(index, choice) {
+        const correct = CONSTELLATIONS[index].name;
+        setProgress(prev => {
+          const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+          if (entry.solved) return prev;
+          entry.attempts += 1;
+          if (choice === correct) {
+            entry.solved = true;
+            setFeedback("✅ Corretto! Ottimo lavoro!");
+          } else {
+            entry.score = Math.max(0, entry.score - 1);
+            setFeedback("❌ Risposta sbagliata, riprova!");
+          }
+          return { ...prev, [index]: entry };
+        });
+      }
+
+      function useHint(index) {
+        setProgress(prev => {
+          const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+          if (entry.solved || entry.usedHints >= 3) return prev;
+          entry.usedHints += 1;
+          entry.score = Math.max(0, entry.score - 1);
+          setFeedback(`💡 Indizio usato: ${CONSTELLATIONS[index].hints[entry.usedHints - 1]}`);
+          return { ...prev, [index]: entry };
+        });
+      }
+
+      return React.createElement(
+        "div",
+        { className: "grid grid-cols-2 md:grid-cols-4 gap-6 w-full" },
+        CONSTELLATIONS.map((c, i) => {
+          const index = i + 1;
+          const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+          const locked = index > day;
+
+          function openModal() {
+            if (!locked) {
+              setActiveModal(i);
+              setFeedback("");
+            }
+          }
+
+          return React.createElement(
+            "div",
+            {
+              key: i,
+              className: `p-6 rounded-2xl shadow-xl cursor-pointer transform transition hover:scale-105 ${locked ? 'bg-gray-700 bg-opacity-70' : entry.solved ? 'celebration bg-gradient-to-br from-yellow-500 to-red-500' : 'bg-gradient-to-br from-indigo-600 to-purple-700 bg-opacity-90'}`,
+              onClick: openModal
+            },
+            React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+            locked
+              ? React.createElement("p", { className: "text-gray-300" }, `🔒 Bloccato fino al giorno ${index}`)
+              : React.createElement("p", { className: "text-green-300 font-semibold" }, entry.solved ? "🎉 Completato!" : "🔹 Clicca per vedere")
+          );
+        }),
+        activeModal !== null && React.createElement(
+          "div",
+          { className: "full-screen-modal" },
+          React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "×"),
+          React.createElement("div", { className: "modal-content" },
+            React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `✨ Giorno ${activeModal + 1}`),
+            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg`, alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-80 mx-auto rounded-lg shadow-lg" }),
+            !progress[activeModal]?.solved && React.createElement(React.Fragment, null,
+              React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
+              React.createElement("div", { className: "flex flex-col gap-3" },
+                CONSTELLATIONS[activeModal].options.map((opt, j) =>
+                  React.createElement("button", {
+                    key: j,
+                    onClick: () => handleAnswer(activeModal, opt),
+                    className: "option-button px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow"
+                  }, opt)
+                )
+              ),
+              feedback && React.createElement("div", { className: `feedback ${feedback.includes('Corretto') ? 'correct' : feedback.includes('sbagliata') ? 'wrong' : ''}` }, feedback),
+              React.createElement("div", { className: "mt-4" },
+                React.createElement("button", { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`)
+              ),
+              React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score || 3}`)
+            ),
+            progress[activeModal]?.solved && React.createElement("div", { className: "mt-6 text-lg space-y-4" },
+              React.createElement("p", null, CONSTELLATIONS[activeModal].description),
+              React.createElement("p", { className: "text-sm text-gray-300" }, `❌ Tentativi sbagliati: ${progress[activeModal]?.attempts - 1}`),
+              React.createElement("p", { className: "text-sm text-gray-300" }, `💡 Indizi usati: ${progress[activeModal]?.usedHints}`)
+            )
+          )
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("app")).render(React.createElement(App));
+  </script>
 </body>
 </html>
