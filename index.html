@@ -20,7 +20,7 @@
       background: rgba(0,0,0,0.6);
       z-index: -1;
     }
-    .stars {
+    .stars, .snow {
       position: fixed;
       top: 0;
       left: 0;
@@ -29,19 +29,42 @@
       background: transparent;
       overflow: hidden;
       z-index: -1;
+      pointer-events: none;
+    }
+    .star, .flake {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.8;
     }
     .star {
-      position: absolute;
       width: 2px;
       height: 2px;
       background: white;
-      border-radius: 50%;
-      opacity: 0.8;
       animation: twinkle 2s infinite ease-in-out;
     }
     @keyframes twinkle {
       0%, 100% { opacity: 0.2; }
       50% { opacity: 1; }
+    }
+    .flake {
+      width: 6px;
+      height: 6px;
+      background: white;
+      opacity: 0.7;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10px); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    .celebration {
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 10px #fbbf24, 0 0 20px #fbbf24; }
+      to { box-shadow: 0 0 20px #f59e0b, 0 0 30px #f59e0b; }
     }
 
     .full-screen-modal {
@@ -112,6 +135,7 @@
 <body class="text-white min-h-screen flex flex-col items-center p-4 overflow-y-auto relative">
   <div class="overlay"></div>
   <div class="stars" id="stars"></div>
+  <div class="snow" id="snow"></div>
 
   <h1 class="text-4xl font-extrabold mb-2 drop-shadow-lg relative z-10">🎄 Calendario dell'Avvento - Costellazioni ✨</h1>
   <h2 id="total-score" class="text-xl font-semibold mb-6 drop-shadow-lg relative z-10">⭐ Punteggio Totale: 0</h2>
@@ -121,7 +145,7 @@
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script>
-    // Generazione stelle scintillanti
+    // Stelle scintillanti
     const starContainer = document.getElementById('stars');
     for (let i = 0; i < 150; i++) {
       const star = document.createElement('div');
@@ -130,6 +154,16 @@
       star.style.left = Math.random() * 100 + '%';
       star.style.animationDuration = 1.5 + Math.random() * 2 + 's';
       starContainer.appendChild(star);
+    }
+    // Fiocchi di neve
+    const snowContainer = document.getElementById('snow');
+    for (let i = 0; i < 50; i++) {
+      const flake = document.createElement('div');
+      flake.classList.add('flake');
+      flake.style.left = Math.random() * 100 + '%';
+      flake.style.animationDuration = 5 + Math.random() * 5 + 's';
+      flake.style.animationDelay = Math.random() * 5 + 's';
+      snowContainer.appendChild(flake);
     }
 
     const { useState, useEffect } = React;
@@ -209,13 +243,13 @@
             "div",
             {
               key: i,
-              className: `p-6 rounded-2xl shadow-xl cursor-pointer transform transition hover:scale-105 ${locked ? 'bg-gray-700 bg-opacity-70' : 'bg-gradient-to-br from-indigo-600 to-purple-700 bg-opacity-90'}`,
+              className: `p-6 rounded-2xl shadow-xl cursor-pointer transform transition hover:scale-105 ${locked ? 'bg-gray-700 bg-opacity-70' : entry.solved ? 'celebration bg-gradient-to-br from-yellow-500 to-red-500' : 'bg-gradient-to-br from-indigo-600 to-purple-700 bg-opacity-90'}`,
               onClick: openModal
             },
             React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
             locked
               ? React.createElement("p", { className: "text-gray-300" }, `🔒 Bloccato fino al giorno ${index}`)
-              : React.createElement("p", { className: "text-green-300 font-semibold" }, entry.solved ? "✅ Completato!" : "🔹 Clicca per vedere")
+              : React.createElement("p", { className: "text-green-300 font-semibold" }, entry.solved ? "🎉 Completato!" : "🔹 Clicca per vedere")
           );
         }),
         activeModal !== null && React.createElement(
@@ -243,7 +277,9 @@
               React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score || 3}`)
             ),
             progress[activeModal]?.solved && React.createElement("div", { className: "mt-6 text-lg space-y-4" },
-              React.createElement("p", null, CONSTELLATIONS[activeModal].description)
+              React.createElement("p", null, CONSTELLATIONS[activeModal].description),
+              React.createElement("p", { className: "text-sm text-gray-300" }, `❌ Tentativi sbagliati: ${progress[activeModal]?.attempts - 1}`),
+              React.createElement("p", { className: "text-sm text-gray-300" }, `💡 Indizi usati: ${progress[activeModal]?.usedHints}`)
             )
           )
         )
