@@ -17,31 +17,39 @@
     <script>
       const { useState, useEffect } = React;
 
+      // 24 costellazioni per ogni giorno di dicembre
       const CONSTELLATIONS = [
-        {
-          name: "Orione",
-          options: ["Orione", "Cassiopea", "Pegaso", "Cigno"],
-          description: "Orione è una delle costellazioni più riconoscibili, visibile in inverno.",
-          hints: [
-            "Ha una famosa 'cintura' di tre stelle allineate",
-            "È legata al mito del cacciatore",
-            "È ben visibile in inverno nell'emisfero nord"
-          ]
-        },
-        {
-          name: "Cassiopea",
-          options: ["Andromeda", "Cassiopea", "Cefeo", "Orsa Minore"],
-          description: "Cassiopea è una costellazione a forma di 'W', visibile nell'emisfero nord.",
-          hints: [
-            "Ha forma di W o M",
-            "È vicina all'Orsa Minore",
-            "È legata al mito della regina Cassiopea"
-          ]
-        }
+        { name: "Orione", options: ["Orione", "Cassiopea", "Pegaso", "Cigno"], description: "Orione è una delle costellazioni più riconoscibili, visibile in inverno.", hints: ["Ha una famosa cintura di tre stelle", "Mito del cacciatore", "Visibile in inverno nell'emisfero nord"] },
+        { name: "Cassiopea", options: ["Andromeda", "Cassiopea", "Cefeo", "Orsa Minore"], description: "Cassiopea è a forma di 'W', visibile nell'emisfero nord.", hints: ["Forma di W o M", "Vicino all'Orsa Minore", "Mito della regina vanitosa"] },
+        { name: "Andromeda", options: ["Andromeda", "Cigno", "Orsa Maggiore", "Lira"], description: "Andromeda ospita la famosa Galassia di Andromeda.", hints: ["Figlia di Cassiopea", "Contiene la galassia più vicina", "Facile da vedere in autunno"] },
+        { name: "Cigno", options: ["Cigno", "Orione", "Perseo", "Pegaso"], description: "Il Cigno, detto anche Croce del Nord, è ben visibile in estate.", hints: ["Forma di croce", "Stella Deneb", "Detto Croce del Nord"] },
+        { name: "Lira", options: ["Lira", "Andromeda", "Pegaso", "Orsa Minore"], description: "La Lira contiene la brillante stella Vega.", hints: ["Stella Vega", "Piccola costellazione", "Vicino al Cigno"] },
+        { name: "Pegaso", options: ["Pegaso", "Cefeo", "Perseo", "Orsa Maggiore"], description: "Pegaso è noto per il grande quadrato di stelle.", hints: ["Grande quadrato", "Cavallo alato", "Mito di Perseo"] },
+        { name: "Perseo", options: ["Perseo", "Orione", "Cefeo", "Ercole"], description: "Perseo è una costellazione legata al mito di Medusa.", hints: ["Eroe greco", "Vicino ad Andromeda", "Uccise Medusa"] },
+        { name: "Orsa Maggiore", options: ["Orsa Maggiore", "Orsa Minore", "Drago", "Cefeo"], description: "L'Orsa Maggiore contiene il Grande Carro.", hints: ["Grande Carro", "Molto estesa", "Guida alla Polare"] },
+        { name: "Orsa Minore", options: ["Orsa Minore", "Orsa Maggiore", "Cefeo", "Drago"], description: "L'Orsa Minore ospita la Stella Polare.", hints: ["Stella Polare", "Piccola costellazione", "Guida per orientarsi"] },
+        { name: "Cefeo", options: ["Cefeo", "Cassiopea", "Perseo", "Drago"], description: "Cefeo rappresenta un re nella mitologia greca.", hints: ["Marito di Cassiopea", "Costellazione settentrionale", "A forma di casa"] },
+        { name: "Drago", options: ["Drago", "Cigno", "Orsa Maggiore", "Cefeo"], description: "Il Drago serpeggia tra Orsa Maggiore e Minore.", hints: ["Forma sinuosa", "Circumpolare", "Vicino a Orsa Maggiore"] },
+        { name: "Ercole", options: ["Ercole", "Perseo", "Orione", "Ofiuco"], description: "Ercole è una grande costellazione estiva.", hints: ["Eroe mitologico", "Costellazione estiva", "Contiene l'ammasso M13"] },
+        { name: "Ofiuco", options: ["Ofiuco", "Ercole", "Scorpione", "Sagittario"], description: "Ofiuco è detta anche il 'tredicesimo segno' zodiacale.", hints: ["Porta il serpente", "Vicino allo Scorpione", "Segno extra dello zodiaco"] },
+        { name: "Scorpione", options: ["Scorpione", "Sagittario", "Ofiuco", "Bilancia"], description: "Lo Scorpione è ben visibile in estate nell'emisfero nord.", hints: ["Forma di scorpione", "Stella Antares", "Visibile in estate"] },
+        { name: "Sagittario", options: ["Sagittario", "Scorpione", "Ofiuco", "Bilancia"], description: "Sagittario punta verso il centro della Via Lattea.", hints: ["Arciere", "Vicino allo Scorpione", "Centro della galassia"] },
+        { name: "Bilancia", options: ["Bilancia", "Vergine", "Scorpione", "Sagittario"], description: "Bilancia è una costellazione zodiacale primaverile.", hints: ["Segno zodiacale", "Tra Vergine e Scorpione", "Piccola costellazione"] },
+        { name: "Vergine", options: ["Vergine", "Bilancia", "Leone", "Gemelli"], description: "La Vergine è la seconda costellazione più grande.", hints: ["Stella Spica", "Grande estensione", "Segno zodiacale"] },
+        { name: "Leone", options: ["Leone", "Vergine", "Cancro", "Gemelli"], description: "Leone è facilmente riconoscibile in primavera.", hints: ["Forma di leone", "Stella Regolo", "Segno zodiacale"] },
+        { name: "Cancro", options: ["Cancro", "Leone", "Gemelli", "Vergine"], description: "Cancro è una costellazione zodiacale poco luminosa.", hints: ["Segno zodiacale", "Vicino a Leone", "Poco visibile"] },
+        { name: "Gemelli", options: ["Gemelli", "Cancro", "Leone", "Toro"], description: "I Gemelli rappresentano Castore e Polluce.", hints: ["Due fratelli", "Stelle Castore e Polluce", "Segno zodiacale"] },
+        { name: "Toro", options: ["Toro", "Ariete", "Gemelli", "Orione"], description: "Il Toro contiene l'ammasso delle Pleiadi.", hints: ["Segno zodiacale", "Stella Aldebaran", "Pleiadi"] },
+        { name: "Ariete", options: ["Ariete", "Toro", "Pesci", "Gemelli"], description: "Ariete è una costellazione zodiacale autunnale.", hints: ["Segno zodiacale", "Vicino a Toro e Pesci", "Piccola"] },
+        { name: "Pesci", options: ["Pesci", "Ariete", "Acquario", "Capricorno"], description: "Pesci è una costellazione zodiacale estesa ma poco luminosa.", hints: ["Segno zodiacale", "Vicino ad Ariete", "Due pesci legati"] },
+        { name: "Acquario", options: ["Acquario", "Pesci", "Capricorno", "Ariete"], description: "Acquario è una grande costellazione zodiacale.", hints: ["Versatore d'acqua", "Molto estesa", "Segno zodiacale"] },
+        { name: "Capricorno", options: ["Capricorno", "Acquario", "Pesci", "Sagittario"], description: "Capricorno è una costellazione zodiacale a forma di capra-pesce.", hints: ["Capra con coda di pesce", "Segno zodiacale", "Vicino a Sagittario"] }
       ];
 
       function App() {
-        const [day, setDay] = useState(new Date().getDate());
+        // For testing: simulate August 18
+        const [day, setDay] = useState(18); // in produzione: new Date().getDate() se mese==12
+
         const [progress, setProgress] = useState(() => {
           return JSON.parse(localStorage.getItem("progress") || "{}");
         });
@@ -77,7 +85,7 @@
 
         return React.createElement(
           "div",
-          { className: "grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl" },
+          { className: "grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-6xl" },
           CONSTELLATIONS.map((c, i) => {
             const index = i + 1;
             const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
