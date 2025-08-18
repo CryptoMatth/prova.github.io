@@ -99,6 +99,14 @@
     .option-button:hover {
       transform: scale(1.05);
     }
+    .feedback {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-align: center;
+    }
+    .feedback.correct { color: #4ade80; }
+    .feedback.wrong { color: #f87171; }
   </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center p-4 overflow-y-auto relative">
@@ -135,6 +143,7 @@
       const [day, setDay] = useState(18);
       const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
       const [activeModal, setActiveModal] = useState(null);
+      const [feedback, setFeedback] = useState("");
 
       useEffect(() => {
         localStorage.setItem("progress", JSON.stringify(progress));
@@ -146,8 +155,13 @@
           const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
           if (entry.solved) return prev;
           entry.attempts += 1;
-          if (choice === correct) entry.solved = true;
-          else entry.score = Math.max(0, entry.score - 1);
+          if (choice === correct) {
+            entry.solved = true;
+            setFeedback("✅ Corretto! Ottimo lavoro!");
+          } else {
+            entry.score = Math.max(0, entry.score - 1);
+            setFeedback("❌ Risposta sbagliata, riprova!");
+          }
           return { ...prev, [index]: entry };
         });
       }
@@ -158,6 +172,7 @@
           if (entry.solved || entry.usedHints >= 3) return prev;
           entry.usedHints += 1;
           entry.score = Math.max(0, entry.score - 1);
+          setFeedback(`💡 Indizio usato: ${CONSTELLATIONS[index].hints[entry.usedHints - 1]}`);
           return { ...prev, [index]: entry };
         });
       }
@@ -171,7 +186,10 @@
           const locked = index > day;
 
           function openModal() {
-            if (!locked) setActiveModal(i);
+            if (!locked) {
+              setActiveModal(i);
+              setFeedback("");
+            }
           }
 
           return React.createElement(
@@ -204,9 +222,9 @@
                 }, opt)
               )
             ),
+            feedback && React.createElement("div", { className: `feedback ${feedback.includes('Corretto') ? 'correct' : feedback.includes('sbagliata') ? 'wrong' : ''}` }, feedback),
             React.createElement("div", { className: "mt-4" },
-              React.createElement("button", { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`),
-              progress[activeModal]?.usedHints > 0 && React.createElement("p", { className: "mt-2 italic" }, `Indizio: ${CONSTELLATIONS[activeModal].hints[progress[activeModal].usedHints - 1]}`)
+              React.createElement("button", { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`)
             ),
             React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score || 3}`),
             progress[activeModal]?.solved && React.createElement("p", { className: "mt-6 text-lg" }, CONSTELLATIONS[activeModal].description)
