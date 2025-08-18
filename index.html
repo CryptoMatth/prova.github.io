@@ -1,721 +1,137 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendario dell'Avvento - Costellazioni</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
+  </head>
+  <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
+    <h1 class="text-3xl font-bold mb-4">Calendario dell'Avvento - Costellazioni</h1>
+    <div id="app"></div>
 
-/**
- * Calendario dell'Avvento – Costellazioni (single-file React component)
- * --------------------------------------------------------------
- * ✔ 24 caselle (1–24) sbloccate giorno per giorno a dicembre
- * ✔ Ogni giorno: 1 immagine (SVG) di una costellazione + 4 opzioni (multiple choice)
- * ✔ Punteggio: 3 punti se indovina al primo tentativo; -1 per ogni tentativo sbagliato; -1 per ogni indizio usato
- * ✔ 3 indizi disponibili; usare un indizio costa 1 punto potenziale
- * ✔ Blocca i giorni futuri; giorni passati sempre rigiocabili/consultabili
- * ✔ Dopo la risposta corretta compaiono informazioni extra sulla costellazione
- * ✔ Stato e punteggi persistenti in localStorage
- * ✔ Modalità demo: aggiungi ?demo=1 all’URL per sbloccare tutte le caselle
- *
- * NOTE:
- * - Tutto in un unico file: pronto per essere pubblicato su GitHub Pages (es. Vite/CRA/Next static).
- * - Le immagini sono SVG generate da coordinate (nessuna dipendenza esterna).
- * - Per aggiungere costellazioni: vedi CONSTELLATIONS sotto.
- */
+    <!-- React e ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-// =============== Utility: data & helpers =====================
+    <!-- Codice React -->
+    <script type="text/babel">
+      const { useState, useEffect } = React;
 
-type Point = { x: number; y: number; mag?: number };
+      const CONSTELLATIONS = [
+        {
+          name: "Orione",
+          options: ["Orione", "Cassiopea", "Pegaso", "Cigno"],
+          description: "Orione è una delle costellazioni più riconoscibili, visibile in inverno.",
+          hints: [
+            "Ha una famosa 'cintura' di tre stelle allineate",
+            "È legata al mito del cacciatore",
+            "È ben visibile in inverno nell'emisfero nord"
+          ]
+        },
+        {
+          name: "Cassiopea",
+          options: ["Andromeda", "Cassiopea", "Cefeo", "Orsa Minore"],
+          description: "Cassiopea è una costellazione a forma di 'W', visibile nell'emisfero nord.",
+          hints: [
+            "Ha forma di W o M",
+            "È vicina all'Orsa Minore",
+            "È legata al mito della regina Cassiopea"
+          ]
+        }
+        // Aggiungi fino a 24 costellazioni...
+      ];
 
-type Constellation = {
-  id: string; // unique
-  name: string; // risposta corretta
-  day: number; // 1..24
-  // punti (0..100 box), lines come indici in points (a,b)
-  points: Point[];
-  lines: [number, number][];
-  hints: string[]; // max 3
-  info: {
-    description: string;
-    bestMonths: string;
-    hemisphere: string;
-    myth: string;
-  };
-  // 3 distrattori per multiple choice
-  distractors: string[];
-};
+      function App() {
+        const [day, setDay] = useState(new Date().getDate());
+        const [progress, setProgress] = useState(() => {
+          return JSON.parse(localStorage.getItem("progress") || "{}")
+        });
 
-// Alcune costellazioni (schema molto semplificato per l’SVG)
-const CONSTELLATIONS: Constellation[] = [
-  {
-    id: "orion",
-    name: "Orione",
-    day: 1,
-    points: [
-      { x: 20, y: 20 }, // Betelgeuse (sempl.)
-      { x: 80, y: 30 }, // Bellatrix
-      { x: 40, y: 55 }, // Alnitak
-      { x: 50, y: 50 }, // Alnilam
-      { x: 60, y: 45 }, // Mintaka
-      { x: 25, y: 85 }, // Saiph
-      { x: 85, y: 80 }, // Rigel
-    ],
-    lines: [
-      [0, 1],
-      [0, 2],
-      [1, 4],
-      [2, 3],
-      [3, 4], // cintura
-      [2, 5],
-      [4, 6],
-    ],
-    hints: [
-      "È ben visibile invernale nell'emisfero nord.",
-      "La sua 'cintura' è formata da tre stelle allineate.",
-      "Include Rigel e Betelgeuse.",
-    ],
-    info: {
-      description:
-        "Orione è una delle costellazioni più riconoscibili, con tre stelle in fila che formano la cintura.",
-      bestMonths: "Dicembre–Febbraio",
-      hemisphere: "Nord e Sud (equatoriale)",
-      myth: "Rappresenta il cacciatore Orione della mitologia greca.",
-    },
-    distractors: ["Toro", "Cigno", "Cassiopea"],
-  },
-  {
-    id: "ursa_major",
-    name: "Orsa Maggiore",
-    day: 2,
-    points: [
-      { x: 10, y: 40 },
-      { x: 25, y: 35 },
-      { x: 40, y: 30 },
-      { x: 55, y: 35 },
-      { x: 70, y: 45 },
-      { x: 60, y: 60 },
-      { x: 40, y: 65 },
-    ],
-    lines: [
-      [0, 1],
-      [1, 2],
-      [2, 3],
-      [3, 4],
-      [4, 5],
-      [5, 6],
-    ],
-    hints: [
-      "Include l'asterismo del Grande Carro.",
-      "Aiuta a trovare la Polare (tramite l'Orsa Minore).",
-      "Molto alta nel cielo boreale.",
-    ],
-    info: {
-      description:
-        "Costellazione ampia dell'emisfero nord, famosa per il Grande Carro.",
-      bestMonths: "Marzo–Maggio",
-      hemisphere: "Nord",
-      myth: "Ninfa Callisto trasformata in orsa (mitologia greca).",
-    },
-    distractors: ["Lira", "Ariete", "Scorpione"],
-  },
-  {
-    id: "cassiopeia",
-    name: "Cassiopea",
-    day: 3,
-    points: [
-      { x: 15, y: 20 },
-      { x: 35, y: 35 },
-      { x: 55, y: 25 },
-      { x: 75, y: 40 },
-      { x: 90, y: 25 },
-    ],
-    lines: [
-      [0, 1],
-      [1, 2],
-      [2, 3],
-      [3, 4],
-    ],
-    hints: [
-      "Ha la forma di una 'W' o 'M' a seconda dell'orientamento.",
-      "Costellazione circumpolare nell'emisfero nord.",
-      "È opposta all'Orsa Maggiore rispetto alla Polare.",
-    ],
-    info: {
-      description: "Facile da riconoscere per la caratteristica forma a W.",
-      bestMonths: "Tutto l'anno alle alte latitudini nord",
-      hemisphere: "Nord (circumpolare)",
-      myth: "Prende il nome dalla regina Cassiopea.",
-    },
-    distractors: ["Perseo", "Cefeo", "Andromeda"],
-  },
-  {
-    id: "taurus",
-    name: "Toro",
-    day: 4,
-    points: [
-      { x: 20, y: 40 },
-      { x: 35, y: 35 },
-      { x: 50, y: 30 },
-      { x: 65, y: 35 },
-      { x: 80, y: 50 },
-      { x: 60, y: 60 },
-    ],
-    lines: [
-      [0, 1],
-      [1, 2],
-      [2, 3],
-      [3, 4],
-      [3, 5],
-    ],
-    hints: [
-      "Ospita l'ammasso stellare delle Iadi.",
-      "La brillante Aldebaran segna l'occhio.",
-      "Vicino alle Pleiadi (M45).",
-    ],
-    info: {
-      description:
-        "Costellazione zodiacale invernale che contiene le Iadi e le Pleiadi (adiacenti).",
-      bestMonths: "Novembre–Gennaio",
-      hemisphere: "Entrambi (zodiacale)",
-      myth: "Il toro in cui Zeus si trasformò per rapire Europa.",
-    },
-    distractors: ["Orione", "Gemelli", "Ercole"],
-  },
-  {
-    id: "gemini",
-    name: "Gemelli",
-    day: 5,
-    points: [
-      { x: 25, y: 25 },
-      { x: 35, y: 20 },
-      { x: 45, y: 35 },
-      { x: 55, y: 30 },
-      { x: 65, y: 45 },
-      { x: 75, y: 40 },
-    ],
-    lines: [
-      [0, 2],
-      [2, 4],
-      [1, 3],
-      [3, 5],
-    ],
-    hints: [
-      "Include Castore e Polluce.",
-      "È una costellazione zodiacale.",
-      "Vicina al Toro e al Cancro.",
-    ],
-    info: {
-      description:
-        "Zodiacale invernale, riconoscibile per le due stelle brillanti Castore e Polluce.",
-      bestMonths: "Dicembre–Febbraio",
-      hemisphere: "Entrambi (zodiacale)",
-      myth: "I gemelli mitologici di Leda.",
-    },
-    distractors: ["Lira", "Aquila", "Cigno"],
-  },
-  {
-    id: "lyra",
-    name: "Lira",
-    day: 6,
-    points: [
-      { x: 60, y: 20 }, // Vega (sempl.)
-      { x: 80, y: 35 },
-      { x: 65, y: 50 },
-      { x: 45, y: 45 },
-      { x: 55, y: 30 },
-    ],
-    lines: [
-      [0, 4],
-      [4, 3],
-      [3, 2],
-      [2, 1],
-      [1, 0],
-    ],
-    hints: [
-      "La stella più brillante è Vega.",
-      "Fa parte del Triangolo Estivo.",
-      "Piccola costellazione estiva nell'emisfero nord.",
-    ],
-    info: {
-      description:
-        "Piccola costellazione dominata da Vega, con M57 (Nebulosa Anello) al suo interno.",
-      bestMonths: "Giugno–Agosto",
-      hemisphere: "Nord",
-      myth: "Rappresenta una lira (strumento musicale).",
-    },
-    distractors: ["Cefeo", "Orsa Minore", "Ariete"],
-  },
-  {
-    id: "cygnus",
-    name: "Cigno",
-    day: 7,
-    points: [
-      { x: 50, y: 15 },
-      { x: 50, y: 35 },
-      { x: 50, y: 55 },
-      { x: 30, y: 45 },
-      { x: 70, y: 45 },
-    ],
-    lines: [
-      [0, 1],
-      [1, 2],
-      [1, 3],
-      [1, 4],
-    ],
-    hints: [
-      "Chiamata anche Croce del Nord.",
-      "Deneb è la stella più brillante.",
-      "Attraversata dalla Via Lattea.",
-    ],
-    info: {
-      description: "Grande croce che taglia la Via Lattea estiva.",
-      bestMonths: "Luglio–Settembre",
-      hemisphere: "Nord",
-      myth: "Rappresenta un cigno in volo.",
-    },
-    distractors: ["Aquila", "Pegaso", "Orione"],
-  },
-  {
-    id: "scorpius",
-    name: "Scorpione",
-    day: 8,
-    points: [
-      { x: 15, y: 60 },
-      { x: 25, y: 55 },
-      { x: 35, y: 50 },
-      { x: 45, y: 55 },
-      { x: 55, y: 65 },
-      { x: 65, y: 75 },
-      { x: 75, y: 85 },
-    ],
-    lines: [
-      [0, 1],
-      [1, 2],
-      [2, 3],
-      [3, 4],
-      [4, 5],
-      [5, 6],
-    ],
-    hints: [
-      "Antares è la stella rossa più brillante.",
-      "Costellazione zodiacale estiva nell'emisfero nord.",
-      "Ha forma arcuata simile a una coda.",
-    ],
-    info: {
-      description:
-        "Zodiacale prominente nel cielo estivo meridionale, riconoscibile per Antares.",
-      bestMonths: "Giugno–Agosto",
-      hemisphere: "Entrambi (vicina all'equatore celeste sud)",
-      myth: "Lo scorpione che uccise Orione nella mitologia.",
-    },
-    distractors: ["Sagittario", "Capricorno", "Leone"],
-  },
-  // --- Aggiungi qui fino a day:24 seguendo lo schema ---
-];
+        useEffect(() => {
+          localStorage.setItem("progress", JSON.stringify(progress));
+        }, [progress]);
 
-const DAYS_TOTAL = 24;
+        function handleAnswer(index, choice) {
+          const correct = CONSTELLATIONS[index].name;
+          setProgress(prev => {
+            const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+            if (entry.solved) return prev;
+            entry.attempts += 1;
+            if (choice === correct) {
+              entry.solved = true;
+            } else {
+              entry.score = Math.max(0, entry.score - 1);
+            }
+            return { ...prev, [index]: entry };
+          });
+        }
 
-// =============== Local Storage helpers =====================
-const LS_KEY = "advent_constellations_v1";
+        function useHint(index) {
+          setProgress(prev => {
+            const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+            if (entry.solved || entry.usedHints >= 3) return prev;
+            entry.usedHints += 1;
+            entry.score = Math.max(0, entry.score - 1);
+            return { ...prev, [index]: entry };
+          });
+        }
 
-type DayState = {
-  solved: boolean;
-  attempts: number; // conteggio tentativi *sbagliati* effettuati prima della soluzione
-  hintsUsed: number;
-  score: number; // punti assegnati al momento della soluzione
-  selectedOption?: string; // ultima selezione
-};
-
-type SavedState = {
-  days: Record<number, DayState>;
-  totalScore: number;
-};
-
-function loadState(): SavedState {
-  const raw = localStorage.getItem(LS_KEY);
-  if (!raw) return { days: {}, totalScore: 0 };
-  try {
-    const parsed = JSON.parse(raw) as SavedState;
-    return parsed ?? { days: {}, totalScore: 0 };
-  } catch {
-    return { days: {}, totalScore: 0 };
-  }
-}
-
-function saveState(state: SavedState) {
-  localStorage.setItem(LS_KEY, JSON.stringify(state));
-}
-
-// =============== SVG Renderer =====================
-function ConstellationSVG({ points, lines }: { points: Point[]; lines: [number, number][] }) {
-  return (
-    <svg viewBox="0 0 100 100" className="w-full h-48 md:h-56 lg:h-64">
-      <rect x="0" y="0" width="100" height="100" rx="8" className="fill-black" />
-      {/* stelle */}
-      {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={1.6} className="fill-white" />
-      ))}
-      {/* linee */}
-      {lines.map(([a, b], i) => (
-        <line
-          key={i}
-          x1={points[a].x}
-          y1={points[a].y}
-          x2={points[b].x}
-          y2={points[b].y}
-          stroke="white"
-          strokeWidth={0.4}
-          strokeOpacity={0.7}
-        />
-      ))}
-      {/* stelle più luminose (leggero alone) */}
-      {points.map((p, i) => (
-        <circle key={`glow-${i}`} cx={p.x} cy={p.y} r={0.8} className="fill-white" />
-      ))}
-    </svg>
-  );
-}
-
-// =============== Main Component =====================
-export default function AdventConstellationsApp() {
-  // Calcolo giorno sbloccato
-  const now = new Date();
-  const url = new URL(window.location.href);
-  const demo = url.searchParams.get("demo") === "1";
-
-  const isDecember = now.getMonth() === 11; // 0-based; 11 = Dicembre
-  const todayDay = isDecember ? now.getDate() : 1; // fuori da dicembre: sblocca solo 1 per default
-  const unlockedDay = demo ? DAYS_TOTAL : Math.min(DAYS_TOTAL, todayDay);
-
-  const [saved, setSaved] = useState<SavedState>(() => loadState());
-
-  useEffect(() => {
-    saveState(saved);
-  }, [saved]);
-
-  const totalScore = useMemo(() => saved.totalScore, [saved.totalScore]);
-
-  const dataByDay: Record<number, Constellation | undefined> = useMemo(() => {
-    const map: Record<number, Constellation | undefined> = {};
-    CONSTELLATIONS.forEach((c) => (map[c.day] = c));
-    return map;
-  }, []);
-
-  function getDayState(day: number): DayState {
-    return saved.days[day] ?? { solved: false, attempts: 0, hintsUsed: 0, score: 0 };
-  }
-
-  function setDayState(day: number, partial: Partial<DayState>) {
-    setSaved((prev) => {
-      const current = getDayState(day);
-      const nextDay = { ...current, ...partial } as DayState;
-      const nextDays = { ...prev.days, [day]: nextDay };
-      return { ...prev, days: nextDays };
-    });
-  }
-
-  function awardScore(day: number, points: number) {
-    setSaved((prev) => {
-      const current = getDayState(day);
-      const nextDay = { ...current, solved: true, score: points };
-      const alreadyCounted = current.solved ? current.score : 0;
-      const delta = points - alreadyCounted;
-      return { days: { ...prev.days, [day]: nextDay }, totalScore: prev.totalScore + delta };
-    });
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-slate-100">
-      <header className="max-w-5xl mx-auto px-4 py-6 flex items-center justify-between">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-          Calendario dell'Avvento – Costellazioni
-        </h1>
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1 rounded-2xl bg-slate-700/60 backdrop-blur text-sm">
-            Punteggio totale: <span className="font-semibold">{totalScore}</span>
-          </div>
-          <a
-            className="px-3 py-1 rounded-2xl bg-emerald-600 hover:bg-emerald-500 transition text-sm"
-            href={demo ? window.location.pathname : `${window.location.pathname}?demo=1`}
-          >
-            {demo ? "Modalità normale" : "Demo (sblocca tutto)"}
-          </a>
-        </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto px-4 pb-16">
-        <p className="text-slate-300 mb-6">
-          Ogni giorno di dicembre si sblocca una nuova costellazione. Indovina il nome: 3 punti
-          al primo colpo; ogni errore e ogni indizio consumano 1 punto potenziale. Dopo la
-          risposta corretta, scopri curiosità e informazioni utili ✨
-        </p>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {Array.from({ length: DAYS_TOTAL }).map((_, i) => {
-            const day = i + 1;
-            const c = dataByDay[day];
-            const locked = day > unlockedDay;
-            const state = getDayState(day);
-            return (
-              <motion.div
-                layout
-                key={day}
-                className={`rounded-2xl p-3 bg-slate-800/70 border border-slate-700 ${
-                  locked ? "opacity-60" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-sm text-slate-300">Giorno {day}</div>
-                  {state.solved && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-600/80">+{state.score}</span>
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+            {CONSTELLATIONS.map((c, i) => {
+              const index = i + 1;
+              const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+              const locked = index > day;
+              return (
+                <div key={i} className="p-4 bg-gray-800 rounded-2xl shadow-lg">
+                  <h2 className="text-xl font-bold mb-2">Giorno {index}</h2>
+                  {locked ? (
+                    <p className="text-gray-500">🔒 Bloccato fino al giorno {index}</p>
+                  ) : !entry.solved ? (
+                    <>
+                      <p className="mb-2">Quale costellazione è questa?</p>
+                      <div className="flex flex-col gap-2">
+                        {c.options.map((opt, j) => (
+                          <button
+                            key={j}
+                            onClick={() => handleAnswer(i, opt)}
+                            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="mt-2">
+                        <button
+                          onClick={() => useHint(i)}
+                          className="text-sm text-yellow-400 underline"
+                        >
+                          Usa indizio ({entry.usedHints}/3)
+                        </button>
+                        {entry.usedHints > 0 && (
+                          <p className="mt-1 italic">Indizio: {c.hints[entry.usedHints - 1]}</p>
+                        )}
+                      </div>
+                      <p className="mt-2 text-sm">Punti: {entry.score}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-green-400">✅ Corretto! Era {c.name}.</p>
+                      <p className="mt-1 text-sm">{c.description}</p>
+                      <p className="mt-1 text-sm">Punti ottenuti: {entry.score}</p>
+                    </>
                   )}
                 </div>
+              );
+            })}
+          </div>
+        );
+      }
 
-                {locked ? (
-                  <div className="h-48 flex items-center justify-center">
-                    <span className="text-slate-400 text-sm">Bloccato fino al giorno {day}</span>
-                  </div>
-                ) : c ? (
-                  <DayCard
-                    day={day}
-                    data={c}
-                    state={state}
-                    onState={(partial) => setDayState(day, partial)}
-                    onAward={awardScore}
-                  />
-                ) : (
-                  <div className="h-48 flex items-center justify-center text-center text-slate-400 text-sm">
-                    <div>
-                      <div className="font-semibold mb-1">In arrivo</div>
-                      <div>Aggiungi la costellazione per questo giorno in CONSTELLATIONS.</div>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <FooterNotes />
-      </main>
-    </div>
-  );
-}
-
-function DayCard({
-  day,
-  data,
-  state,
-  onState,
-  onAward,
-}: {
-  day: number;
-  data: Constellation;
-  state: DayState;
-  onState: (partial: Partial<DayState>) => void;
-  onAward: (day: number, points: number) => void;
-}) {
-  const [revealedHintCount, setRevealedHintCount] = useState(state.hintsUsed);
-
-  useEffect(() => {
-    // allinea con localStorage
-    if (revealedHintCount !== state.hintsUsed) setRevealedHintCount(state.hintsUsed);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Prepara opzioni (1 corretta + 3 distrattori), mescolate
-  const options = useMemo(() => {
-    const arr = [data.name, ...data.distractors];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }, [data]);
-
-  // Punteggio potenziale residuo: 3 – tentativi sbagliati – indizi usati (min 0)
-  const potential = Math.max(3 - state.attempts - revealedHintCount, 0);
-
-  function submit(answer: string) {
-    if (state.solved) return;
-    const correct = answer === data.name;
-    onState({ selectedOption: answer });
-    if (correct) {
-      onAward(day, potential);
-    } else {
-      onState({ attempts: state.attempts + 1 });
-    }
-  }
-
-  function useHint() {
-    if (state.solved) return;
-    if (revealedHintCount >= 3) return;
-    const next = revealedHintCount + 1;
-    setRevealedHintCount(next);
-    onState({ hintsUsed: next });
-  }
-
-  return (
-    <div>
-      <ConstellationSVG points={data.points} lines={data.lines} />
-
-      {/* Punteggio potenziale e indizi */}
-      <div className="flex items-center justify-between mt-2">
-        <div className="text-xs text-slate-300">Punti possibili: {potential}</div>
-        <button
-          onClick={useHint}
-          disabled={state.solved || revealedHintCount >= 3}
-          className="text-xs px-2 py-1 rounded-lg bg-sky-700/70 hover:bg-sky-600 disabled:opacity-50"
-        >
-          Indizio ({3 - revealedHintCount} rimasti)
-        </button>
-      </div>
-
-      {/* Sezione indizi */}
-      <AnimatePresence initial={false}>
-        {revealedHintCount > 0 && (
-          <motion.ul
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mt-2 text-xs text-slate-300 list-disc list-inside space-y-1"
-          >
-            {data.hints.slice(0, revealedHintCount).map((h, idx) => (
-              <li key={idx}>{h}</li>
-            ))}
-          </motion.ul>
-        )}
-      </AnimatePresence>
-
-      {/* Opzioni risposta */}
-      <div className="mt-3 grid grid-cols-1 gap-2">
-        {options.map((opt) => {
-          const isSelected = state.selectedOption === opt;
-          const isCorrect = state.solved && opt === data.name;
-          const isWrongChoice = state.solved && isSelected && !isCorrect;
-          return (
-            <button
-              key={opt}
-              onClick={() => submit(opt)}
-              disabled={state.solved}
-              className={`w-full text-left px-3 py-2 rounded-xl border transition ${
-                isCorrect
-                  ? "bg-emerald-700/70 border-emerald-500"
-                  : isWrongChoice
-                  ? "bg-rose-800/60 border-rose-600"
-                  : isSelected && !state.solved
-                  ? "bg-slate-700/70 border-slate-500"
-                  : "bg-slate-700/40 border-slate-600 hover:bg-slate-700/60"
-              }`}
-            >
-              {opt}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Messaggi e informazioni extra */}
-      <div className="mt-3 min-h-10">
-        {!state.solved ? (
-          state.attempts > 0 ? (
-            <div className="text-sm text-amber-300">Ritenta! ({state.attempts} errore/i)</div>
-          ) : (
-            <div className="text-sm text-slate-300">Scegli la risposta corretta 👇</div>
-          )
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-sm"
-          >
-            <div className="font-semibold text-emerald-300 mb-1">
-              Corretto! Hai guadagnato {state.score} punto{state.score !== 1 ? "i" : ""}.
-            </div>
-            <div className="text-slate-200">
-              <div className="mb-2">
-                <span className="font-semibold">{data.name}</span>: {data.info.description}
-              </div>
-              <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
-                <li>
-                  <span className="font-semibold text-slate-200">Mesi migliori:</span> {data.info.bestMonths}
-                </li>
-                <li>
-                  <span className="font-semibold text-slate-200">Emisfero:</span> {data.info.hemisphere}
-                </li>
-                <li>
-                  <span className="font-semibold text-slate-200">Mitologia:</span> {data.info.myth}
-                </li>
-              </ul>
-            </div>
-          </motion.div>
-        )}
-      </div>
-
-      {/* Azioni supplementari */}
-      <div className="mt-3 flex items-center justify-between text-xs">
-        <button
-          onClick={() => onState({ attempts: 0, hintsUsed: 0, selectedOption: undefined, solved: false })}
-          className="px-2 py-1 rounded-lg bg-slate-700/60 hover:bg-slate-600"
-        >
-          Resetta tentativa
-        </button>
-        <button
-          onClick={() => {
-            // Forza risolto senza punti (per studio della mappa)
-            if (!state.solved) {
-              onAward(day, 0);
-            }
-          }}
-          className="px-2 py-1 rounded-lg bg-slate-700/60 hover:bg-slate-600"
-        >
-          Mostra info senza punti
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function FooterNotes() {
-  return (
-    <div className="mt-10 text-xs text-slate-400 space-y-2">
-      <details className="bg-slate-900/40 border border-slate-700 rounded-xl p-4">
-        <summary className="cursor-pointer font-semibold text-slate-200">Come personalizzare</summary>
-        <ul className="list-disc list-inside mt-2 space-y-1">
-          <li>
-            Aggiungi altre costellazioni nell'array <code>CONSTELLATIONS</code> (fino al giorno 24).
-            Ogni oggetto include: <code>name</code>, <code>day</code>, <code>points</code>, <code>lines</code>,
-            <code>hints</code>, <code>info</code> e <code>distractors</code>.
-          </li>
-          <li>
-            Le coordinate dei punti sono in un box 100×100. Usa <code>lines</code> per unire i punti.
-          </li>
-          <li>
-            Vuoi immagini reali? Sostituisci il componente <code>ConstellationSVG</code> con un
-            <code>&lt;img src=... /&gt;</code> usando file locali o URL (ad es. in <code>/public/</code>),
-            mantenendo il resto invariato.
-          </li>
-          <li>
-            Modalità demo per test: aggiungi <code>?demo=1</code> all'URL per sbloccare tutte le caselle.
-          </li>
-          <li>
-            Per azzerare i progressi, cancella il <code>localStorage</code> o usa gli strumenti del browser.
-          </li>
-        </ul>
-      </details>
-
-      <details className="bg-slate-900/40 border border-slate-700 rounded-xl p-4">
-        <summary className="cursor-pointer font-semibold text-slate-200">Deploy rapido su GitHub Pages</summary>
-        <ol className="list-decimal list-inside mt-2 space-y-1">
-          <li>Crea un nuovo repository su GitHub (pubblico).</li>
-          <li>
-            Inizia un progetto con Vite (<code>npm create vite@latest</code> • React + TS), sostituisci il
-            componente <code>App.tsx</code> con questo file e aggiungi Tailwind (guida ufficiale).
-          </li>
-          <li>
-            Installa dipendenze: <code>npm i framer-motion</code> (Tailwind già configurato nel progetto).
-          </li>
-          <li>
-            Build: <code>npm run build</code> e pubblica con GitHub Pages (impostazioni del repo → Pages →
-            branch <code>gh-pages</code> oppure usa <code>gh-pages</code> package).
-          </li>
-        </ol>
-      </details>
-    </div>
-  );
-}
+      ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+    </script>
+  </body>
+</html>
