@@ -212,22 +212,26 @@
           React.createElement("div", { className: "modal-content" },
             React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `✨ Giorno ${activeModal + 1}`),
             React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg`, alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-80 mx-auto rounded-lg shadow-lg" }),
-            React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
-            React.createElement("div", { className: "flex flex-col gap-3" },
-              CONSTELLATIONS[activeModal].options.map((opt, j) =>
-                React.createElement("button", {
-                  key: j,
-                  onClick: () => handleAnswer(activeModal, opt),
-                  className: "option-button px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow"
-                }, opt)
-              )
+            !progress[activeModal]?.solved && React.createElement(React.Fragment, null,
+              React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
+              React.createElement("div", { className: "flex flex-col gap-3" },
+                CONSTELLATIONS[activeModal].options.map((opt, j) =>
+                  React.createElement("button", {
+                    key: j,
+                    onClick: () => handleAnswer(activeModal, opt),
+                    className: "option-button px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow"
+                  }, opt)
+                )
+              ),
+              feedback && React.createElement("div", { className: `feedback ${feedback.includes('Corretto') ? 'correct' : feedback.includes('sbagliata') ? 'wrong' : ''}` }, feedback),
+              React.createElement("div", { className: "mt-4" },
+                React.createElement("button", { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`)
+              ),
+              React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score || 3}`)
             ),
-            feedback && React.createElement("div", { className: `feedback ${feedback.includes('Corretto') ? 'correct' : feedback.includes('sbagliata') ? 'wrong' : ''}` }, feedback),
-            React.createElement("div", { className: "mt-4" },
-              React.createElement("button", { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`)
-            ),
-            React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score || 3}`),
-            progress[activeModal]?.solved && React.createElement("p", { className: "mt-6 text-lg" }, CONSTELLATIONS[activeModal].description)
+            progress[activeModal]?.solved && React.createElement("div", { className: "mt-6 text-lg space-y-4" },
+              React.createElement("p", null, CONSTELLATIONS[activeModal].description)
+            )
           )
         )
       );
