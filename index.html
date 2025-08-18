@@ -113,7 +113,9 @@
   <div class="overlay"></div>
   <div class="stars" id="stars"></div>
 
-  <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg relative z-10">🎄 Calendario dell'Avvento - Costellazioni ✨</h1>
+  <h1 class="text-4xl font-extrabold mb-2 drop-shadow-lg relative z-10">🎄 Calendario dell'Avvento - Costellazioni ✨</h1>
+  <h2 id="total-score" class="text-xl font-semibold mb-6 drop-shadow-lg relative z-10">⭐ Punteggio Totale: 0</h2>
+
   <div id="app" class="w-full max-w-6xl relative z-10"></div>
 
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -144,10 +146,21 @@
       const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
       const [activeModal, setActiveModal] = useState(null);
       const [feedback, setFeedback] = useState("");
+      const [totalScore, setTotalScore] = useState(0);
 
       useEffect(() => {
         localStorage.setItem("progress", JSON.stringify(progress));
+        // Calcolo punteggio totale
+        let score = 0;
+        Object.values(progress).forEach(entry => {
+          score += entry.score || 0;
+        });
+        setTotalScore(score);
       }, [progress]);
+
+      useEffect(() => {
+        document.getElementById("total-score").innerText = `⭐ Punteggio Totale: ${totalScore}`;
+      }, [totalScore]);
 
       function handleAnswer(index, choice) {
         const correct = CONSTELLATIONS[index].name;
