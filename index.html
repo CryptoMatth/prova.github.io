@@ -11,125 +11,26 @@
       background-size: cover;
       overflow: hidden;
     }
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      z-index: -1;
-    }
-    .stars, .snow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      overflow: hidden;
-      z-index: -1;
-      pointer-events: none;
-    }
-    .star, .flake {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.8;
-    }
-    .star {
-      width: 2px;
-      height: 2px;
-      background: white;
-      animation: twinkle 2s infinite ease-in-out;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
-    }
-    .flake {
-      width: 6px;
-      height: 6px;
-      background: white;
-      opacity: 0.7;
-      animation: fall linear infinite;
-    }
-    @keyframes fall {
-      0% { transform: translateY(-10px); opacity: 0; }
-      20% { opacity: 1; }
-      100% { transform: translateY(100vh); opacity: 0; }
-    }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: -1; }
+    .stars, .snow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; z-index: -1; pointer-events: none; }
+    .star, .flake { position: absolute; border-radius: 50%; opacity: 0.8; }
+    .star { width: 2px; height: 2px; background: white; animation: twinkle 2s infinite ease-in-out; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+    .flake { width: 6px; height: 6px; background: white; opacity: 0.7; animation: fall linear infinite; }
+    @keyframes fall { 0% { transform: translateY(-10px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(100vh); opacity: 0; } }
 
-    /* Glow sincronizzato per tutti i giorni completati */
-    .celebration {
-      animation: glow 1s ease-in-out infinite alternate;
-      animation-delay: 0s !important; /* tutti partono insieme */
-    }
-    @keyframes glow {
-      from { box-shadow: 0 0 10px #fbbf24, 0 0 20px #fbbf24; }
-      to { box-shadow: 0 0 20px #f59e0b, 0 0 30px #f59e0b; }
-    }
+    .celebration { animation: glow 1s ease-in-out infinite alternate; animation-delay: 0s !important; }
+    @keyframes glow { from { box-shadow: 0 0 10px #fbbf24, 0 0 20px #fbbf24; } to { box-shadow: 0 0 20px #f59e0b, 0 0 30px #f59e0b; } }
 
-    .full-screen-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 50;
-      padding: 2rem;
-      overflow-y: auto;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-    .close-button {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      font-size: 2rem;
-      cursor: pointer;
-      background: none;
-      border: none;
-      color: white;
-      transition: transform 0.2s ease;
-    }
-    .close-button:hover {
-      transform: scale(1.2);
-      color: #f87171;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .modal-content {
-      animation: slideUp 0.3s ease-in-out;
-      max-width: 700px;
-      width: 100%;
-      background: #1f2937;
-      border-radius: 1rem;
-      padding: 2rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-    }
-    .option-button {
-      transition: all 0.2s ease;
-    }
-    .option-button:hover {
-      transform: scale(1.05);
-    }
-    .feedback {
-      margin-top: 1rem;
-      font-size: 1.1rem;
-      font-weight: bold;
-      text-align: center;
-    }
+    .full-screen-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); color: white; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 50; padding: 2rem; overflow-y: auto; animation: fadeIn 0.3s ease-in-out; }
+    .close-button { position: absolute; top: 1rem; right: 1rem; font-size: 2rem; cursor: pointer; background: none; border: none; color: white; transition: transform 0.2s ease; }
+    .close-button:hover { transform: scale(1.2); color: #f87171; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-content { animation: slideUp 0.3s ease-in-out; max-width: 700px; width: 100%; background: #1f2937; border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+    .option-button { transition: all 0.2s ease; }
+    .option-button:hover { transform: scale(1.05); }
+    .feedback { margin-top: 1rem; font-size: 1.1rem; font-weight: bold; text-align: center; }
     .feedback.correct { color: #4ade80; }
     .feedback.wrong { color: #f87171; }
   </style>
@@ -147,7 +48,6 @@
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script>
-    // 🔥 Ripristino dello script React per rendere visibili le domande
     const { useState, useEffect } = React;
 
     const CONSTELLATIONS = Array.from({ length: 31 }, (_, i) => ({
@@ -167,7 +67,7 @@
       useEffect(() => {
         localStorage.setItem("progress", JSON.stringify(progress));
         let score = 0;
-        Object.values(progress).forEach(entry => { score += entry.score || 0; });
+        Object.values(progress).forEach(entry => { score += Math.max(0, entry.score || 0); });
         setTotalScore(score);
       }, [progress]);
 
@@ -237,7 +137,7 @@
           React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "×"),
           React.createElement("div", { className: "modal-content" },
             React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `✨ Giorno ${activeModal + 1}`),
-            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg`, alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-80 mx-auto rounded-lg shadow-lg" }),
+            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg", alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-80 mx-auto rounded-lg shadow-lg" }),
             !progress[activeModal]?.solved && React.createElement(React.Fragment, null,
               React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
               React.createElement("div", { className: "flex flex-col gap-3" },
@@ -253,7 +153,7 @@
               React.createElement("div", { className: "mt-4" },
                 React.createElement("button", { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`)
               ),
-              React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score || 3}`)
+              React.createElement("p", { className: "mt-2 text-sm" }, `⭐ Punti: ${progress[activeModal]?.score ?? 3}`)
             ),
             progress[activeModal]?.solved && React.createElement("div", { className: "mt-6 text-lg space-y-4" },
               React.createElement("p", null, CONSTELLATIONS[activeModal].description),
