@@ -8,7 +8,7 @@
   </head>
   <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
     <h1 class="text-3xl font-bold mb-2">Calendario dell'Avvento - Costellazioni</h1>
-    <div id="score" class="mb-4 text-lg text-yellow-300"></div>
+    <div id="score" class="mb-4 text-lg text-yellow-400"></div>
     <div id="app"></div>
 
     <!-- React e ReactDOM -->
@@ -19,46 +19,55 @@
       const { useState, useEffect } = React;
 
       const CONSTELLATIONS = [
-        { name: "Orione", options: ["Orione", "Cassiopea", "Pegaso", "Cigno"], description: "Orione è una delle costellazioni più riconoscibili, visibile in inverno.", hints: ["Ha una famosa 'cintura' di tre stelle allineate","È legata al mito del cacciatore","È ben visibile in inverno nell'emisfero nord"] },
-        { name: "Cassiopea", options: ["Andromeda", "Cassiopea", "Cefeo", "Orsa Minore"], description: "Cassiopea è una costellazione a forma di 'W', visibile nell'emisfero nord.", hints: ["Ha forma di W o M","È vicina all'Orsa Minore","È legata al mito della regina Cassiopea"] },
-        { name: "Andromeda", options: ["Andromeda", "Perseo", "Ariete", "Pegaso"], description: "Andromeda è famosa per la galassia di Andromeda.", hints: ["Ospita una famosa galassia visibile ad occhio nudo","È figlia di Cassiopea","Costellazione autunnale"] },
-        { name: "Cigno", options: ["Cigno", "Lira", "Aquila", "Orione"], description: "Il Cigno è anche chiamato Croce del Nord.", hints: ["È a forma di croce","Contiene la stella Deneb","Visibile in estate"] },
-        { name: "Pegaso", options: ["Pegaso", "Andromeda", "Perseo", "Cefeo"], description: "Pegaso è riconoscibile per il suo grande quadrilatero.", hints: ["Ha un grande quadrilatero di stelle","Cavallo alato della mitologia","Visibile in autunno"] },
-        { name: "Toro", options: ["Toro", "Ariete", "Perseo", "Orione"], description: "Il Toro ospita l'ammasso delle Pleiadi.", hints: ["Contiene Aldebaran","Contiene le Pleiadi","Costellazione zodiacale"] },
-        { name: "Gemelli", options: ["Gemelli", "Cancro", "Leone", "Toro"], description: "Gemelli rappresenta Castore e Polluce.", hints: ["Due stelle brillanti vicine","Costellazione zodiacale","Mitologia greca: due fratelli"] },
-        { name: "Leone", options: ["Leone", "Vergine", "Cancro", "Bilancia"], description: "Leone è una costellazione zodiacale di primavera.", hints: ["Forma di leone sdraiato","Stella Regolo","Costellazione zodiacale"] },
-        { name: "Vergine", options: ["Vergine", "Bilancia", "Leone", "Scorpione"], description: "Vergine è la seconda costellazione più grande.", hints: ["Ospita Spica","Costellazione zodiacale","Visibile in primavera"] },
-        { name: "Bilancia", options: ["Bilancia", "Scorpione", "Vergine", "Sagittario"], description: "Bilancia è una piccola costellazione zodiacale.", hints: ["Simbolo della giustizia","Tra Vergine e Scorpione","Costellazione zodiacale"] },
-        { name: "Scorpione", options: ["Scorpione", "Sagittario", "Ofiuco", "Bilancia"], description: "Scorpione è facilmente riconoscibile per la sua forma.", hints: ["Forma a S","Contiene Antares","Costellazione zodiacale"] },
-        { name: "Sagittario", options: ["Sagittario", "Scorpione", "Capricorno", "Aquila"], description: "Sagittario è ricco di oggetti della Via Lattea.", hints: ["Arciere","Vicino al centro galattico","Costellazione zodiacale"] },
-        { name: "Capricorno", options: ["Capricorno", "Acquario", "Sagittario", "Pesci"], description: "Capricorno ha la forma di un caprone con la coda di pesce.", hints: ["Caprone marino","Costellazione zodiacale","Visibile in estate"] },
-        { name: "Acquario", options: ["Acquario", "Pesci", "Capricorno", "Ariete"], description: "Acquario è una vasta costellazione zodiacale.", hints: ["Il portatore d'acqua","Molte stelle deboli","Costellazione zodiacale"] },
-        { name: "Pesci", options: ["Pesci", "Ariete", "Acquario", "Toro"], description: "Pesci è una costellazione zodiacale poco luminosa.", hints: ["Due pesci legati","Costellazione zodiacale","Visibile in autunno"] },
-        { name: "Ariete", options: ["Ariete", "Toro", "Pesci", "Gemelli"], description: "Ariete segna l'inizio della primavera.", hints: ["Piccola costellazione","Contiene Hamal","Costellazione zodiacale"] },
-        { name: "Cefeo", options: ["Cefeo", "Cassiopea", "Andromeda", "Drago"], description: "Cefeo è una costellazione a forma di casa.", hints: ["Vicino a Cassiopea","Forma di casetta","Re etiope nella mitologia"] },
-        { name: "Drago", options: ["Drago", "Orsa Minore", "Cefeo", "Lira"], description: "Drago si snoda attorno alla Polare.", hints: ["Costellazione circumpolare","Forma sinuosa","Vicino all'Orsa Minore"] },
-        { name: "Orsa Maggiore", options: ["Orsa Maggiore", "Orsa Minore", "Drago", "Lince"], description: "Orsa Maggiore contiene il Grande Carro.", hints: ["Facile da riconoscere","Contiene il Grande Carro","Guida alla Stella Polare"] },
-        { name: "Orsa Minore", options: ["Orsa Minore", "Orsa Maggiore", "Cefeo", "Drago"], description: "Orsa Minore contiene la Stella Polare.", hints: ["Piccolo Carro","Stella Polare","Costellazione circumpolare"] },
-        { name: "Lira", options: ["Lira", "Cigno", "Aquila", "Drago"], description: "Lira contiene la stella Vega.", hints: ["Piccola costellazione","Contiene Vega","Visibile in estate"] },
-        { name: "Aquila", options: ["Aquila", "Cigno", "Lira", "Sagittario"], description: "Aquila contiene la stella Altair.", hints: ["Stella Altair","Visibile in estate","Fa parte del Triangolo Estivo"] },
-        { name: "Perseo", options: ["Perseo", "Andromeda", "Cassiopea", "Auriga"], description: "Perseo è legato al mito di Andromeda.", hints: ["Eroe greco","Vicino ad Andromeda","Contiene Algol"] },
-        { name: "Auriga", options: ["Auriga", "Perseo", "Gemelli", "Toro"], description: "Auriga contiene Capella, una delle stelle più brillanti.", hints: ["Contiene Capella","Visibile in inverno","Auriga = cocchiere"] }
+        {
+          name: "Orione",
+          options: ["Orione", "Cassiopea", "Pegaso", "Cigno"],
+          description: "Orione è una delle costellazioni più riconoscibili, visibile in inverno.",
+          hints: [
+            "Ha una famosa 'cintura' di tre stelle allineate",
+            "È legata al mito del cacciatore",
+            "È ben visibile in inverno nell'emisfero nord"
+          ],
+          image: "images/orione.jpg"
+        },
+        {
+          name: "Cassiopea",
+          options: ["Andromeda", "Cassiopea", "Cefeo", "Orsa Minore"],
+          description: "Cassiopea è una costellazione a forma di 'W', visibile nell'emisfero nord.",
+          hints: [
+            "Ha forma di W o M",
+            "È vicina all'Orsa Minore",
+            "È legata al mito della regina Cassiopea"
+          ],
+          image: "images/cassiopea.jpg"
+        },
+        {
+          name: "Andromeda",
+          options: ["Andromeda", "Perseo", "Pegaso", "Cigno"],
+          description: "Andromeda è famosa per la galassia di Andromeda, visibile a occhio nudo.",
+          hints: [
+            "È figlia di Cassiopea nella mitologia",
+            "Si trova vicino a Pegaso",
+            "Ospita una delle galassie più vicine alla Via Lattea"
+          ],
+          image: "images/andromeda.jpg"
+        }
+        // ... continua fino a 24
       ];
 
       function App() {
-        // Simulazione giorno di agosto (18)
-        const [day] = useState(18);
-        const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
+        const simulatedDay = 18; // test: ad agosto mostra 18 giorni
+        const [day, setDay] = useState(simulatedDay);
+        const [progress, setProgress] = useState(() => {
+          return JSON.parse(localStorage.getItem("progress") || "{}");
+        });
 
         useEffect(() => {
           localStorage.setItem("progress", JSON.stringify(progress));
         }, [progress]);
 
-        const totalScore = Object.values(progress).reduce((sum, entry) => sum + (entry.score || 0), 0);
-
-        useEffect(() => {
-          document.getElementById("score").innerText = `Punteggio totale: ${totalScore}`;
-        }, [totalScore]);
+        const totalScore = Object.values(progress).reduce((acc, e) => acc + (e.score || 0), 0);
+        document.getElementById("score").innerText = `Punteggio totale: ${totalScore}`;
 
         function handleAnswer(index, choice) {
           const correct = CONSTELLATIONS[index].name;
@@ -87,7 +96,7 @@
 
         return React.createElement(
           "div",
-          { className: "grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-6xl" },
+          { className: "grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl" },
           CONSTELLATIONS.map((c, i) => {
             const index = i + 1;
             const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
@@ -106,6 +115,7 @@
                 "div",
                 { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
                 React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+                React.createElement("img", { src: c.image, alt: c.name, className: "w-full h-40 object-contain mb-2" }),
                 React.createElement("p", { className: "mb-2" }, "Quale costellazione è questa?"),
                 React.createElement(
                   "div",
@@ -127,12 +137,24 @@
                   { className: "mt-2" },
                   React.createElement(
                     "button",
-                    { onClick: () => useHint(i), className: "text-sm text-yellow-400 underline" },
+                    {
+                      onClick: () => useHint(i),
+                      className: "text-sm text-yellow-400 underline"
+                    },
                     `Usa indizio (${entry.usedHints}/3)`
                   ),
-                  entry.usedHints > 0 && React.createElement("p", { className: "mt-1 italic" }, `Indizio: ${c.hints[entry.usedHints - 1]}`)
+                  entry.usedHints > 0 &&
+                    React.createElement(
+                      "p",
+                      { className: "mt-1 italic" },
+                      `Indizio: ${c.hints[entry.usedHints - 1]}`
+                    )
                 ),
-                React.createElement("p", { className: "mt-2 text-sm" }, `Punti: ${entry.score}`)
+                React.createElement(
+                  "p",
+                  { className: "mt-2 text-sm" },
+                  `Punti: ${entry.score}`
+                )
               );
             }
 
@@ -140,6 +162,7 @@
               "div",
               { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
               React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+              React.createElement("img", { src: c.image, alt: c.name, className: "w-full h-40 object-contain mb-2" }),
               React.createElement("p", { className: "text-green-400" }, `✅ Corretto! Era ${c.name}.`),
               React.createElement("p", { className: "mt-1 text-sm" }, c.description),
               React.createElement("p", { className: "mt-1 text-sm" }, `Punti ottenuti: ${entry.score}`)
