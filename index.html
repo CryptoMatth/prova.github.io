@@ -6,12 +6,14 @@
     <title>Calendario dell'Avvento - Costellazioni</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
+      body, html {
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
+        height: 100%;
+        overflow: hidden;
+        font-family: sans-serif;
       }
-      canvas#starry-sky {
+      #milkyWay {
         position: fixed;
         top: 0;
         left: 0;
@@ -20,134 +22,117 @@
         z-index: -1;
       }
       .card {
-        backdrop-filter: blur(10px);
-        background-color: rgba(20, 20, 40, 0.6);
+        backdrop-filter: blur(5px);
+        background-color: rgba(20, 20, 30, 0.6);
       }
     </style>
   </head>
-  <body class="bg-black text-white min-h-screen flex flex-col items-center p-4">
-    <canvas id="starry-sky"></canvas>
-
+  <body class="bg-black text-white flex flex-col items-center p-4">
+    <canvas id="milkyWay"></canvas>
     <h1 class="text-3xl font-bold mb-4">Calendario dell'Avvento - Costellazioni</h1>
-    <div id="app" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-6xl"></div>
+    <div id="app"></div>
 
+    <!-- React e ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
     <script>
-      // Effetto via lattea in movimento sul canvas
-      const canvas = document.getElementById('starry-sky');
-      const ctx = canvas.getContext('2d');
-      let width = canvas.width = window.innerWidth;
-      let height = canvas.height = window.innerHeight;
-
-      window.addEventListener('resize', () => {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-      });
-
-      const stars = [];
-      const numStars = 200;
-      for(let i=0;i<numStars;i++){
-        stars.push({
-          x: Math.random()*width,
-          y: Math.random()*height,
-          radius: Math.random()*1.2,
-          speed: Math.random()*0.2 + 0.05
-        });
-      }
-
-      function draw() {
-        ctx.fillStyle = 'rgba(0,0,10,0.3)';
-        ctx.fillRect(0,0,width,height);
-        ctx.beginPath();
-        for(const s of stars){
-          s.y -= s.speed;
-          if(s.y < 0) s.y = height;
-          ctx.moveTo(s.x, s.y);
-          ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2);
-        }
-        ctx.fillStyle = 'white';
-        ctx.fill();
-        requestAnimationFrame(draw);
-      }
-      draw();
-
       const { useState, useEffect } = React;
-      const CONSTELLATIONS = [
-        /* Inserire qui le 31 costellazioni di dicembre */
-      ];
+
+      const CONSTELLATIONS = Array.from({length: 31}, (_, i) => ({
+        name: `Costellazione ${i+1}`,
+        options: [`Opzione1`, `Opzione2`, `Opzione3`, `Opzione4`],
+        description: `Informazioni su Costellazione ${i+1}`,
+        hints: [`Indizio 1`, `Indizio 2`, `Indizio 3`]
+      }));
 
       function App() {
-        const [day, setDay] = useState(18); // Agosto per test
-        const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('progress')||'{}'));
+        const [day, setDay] = useState(18); // agosto per test
+        const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('progress') || '{}'));
 
-        useEffect(()=>{
-          localStorage.setItem('progress', JSON.stringify(progress));
-        },[progress]);
+        useEffect(() => { localStorage.setItem('progress', JSON.stringify(progress)); }, [progress]);
 
-        function handleAnswer(index, choice){
+        function handleAnswer(index, choice) {
           const correct = CONSTELLATIONS[index].name;
           setProgress(prev => {
-            const entry = prev[index] || {attempts:0, solved:false, score:3, usedHints:0};
+            const entry = prev[index] || { attempts:0, solved:false, score:3, usedHints:0 };
             if(entry.solved) return prev;
-            entry.attempts +=1;
-            if(choice===correct){entry.solved=true;}
-            else entry.score=Math.max(0,entry.score-1);
-            return {...prev,[index]:entry};
+            entry.attempts++;
+            if(choice === correct) entry.solved = true;
+            else entry.score = Math.max(0, entry.score-1);
+            return {...prev, [index]: entry};
           });
         }
 
-        function useHint(index){
-          setProgress(prev=>{
-            const entry = prev[index] || {attempts:0, solved:false, score:3, usedHints:0};
+        function useHint(index) {
+          setProgress(prev => {
+            const entry = prev[index] || { attempts:0, solved:false, score:3, usedHints:0 };
             if(entry.solved || entry.usedHints>=3) return prev;
-            entry.usedHints +=1;
+            entry.usedHints++;
             entry.score = Math.max(0, entry.score-1);
-            return {...prev,[index]:entry};
+            return {...prev, [index]: entry};
           });
         }
 
-        const totalScore = Object.values(progress).reduce((sum,e)=>sum+(e.solved?e.score:0),0);
-
-        return React.createElement('>
-          <div className="mb-4 text-xl">Punteggio totale: {totalScore}</div>
-        ', null, CONSTELLATIONS.map((c,i)=>{
-          const index = i+1;
-          const entry = progress[i] || {attempts:0, solved:false, score:3, usedHints:0};
-          const locked = index>day;
-          if(locked){
-            return React.createElement('div',{key:i,className:'card p-4 rounded-2xl shadow-lg'},
-              React.createElement('h2',{className:'text-xl font-bold mb-2'},`Giorno ${index}`),
-              React.createElement('p',{className:'text-gray-400'},`🔒 Bloccato fino al giorno ${index}`)
+        return React.createElement('div',{className:"grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl"},
+          CONSTELLATIONS.map((c,i)=>{
+            const index = i+1;
+            const entry = progress[i] || {attempts:0, solved:false, score:3, usedHints:0};
+            const locked = index>day;
+            if(locked) return React.createElement('div',{key:i,className:"card p-4 rounded-2xl shadow-lg"},
+              React.createElement('h2',{className:"text-xl font-bold mb-2"},`Giorno ${index}`),
+              React.createElement('p',{className:"text-gray-500"},`🔒 Bloccato fino al giorno ${index}`)
             );
-          }
 
-          if(!entry.solved){
-            return React.createElement('div',{key:i,className:'card p-4 rounded-2xl shadow-lg'},
-              React.createElement('h2',{className:'text-xl font-bold mb-2'},`Giorno ${index}`),
-              React.createElement('p',{className:'mb-2'},'Quale costellazione è questa?'),
-              React.createElement('div',{className:'flex flex-col gap-2'},
-                c.options.map((opt,j)=>React.createElement('button',{key:j,onClick:()=>handleAnswer(i,opt),className:'px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg'},opt))
+            if(!entry.solved) return React.createElement('div',{key:i,className:"card p-4 rounded-2xl shadow-lg"},
+              React.createElement('h2',{className:"text-xl font-bold mb-2"},`Giorno ${index}`),
+              React.createElement('p',{className:"mb-2"},"Quale costellazione è questa?"),
+              React.createElement('div',{className:"flex flex-col gap-2"}, c.options.map((opt,j)=>
+                React.createElement('button',{key:j,onClick:()=>handleAnswer(i,opt),className:"px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"},opt)
+              )),
+              React.createElement('div',{className:"mt-2"},
+                React.createElement('button',{onClick:()=>useHint(i),className:"text-sm text-yellow-400 underline"},`Usa indizio (${entry.usedHints}/3)`),
+                entry.usedHints>0 && React.createElement('p',{className:"mt-1 italic"},`Indizio: ${c.hints[entry.usedHints-1]}`)
               ),
-              React.createElement('div',{className:'mt-2'},
-                React.createElement('button',{onClick:()=>useHint(i),className:'text-sm text-yellow-400 underline'},`Usa indizio (${entry.usedHints}/3)`),
-                entry.usedHints>0 && React.createElement('p',{className:'mt-1 italic'},`Indizio: ${c.hints[entry.usedHints-1]}`)
-              ),
-              React.createElement('p',{className:'mt-2 text-sm'},`Punti: ${entry.score}`)
+              React.createElement('p',{className:"mt-2 text-sm"},`Punti: ${entry.score}`)
             );
-          }
 
-          return React.createElement('div',{key:i,className:'card p-4 rounded-2xl shadow-lg'},
-            React.createElement('h2',{className:'text-xl font-bold mb-2'},`Giorno ${index}`),
-            React.createElement('p',{className:'text-green-400'},`✅ Corretto! Era ${c.name}.`),
-            React.createElement('p',{className:'mt-1 text-sm'},c.description),
-            React.createElement('p',{className:'mt-1 text-sm'},`Punti ottenuti: ${entry.score}`)
-          );
-        }));
+            return React.createElement('div',{key:i,className:"card p-4 rounded-2xl shadow-lg"},
+              React.createElement('h2',{className:"text-xl font-bold mb-2"},`Giorno ${index}`),
+              React.createElement('p',{className:"text-green-400"},`✅ Corretto! Era ${c.name}.`),
+              React.createElement('p',{className:"mt-1 text-sm"},c.description),
+              React.createElement('p',{className:"mt-1 text-sm"},`Punti ottenuti: ${entry.score}`)
+            );
+          })
+        );
       }
 
       ReactDOM.createRoot(document.getElementById('app')).render(React.createElement(App));
+
+      // Effetto via lattea
+      const canvas = document.getElementById('milkyWay');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const stars = Array.from({length:200},()=>({x:Math.random()*canvas.width, y:Math.random()*canvas.height, size:Math.random()*2+1, speed:Math.random()*0.2+0.05}));
+
+      function animate(){
+        ctx.fillStyle='black';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        stars.forEach(s=>{
+          ctx.fillStyle='white';
+          ctx.beginPath();
+          ctx.arc(s.x,s.y,s.size,0,2*Math.PI);
+          ctx.fill();
+          s.y += s.speed;
+          if(s.y>canvas.height){ s.y=0; s.x=Math.random()*canvas.width; }
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
     </script>
   </body>
 </html>
