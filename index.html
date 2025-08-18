@@ -1,144 +1,99 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calendario dell'Avvento - Costellazioni</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body, html {
-        height: 100%;
-        margin: 0;
-        overflow-y: auto; /* Permette lo scroll verticale */
-      }
-      #milkyway {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        background: radial-gradient(ellipse at bottom, #000 0%, #00111a 100%);
-      }
-      .star {
-        position: absolute;
-        background: white;
-        border-radius: 50%;
-        opacity: 0.8;
-        animation: twinkle 5s infinite alternate;
-      }
-      @keyframes twinkle {
-        from {opacity: 0.2;}
-        to {opacity: 1;}
-      }
-    </style>
-  </head>
-  <body class="text-white p-4">
-    <div id="milkyway"></div>
-    <h1 class="text-3xl font-bold mb-4 text-center">Calendario dell'Avvento - Costellazioni</h1>
-    <div id="app" class="flex flex-wrap justify-center gap-4"></div>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendario dell'Avvento - Costellazioni</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen p-4 overflow-y-auto relative">
+  <h1 class="text-3xl font-bold mb-4 text-center">Calendario dell'Avvento - Costellazioni</h1>
 
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script>
-      const { useState, useEffect } = React;
+  <div id="app" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
 
-      const CONSTELLATIONS = [];
-      for(let i=1;i<=31;i++) {
-        CONSTELLATIONS.push({
-          name: `Costellazione ${i}`,
-          options: [`Costellazione ${i}`, `Altro 1`, `Altro 2`, `Altro 3`],
-          description: `Descrizione della costellazione ${i}`,
-          hints: [`Indizio 1`, `Indizio 2`, `Indizio 3`]
+  <!-- React e ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+  <script>
+    const { useState, useEffect } = React;
+
+    const CONSTELLATIONS = Array.from({ length: 18 }, (_, i) => ({
+      name: `Costellazione ${i+1}`,
+      options: [`A`, `B`, `C`, `D`],
+      description: `Descrizione della costellazione ${i+1}`,
+      hints: [`Indizio 1`, `Indizio 2`, `Indizio 3`],
+      image: `https://via.placeholder.com/400x300?text=Costellazione+${i+1}`
+    }));
+
+    function App() {
+      const [day, setDay] = useState(18);
+      const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
+      const [modal, setModal] = useState(null);
+
+      useEffect(() => { localStorage.setItem("progress", JSON.stringify(progress)); }, [progress]);
+
+      function handleAnswer(index, choice) {
+        const correct = CONSTELLATIONS[index].name;
+        setProgress(prev => {
+          const entry = prev[index] || { attempts:0, solved:false, score:3, usedHints:0 };
+          if(entry.solved) return prev;
+          entry.attempts +=1;
+          if(choice === correct) entry.solved=true;
+          else entry.score=Math.max(0, entry.score-1);
+          return { ...prev, [index]: entry };
         });
       }
 
-      function App() {
-        const [day, setDay] = useState(18); // Test agosto: mostra i primi 18 giorni
-        const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('progress')||'{}'));
+      function useHint(index) {
+        setProgress(prev => {
+          const entry = prev[index] || { attempts:0, solved:false, score:3, usedHints:0 };
+          if(entry.solved || entry.usedHints>=3) return prev;
+          entry.usedHints +=1;
+          entry.score=Math.max(0, entry.score-1);
+          return { ...prev, [index]: entry };
+        });
+      }
 
-        useEffect(()=>{localStorage.setItem('progress', JSON.stringify(progress))}, [progress]);
+      return React.createElement("div", null,
+        CONSTELLATIONS.map((c,i) => {
+          const index = i+1;
+          const entry = progress[i] || { attempts:0, solved:false, score:3, usedHints:0 };
+          const locked = index>day;
+          return React.createElement(
+            "div",
+            { key:i, className:`p-4 bg-gray-800 rounded-2xl shadow-lg cursor-pointer`, onClick:()=>!locked&&setModal(i) },
+            React.createElement("h2", { className:"text-xl font-bold mb-2" }, `Giorno ${index}`),
+            locked ? React.createElement("p", { className:"text-gray-500" }, `🔒 Bloccato fino al giorno ${index}`)
+            : !entry.solved ? React.createElement("p", null, "Rispondi per aprire")
+            : React.createElement("p", { className:"text-green-400" }, `✅ Corretto! Punti: ${entry.score}`)
+          );
+        }),
 
-        function handleAnswer(index, choice) {
-          const correct = CONSTELLATIONS[index].name;
-          setProgress(prev=>{
-            const entry = prev[index]||{attempts:0,solved:false,score:3,usedHints:0};
-            if(entry.solved) return prev;
-            entry.attempts+=1;
-            if(choice===correct){entry.solved=true;}
-            else{entry.score=Math.max(0, entry.score-1);}
-            return {...prev,[index]:entry};
-          });
-        }
-
-        function useHint(index){
-          setProgress(prev=>{
-            const entry = prev[index]||{attempts:0,solved:false,score:3,usedHints:0};
-            if(entry.solved||entry.usedHints>=3) return prev;
-            entry.usedHints+=1;
-            entry.score=Math.max(0, entry.score-1);
-            return {...prev,[index]:entry};
-          });
-        }
-
-        const totalScore = Object.values(progress).reduce((acc,e)=>acc+(e.score||0),0);
-
-        return React.createElement('div', null, 
-          React.createElement('p', {className:'text-center mb-4 text-xl'}, `Punteggio totale: ${totalScore}`),
-          React.createElement('div',{className:'grid grid-cols-1 md:grid-cols-4 gap-4'},
-            CONSTELLATIONS.map((c,i)=>{
-              const index = i+1;
-              const entry = progress[i]||{attempts:0,solved:false,score:3,usedHints:0};
-              const locked = index>day;
-
-              if(locked){
-                return React.createElement('div',{key:i,className:'p-4 bg-gray-800 rounded-2xl shadow-lg'},
-                  React.createElement('h2',{className:'text-xl font-bold mb-2'},`Giorno ${index}`),
-                  React.createElement('p',{className:'text-gray-500'},`🔒 Bloccato fino al giorno ${index}`)
-                );
-              }
-
-              if(!entry.solved){
-                return React.createElement('div',{key:i,className:'p-4 bg-gray-800 rounded-2xl shadow-lg'},
-                  React.createElement('h2',{className:'text-xl font-bold mb-2'},`Giorno ${index}`),
-                  React.createElement('p',{className:'mb-2'},'Quale costellazione è questa?'),
-                  React.createElement('div',{className:'flex flex-col gap-2'},
-                    c.options.map((opt,j)=>React.createElement('button',{key:j,onClick:()=>handleAnswer(i,opt),className:'px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg'},opt))
-                  ),
-                  React.createElement('div',{className:'mt-2'},
-                    React.createElement('button',{onClick:()=>useHint(i),className:'text-sm text-yellow-400 underline'},`Usa indizio (${entry.usedHints}/3)`),
-                    entry.usedHints>0 && React.createElement('p',{className:'mt-1 italic'},`Indizio: ${c.hints[entry.usedHints-1]}`)
-                  ),
-                  React.createElement('p',{className:'mt-2 text-sm'},`Punti: ${entry.score}`)
-                );
-              }
-
-              return React.createElement('div',{key:i,className:'p-4 bg-gray-800 rounded-2xl shadow-lg'},
-                React.createElement('h2',{className:'text-xl font-bold mb-2'},`Giorno ${index}`),
-                React.createElement('p',{className:'text-green-400'},`✅ Corretto! Era ${c.name}.`),
-                React.createElement('p',{className:'mt-1 text-sm'},c.description),
-                React.createElement('p',{className:'mt-1 text-sm'},`Punti ottenuti: ${entry.score}`)
-              );
-            })
+        modal !== null && React.createElement("div", { className:"fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50" },
+          React.createElement("div", { className:"bg-gray-900 p-6 rounded-xl max-w-lg w-full relative" },
+            React.createElement("button", { className:"absolute top-2 right-2 text-xl", onClick:()=>setModal(null) }, "×"),
+            React.createElement("h2", { className:"text-2xl font-bold mb-2" }, CONSTELLATIONS[modal].name),
+            React.createElement("img", { src: CONSTELLATIONS[modal].image, className:"w-full rounded-lg mb-4" }),
+            React.createElement("p", { className:"mb-2" }, CONSTELLATIONS[modal].description),
+            React.createElement("div", { className:"flex flex-col gap-2" },
+              CONSTELLATIONS[modal].options.map((opt,j) => React.createElement(
+                "button",
+                { key:j, onClick:()=>handleAnswer(modal,opt), className:"px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg" },
+                opt
+              ))
+            ),
+            React.createElement("div", { className:"mt-2" },
+              React.createElement("button", { onClick:()=>useHint(modal), className:"text-sm text-yellow-400 underline" }, `Usa indizio (${progress[modal]?.usedHints||0}/3)`),
+              progress[modal]?.usedHints>0 && React.createElement("p", { className:"mt-1 italic" }, `Indizio: ${CONSTELLATIONS[modal].hints[progress[modal].usedHints-1]}`)
+            ),
+            React.createElement("p", { className:"mt-2 text-sm" }, `Punti: ${progress[modal]?.score||3}`)
           )
-        );
-      }
+        )
+      );
+    }
 
-      ReactDOM.createRoot(document.getElementById('app')).render(React.createElement(App));
-
-      // Milky Way stars
-      const milkyway = document.getElementById('milkyway');
-      for(let i=0;i<200;i++){
-        const star = document.createElement('div');
-        star.className='star';
-        const size=Math.random()*2+1;
-        star.style.width=size+'px';
-        star.style.height=size+'px';
-        star.style.top=Math.random()*100+'%';
-        star.style.left=Math.random()*100+'%';
-        star.style.animationDuration=(Math.random()*5+5)+'s';
-        milkyway.appendChild(star);
-      }
-    </script>
-  </body>
+    ReactDOM.createRoot(document.getElementById("app")).render(React.createElement(App));
+  </script>
+</body>
 </html>
