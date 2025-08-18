@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calendario dell'Avvento - Costellazioni</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
   </head>
   <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
     <h1 class="text-3xl font-bold mb-4">Calendario dell'Avvento - Costellazioni</h1>
@@ -14,10 +13,8 @@
     <!-- React e ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    <!-- Codice React -->
-    <script type="text/babel">
+    <script>
       const { useState, useEffect } = React;
 
       const CONSTELLATIONS = [
@@ -41,13 +38,12 @@
             "È legata al mito della regina Cassiopea"
           ]
         }
-        // Aggiungi fino a 24 costellazioni...
       ];
 
       function App() {
         const [day, setDay] = useState(new Date().getDate());
         const [progress, setProgress] = useState(() => {
-          return JSON.parse(localStorage.getItem("progress") || "{}")
+          return JSON.parse(localStorage.getItem("progress") || "{}");
         });
 
         useEffect(() => {
@@ -79,59 +75,82 @@
           });
         }
 
-        return (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
-            {CONSTELLATIONS.map((c, i) => {
-              const index = i + 1;
-              const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
-              const locked = index > day;
-              return (
-                <div key={i} className="p-4 bg-gray-800 rounded-2xl shadow-lg">
-                  <h2 className="text-xl font-bold mb-2">Giorno {index}</h2>
-                  {locked ? (
-                    <p className="text-gray-500">🔒 Bloccato fino al giorno {index}</p>
-                  ) : !entry.solved ? (
-                    <>
-                      <p className="mb-2">Quale costellazione è questa?</p>
-                      <div className="flex flex-col gap-2">
-                        {c.options.map((opt, j) => (
-                          <button
-                            key={j}
-                            onClick={() => handleAnswer(i, opt)}
-                            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
-                          >
-                            {opt}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="mt-2">
-                        <button
-                          onClick={() => useHint(i)}
-                          className="text-sm text-yellow-400 underline"
-                        >
-                          Usa indizio ({entry.usedHints}/3)
-                        </button>
-                        {entry.usedHints > 0 && (
-                          <p className="mt-1 italic">Indizio: {c.hints[entry.usedHints - 1]}</p>
-                        )}
-                      </div>
-                      <p className="mt-2 text-sm">Punti: {entry.score}</p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-green-400">✅ Corretto! Era {c.name}.</p>
-                      <p className="mt-1 text-sm">{c.description}</p>
-                      <p className="mt-1 text-sm">Punti ottenuti: {entry.score}</p>
-                    </>
-                  )}
-                </div>
+        return React.createElement(
+          "div",
+          { className: "grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl" },
+          CONSTELLATIONS.map((c, i) => {
+            const index = i + 1;
+            const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+            const locked = index > day;
+            if (locked) {
+              return React.createElement(
+                "div",
+                { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
+                React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+                React.createElement("p", { className: "text-gray-500" }, `🔒 Bloccato fino al giorno ${index}`)
               );
-            })}
-          </div>
+            }
+
+            if (!entry.solved) {
+              return React.createElement(
+                "div",
+                { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
+                React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+                React.createElement("p", { className: "mb-2" }, "Quale costellazione è questa?"),
+                React.createElement(
+                  "div",
+                  { className: "flex flex-col gap-2" },
+                  c.options.map((opt, j) =>
+                    React.createElement(
+                      "button",
+                      {
+                        key: j,
+                        onClick: () => handleAnswer(i, opt),
+                        className: "px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                      },
+                      opt
+                    )
+                  )
+                ),
+                React.createElement(
+                  "div",
+                  { className: "mt-2" },
+                  React.createElement(
+                    "button",
+                    {
+                      onClick: () => useHint(i),
+                      className: "text-sm text-yellow-400 underline"
+                    },
+                    `Usa indizio (${entry.usedHints}/3)`
+                  ),
+                  entry.usedHints > 0 &&
+                    React.createElement(
+                      "p",
+                      { className: "mt-1 italic" },
+                      `Indizio: ${c.hints[entry.usedHints - 1]}`
+                    )
+                ),
+                React.createElement(
+                  "p",
+                  { className: "mt-2 text-sm" },
+                  `Punti: ${entry.score}`
+                )
+              );
+            }
+
+            return React.createElement(
+              "div",
+              { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
+              React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+              React.createElement("p", { className: "text-green-400" }, `✅ Corretto! Era ${c.name}.`),
+              React.createElement("p", { className: "mt-1 text-sm" }, c.description),
+              React.createElement("p", { className: "mt-1 text-sm" }, `Punti ottenuti: ${entry.score}`)
+            );
+          })
         );
       }
 
-      ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+      ReactDOM.createRoot(document.getElementById("app")).render(React.createElement(App));
     </script>
   </body>
 </html>
