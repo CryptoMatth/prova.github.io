@@ -128,7 +128,10 @@
             React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
             locked
               ? React.createElement("p", { className: "text-gray-300" }, `🔒 Bloccato fino al giorno ${index}`)
-              : React.createElement("p", { className: "text-green-300 font-semibold" }, entry.solved ? "🎉 Completato!" : "🔹 Clicca per vedere")
+              : React.createElement("div", { className: "space-y-1" },
+                  React.createElement("p", { className: "text-green-300 font-semibold" }, entry.solved ? "🎉 Completato!" : "🔹 Clicca per vedere"),
+                  React.createElement("p", { className: `text-sm ${entry.score === 3 ? 'text-green-400' : entry.score === 0 ? 'text-red-400' : 'text-yellow-300'}` }, `⭐ ${entry.score}/3`)
+                )
           );
         }),
         activeModal !== null && React.createElement(
@@ -137,7 +140,7 @@
           React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "×"),
           React.createElement("div", { className: "modal-content" },
             React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `✨ Giorno ${activeModal + 1}`),
-            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg", alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-80 mx-auto rounded-lg shadow-lg" }),
+            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg`, alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-80 mx-auto rounded-lg shadow-lg" }),
             !progress[activeModal]?.solved && React.createElement(React.Fragment, null,
               React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
               React.createElement("div", { className: "flex flex-col gap-3" },
