@@ -7,67 +7,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
-    <h1 class="text-3xl font-bold mb-2">Calendario dell'Avvento - Costellazioni</h1>
-    <div id="score" class="mb-4 text-lg text-yellow-400"></div>
+    <h1 class="text-3xl font-bold mb-4">Calendario dell'Avvento - Costellazioni</h1>
     <div id="app"></div>
 
-    <!-- React e ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
     <script>
       const { useState, useEffect } = React;
 
-      const CONSTELLATIONS = [
-        {
-          name: "Orione",
-          options: ["Orione", "Cassiopea", "Pegaso", "Cigno"],
-          description: "Orione è una delle costellazioni più riconoscibili, visibile in inverno.",
-          hints: [
-            "Ha una famosa 'cintura' di tre stelle allineate",
-            "È legata al mito del cacciatore",
-            "È ben visibile in inverno nell'emisfero nord"
-          ],
-          image: "images/orione.jpg"
-        },
-        {
-          name: "Cassiopea",
-          options: ["Andromeda", "Cassiopea", "Cefeo", "Orsa Minore"],
-          description: "Cassiopea è una costellazione a forma di 'W', visibile nell'emisfero nord.",
-          hints: [
-            "Ha forma di W o M",
-            "È vicina all'Orsa Minore",
-            "È legata al mito della regina Cassiopea"
-          ],
-          image: "images/cassiopea.jpg"
-        },
-        {
-          name: "Andromeda",
-          options: ["Andromeda", "Perseo", "Pegaso", "Cigno"],
-          description: "Andromeda è famosa per la galassia di Andromeda, visibile a occhio nudo.",
-          hints: [
-            "È figlia di Cassiopea nella mitologia",
-            "Si trova vicino a Pegaso",
-            "Ospita una delle galassie più vicine alla Via Lattea"
-          ],
-          image: "images/andromeda.jpg"
-        }
-        // ... continua fino a 24
-      ];
+      const CONSTELLATIONS = Array.from({ length: 24 }, (_, i) => ({
+        name: `Costellazione ${i+1}`,
+        options: [`Opzione A`, `Opzione B`, `Opzione C`, `Opzione D`],
+        description: `Descrizione della costellazione ${i+1}.`,
+        image: `images/costellazione${i+1}.jpg`,
+        hints: [`Indizio 1`, `Indizio 2`, `Indizio 3`]
+      }));
 
       function App() {
-        const simulatedDay = 18; // test: ad agosto mostra 18 giorni
-        const [day, setDay] = useState(simulatedDay);
-        const [progress, setProgress] = useState(() => {
-          return JSON.parse(localStorage.getItem("progress") || "{}");
-        });
+        const today = new Date();
+        const currentDay = today.getMonth() === 11 ? today.getDate() : 18; // test ad agosto
+        const [day, setDay] = useState(currentDay);
+        const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
+        const [newUnlocked, setNewUnlocked] = useState([]);
 
         useEffect(() => {
           localStorage.setItem("progress", JSON.stringify(progress));
-        }, [progress]);
-
-        const totalScore = Object.values(progress).reduce((acc, e) => acc + (e.score || 0), 0);
-        document.getElementById("score").innerText = `Punteggio totale: ${totalScore}`;
+          const unlockedToday = CONSTELLATIONS.map((_, i) => i+1).filter(d => d === day && !(progress[d-1]?.solved));
+          setNewUnlocked(unlockedToday);
+        }, [progress, day]);
 
         function handleAnswer(index, choice) {
           const correct = CONSTELLATIONS[index].name;
@@ -75,11 +43,8 @@
             const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
             if (entry.solved) return prev;
             entry.attempts += 1;
-            if (choice === correct) {
-              entry.solved = true;
-            } else {
-              entry.score = Math.max(0, entry.score - 1);
-            }
+            if (choice === correct) entry.solved = true;
+            else entry.score = Math.max(0, entry.score - 1);
             return { ...prev, [index]: entry };
           });
         }
@@ -94,80 +59,49 @@
           });
         }
 
+        const totalScore = Object.values(progress).reduce((acc, e) => acc + (e.solved ? e.score : 0), 0);
+
         return React.createElement(
           "div",
-          { className: "grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl" },
-          CONSTELLATIONS.map((c, i) => {
-            const index = i + 1;
-            const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
-            const locked = index > day;
-            if (locked) {
-              return React.createElement(
-                "div",
-                { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
+          { className: "w-full max-w-5xl" },
+          React.createElement("p", { className: "mb-4 text-xl" }, `Punteggio totale: ${totalScore}`),
+          newUnlocked.length > 0 && React.createElement("p", { className: "mb-4 text-green-300 font-bold" }, `🎉 Nuova domanda sbloccata oggi! Giorno ${newUnlocked[0]}`),
+          React.createElement(
+            "div",
+            { className: "grid grid-cols-2 md:grid-cols-4 gap-4" },
+            CONSTELLATIONS.map((c, i) => {
+              const index = i + 1;
+              const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
+              const locked = index > day;
+
+              if (locked) return React.createElement("div", { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
                 React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
                 React.createElement("p", { className: "text-gray-500" }, `🔒 Bloccato fino al giorno ${index}`)
               );
-            }
 
-            if (!entry.solved) {
-              return React.createElement(
-                "div",
-                { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
+              if (!entry.solved) return React.createElement("div", { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
                 React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
-                React.createElement("img", { src: c.image, alt: c.name, className: "w-full h-40 object-contain mb-2" }),
+                React.createElement("img", { src: c.image, alt: c.name, className: "mb-2 rounded-lg" }),
                 React.createElement("p", { className: "mb-2" }, "Quale costellazione è questa?"),
-                React.createElement(
-                  "div",
-                  { className: "flex flex-col gap-2" },
-                  c.options.map((opt, j) =>
-                    React.createElement(
-                      "button",
-                      {
-                        key: j,
-                        onClick: () => handleAnswer(i, opt),
-                        className: "px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
-                      },
-                      opt
-                    )
-                  )
+                React.createElement("div", { className: "flex flex-col gap-2" },
+                  c.options.map((opt, j) => React.createElement("button", { key: j, onClick: () => handleAnswer(i, opt), className: "px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg" }, opt))
                 ),
-                React.createElement(
-                  "div",
-                  { className: "mt-2" },
-                  React.createElement(
-                    "button",
-                    {
-                      onClick: () => useHint(i),
-                      className: "text-sm text-yellow-400 underline"
-                    },
-                    `Usa indizio (${entry.usedHints}/3)`
-                  ),
-                  entry.usedHints > 0 &&
-                    React.createElement(
-                      "p",
-                      { className: "mt-1 italic" },
-                      `Indizio: ${c.hints[entry.usedHints - 1]}`
-                    )
+                React.createElement("div", { className: "mt-2" },
+                  React.createElement("button", { onClick: () => useHint(i), className: "text-sm text-yellow-400 underline" }, `Usa indizio (${entry.usedHints}/3)`),
+                  entry.usedHints > 0 && React.createElement("p", { className: "mt-1 italic" }, `Indizio: ${c.hints[entry.usedHints - 1]}`)
                 ),
-                React.createElement(
-                  "p",
-                  { className: "mt-2 text-sm" },
-                  `Punti: ${entry.score}`
-                )
+                React.createElement("p", { className: "mt-2 text-sm" }, `Punti: ${entry.score}`)
               );
-            }
 
-            return React.createElement(
-              "div",
-              { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
-              React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
-              React.createElement("img", { src: c.image, alt: c.name, className: "w-full h-40 object-contain mb-2" }),
-              React.createElement("p", { className: "text-green-400" }, `✅ Corretto! Era ${c.name}.`),
-              React.createElement("p", { className: "mt-1 text-sm" }, c.description),
-              React.createElement("p", { className: "mt-1 text-sm" }, `Punti ottenuti: ${entry.score}`)
-            );
-          })
+              return React.createElement("div", { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
+                React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
+                React.createElement("img", { src: c.image, alt: c.name, className: "mb-2 rounded-lg" }),
+                React.createElement("p", { className: "text-green-400" }, `✅ Corretto! Era ${c.name}.`),
+                React.createElement("p", { className: "mt-1 text-sm" }, c.description),
+                React.createElement("p", { className: "mt-1 text-sm" }, `Punti ottenuti: ${entry.score}`)
+              );
+            })
+          )
         );
       }
 
