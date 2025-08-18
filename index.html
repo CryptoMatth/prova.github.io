@@ -5,6 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calendario dell'Avvento - Costellazioni</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .full-screen-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 50;
+        padding: 2rem;
+        overflow-y: auto;
+      }
+      .close-button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: white;
+      }
+    </style>
   </head>
   <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4 overflow-y-auto">
     <h1 class="text-3xl font-bold mb-4">Calendario dell'Avvento - Costellazioni</h1>
@@ -26,6 +54,7 @@
       function App() {
         const [day, setDay] = useState(18);
         const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem("progress") || "{}"));
+        const [activeModal, setActiveModal] = useState(null);
 
         useEffect(() => {
           localStorage.setItem("progress", JSON.stringify(progress));
@@ -61,17 +90,66 @@
             const entry = progress[i] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
             const locked = index > day;
 
+            function openModal() {
+              if (!locked) setActiveModal(i);
+            }
+
             return React.createElement(
               "div",
-              { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg" },
+              { key: i, className: "p-4 bg-gray-800 rounded-2xl shadow-lg cursor-pointer", onClick: openModal },
               React.createElement("h2", { className: "text-xl font-bold mb-2" }, `Giorno ${index}`),
-              locked
-                ? React.createElement("p", { className: "text-gray-500" }, `🔒 Bloccato fino al giorno ${index}`)
-                : !entry.solved
-                  ? React.createElement("p", { className: "text-green-400" }, `🔹 Clicca per rispondere`)
-                  : React.createElement("p", { className: "text-green-400" }, `✅ Completato! Punti: ${entry.score}`)
+              locked ? React.createElement("p", { className: "text-gray-500" }, `🔒 Bloccato fino al giorno ${index}`)
+                     : React.createElement("p", { className: "text-green-400" }, entry.solved ? `✅ Completato!` : `🔹 Clicca per vedere`) 
             );
-          })
+          }),
+
+          activeModal !== null && React.createElement(
+            "div",
+            { className: "full-screen-modal" },
+            React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "×"),
+            React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `Giorno ${activeModal + 1}`),
+            React.createElement("img", { src: `images/costellazione${activeModal+1}.jpg`, alt: CONSTELLATIONS[activeModal].name, className: "mb-4 max-h-96 object-contain" }),
+            React.createElement("p", { className: "mb-2" }, `Quale costellazione è questa?`),
+            React.createElement(
+              "div",
+              { className: "flex flex-col gap-2" },
+              CONSTELLATIONS[activeModal].options.map((opt, j) => 
+                React.createElement(
+                  "button",
+                  {
+                    key: j,
+                    onClick: () => handleAnswer(activeModal, opt),
+                    className: "px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                  },
+                  opt
+                )
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "mt-2" },
+              React.createElement(
+                "button",
+                { onClick: () => useHint(activeModal), className: "text-sm text-yellow-400 underline" },
+                `Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`
+              ),
+              progress[activeModal]?.usedHints > 0 && React.createElement(
+                "p",
+                { className: "mt-1 italic" },
+                `Indizio: ${CONSTELLATIONS[activeModal].hints[progress[activeModal].usedHints - 1]}`
+              )
+            ),
+            React.createElement(
+              "p",
+              { className: "mt-2 text-sm" },
+              `Punti: ${progress[activeModal]?.score || 3}`
+            ),
+            progress[activeModal]?.solved && React.createElement(
+              React.Fragment,
+              null,
+              React.createElement("p", { className: "mt-4 text-lg" }, CONSTELLATIONS[activeModal].description)
+            )
+          )
         );
       }
 
