@@ -167,6 +167,15 @@
 
     const { useState, useEffect } = React;
 
+    function shuffleArray(array) {
+      const shuffled = [...array]; 
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
     const CONSTELLATIONS = Array.from({ length: 31 }, (_, i) => ({
       name: `Costellazione ${i + 1}`,
       options: [`Costellazione ${i + 1}`, "Altro 1", "Altro 2", "Altro 3"],
@@ -262,13 +271,13 @@
             !progress[activeModal]?.solved && React.createElement(React.Fragment, null,
               React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
               React.createElement("div", { className: "flex flex-col gap-3" },
-                CONSTELLATIONS[activeModal].options.map((opt, j) =>
-                  React.createElement("button", {
-                    key: j,
-                    onClick: () => handleAnswer(activeModal, opt),
-                    className: "option-button px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow"
-                  }, opt)
-                )
+                      shuffleArray(CONSTELLATIONS[activeModal].options).map((opt, j) =>
+                      React.createElement("button", {
+                          key: j,
+                          onClick: () => handleAnswer(activeModal, opt),
+                          className: "option-button px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow"
+                      }, opt)
+                  )
               ),
               feedback && React.createElement("div", { className: `feedback ${feedback.includes('Corretto') ? 'correct' : feedback.includes('sbagliata') ? 'wrong' : ''}` }, feedback),
               feedback && React.createElement("div", { className: "mt-2 text-sm text-center" },
