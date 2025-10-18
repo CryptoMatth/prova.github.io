@@ -181,439 +181,15 @@
       to { transform: translateX(0); opacity: 1; }
     }
     
-    .save-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-    .save-indicator.saved {
-      background: rgba(34, 197, 94, 0.2);
-      color: #4ade80;
-    }
-    .save-indicator.saving {
-      background: rgba(234, 179, 8, 0.2);
-      color: #facc15;
-    }
-    .save-indicator.error {
-      background: rgba(239, 68, 68, 0.2);
-      color: #f87171;
-    }
-    
-    /* Backup Modal Styles - Sistema Robusto */
-    .backup-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      animation: fadeIn 0.3s ease-in-out;
-    }
 
-    .backup-content {
-      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-      padding: 2.5rem;
-      border-radius: 1.5rem;
-      max-width: 700px;
-      width: 90%;
-      color: white;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      border: 2px solid #374151;
-      position: relative;
-    }
+    
 
-    .backup-content h2 {
-      color: #10b981;
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
-      text-align: center;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
     
-    .backup-instructions {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      color: #e5e7eb;
-    }
-    
-    .backup-instructions strong {
-      color: #fbbf24;
-    }
 
-    .backup-code {
-      width: 100%;
-      min-height: 180px;
-      max-height: 250px;
-      padding: 1.5rem;
-      border: 2px solid #374151;
-      border-radius: 1rem;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      margin: 1.5rem 0;
-      resize: vertical;
-      background: #0f172a;
-      color: #f1f5f9;
-      line-height: 1.4;
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
     
-    .backup-code:focus {
-      outline: none;
-      border-color: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1), inset 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
 
-    .backup-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin: 1.5rem 0;
-    }
 
-    .backup-actions .btn {
-      padding: 0.875rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-transform: none;
-      min-width: 140px;
-    }
 
-    .backup-actions .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
-    
-    .backup-note {
-      font-size: 0.95rem;
-      text-align: center;
-      color: #9ca3af;
-      background: rgba(59, 130, 246, 0.1);
-      padding: 1rem;
-      border-radius: 0.75rem;
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      margin-bottom: 1rem;
-    }
-    
-    .backup-note strong {
-      color: #60a5fa;
-    }
-    
-    .backup-info {
-      text-align: center;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #374151;
-    }
-    
-    .backup-info small {
-      color: #6b7280;
-      font-size: 0.8rem;
-    }
-
-    /* Import feedback styles */
-    .import-feedback {
-      padding: 1rem;
-      margin: 1rem 0;
-      border-radius: 0.75rem;
-      font-weight: 600;
-      font-size: 1rem;
-      text-align: center;
-      border: 2px solid transparent;
-    }
-
-    .import-feedback.success {
-      background: rgba(16, 185, 129, 0.15);
-      color: #10b981;
-      border-color: rgba(16, 185, 129, 0.3);
-      animation: successPulse 0.5s ease-in-out;
-    }
-
-    .import-feedback.error {
-      background: rgba(239, 68, 68, 0.15);
-      color: #ef4444;
-      border-color: rgba(239, 68, 68, 0.3);
-      animation: errorShake 0.5s ease-in-out;
-    }
-    
-    .import-feedback.info {
-      background: rgba(59, 130, 246, 0.15);
-      color: #3b82f6;
-      border-color: rgba(59, 130, 246, 0.3);
-    }
-    
-    @keyframes successPulse {
-      0% { transform: scale(0.95); opacity: 0; }
-      50% { transform: scale(1.02); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    
-    @keyframes errorShake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-    
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
-    }
-    
-    .backup-section {
-      background: rgba(17, 24, 39, 0.8);
-      padding: 1.5rem;
-      border-radius: 1rem;
-      margin: 1rem 0;
-      border: 1px solid rgba(75, 85, 99, 0.3);
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    
-    .stat-card {
-      background: rgba(17, 24, 39, 0.6);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      text-align: center;
-      border: 1px solid rgba(75, 85, 99, 0.2);
-    }
-    
-    /* Login Screen Styles */
-    .login-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #000428 0%, #004e92 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-    }
-    
-    .login-form {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      padding: 3rem;
-      border-radius: 1.5rem;
-      border: 2px solid var(--christmas-gold);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      text-align: center;
-      min-width: 400px;
-    }
-    
-    .login-title {
-      color: var(--christmas-gold);
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-    
-    .login-subtitle {
-      color: white;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-    
-    .login-input {
-      width: 100%;
-      padding: 1rem;
-      margin: 0.5rem 0;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 0.75rem;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-    }
-    
-    .login-input:focus {
-      outline: none;
-      border-color: var(--christmas-gold);
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    }
-    
-    .login-input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
-    }
-    
-    .login-button {
-      width: 100%;
-      padding: 1rem;
-      margin-top: 1rem;
-      background: linear-gradient(45deg, var(--christmas-red), var(--christmas-green));
-      color: white;
-      border: none;
-      border-radius: 0.75rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .login-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    }
-    
-    .login-error {
-      color: #ff6b6b;
-      margin-top: 1rem;
-      font-weight: bold;
-      animation: shake 0.5s ease-in-out;
-    }
-    
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-    
-    /* Header Controls Styles */
-    .header-controls {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .control-btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s ease;
-      font-weight: 500;
-    }
-
-    .control-btn:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-    }
-
-    .export-btn {
-      background: #10b981;
-      color: white;
-    }
-
-    .import-btn {
-      background: #3b82f6;
-      color: white;
-    }
-
-    .leaderboard-btn {
-      background: #f59e0b;
-      color: white;
-    }
-
-    .logout-btn {
-      background: #ef4444;
-      color: white;
-    }
-
-    /* Export Modal Styles */
-    .export-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .export-content {
-      background: #1f2937;
-      padding: 2rem;
-      border-radius: 1rem;
-      max-width: 600px;
-      width: 90%;
-      color: white;
-      text-align: center;
-    }
-
-    .export-content h2 {
-      color: #10b981;
-      margin-bottom: 1rem;
-      font-size: 1.8rem;
-    }
-
-    .export-code {
-      width: 100%;
-      height: 120px;
-      background: #374151;
-      border: 1px solid #4b5563;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      color: #f3f4f6;
-      font-family: monospace;
-      font-size: 0.9rem;
-      resize: none;
-      margin: 1rem 0;
-    }
-
-    .export-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 1.5rem;
-    }
-
-    .copy-btn {
-      background: #10b981;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s ease;
-    }
-
-    .copy-btn:hover {
-      background: #059669;
-      transform: translateY(-1px);
-    }
-
-    .close-btn {
-      background: #6b7280;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .close-btn:hover {
-      background: #4b5563;
-    }
 
     /* Christmas Card Styles */
     .christmas-card {
@@ -654,67 +230,7 @@
       font-family: serif;
     }
     
-    /* Leaderboard Styles */
-    .leaderboard {
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(15px);
-      border: 2px solid var(--christmas-gold);
-      border-radius: 1rem;
-      padding: 2rem;
-      max-width: 600px;
-      width: 100%;
-    }
-    
-    .leaderboard-title {
-      color: var(--christmas-gold);
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
-      font-weight: bold;
-    }
-    
-    .leaderboard-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      margin: 0.5rem 0;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 0.5rem;
-      transition: all 0.3s ease;
-    }
-    
-    .leaderboard-row.current-user {
-      background: rgba(255, 215, 0, 0.2);
-      border: 1px solid var(--christmas-gold);
-    }
-    
-    .leaderboard-row:hover {
-      transform: translateX(5px);
-      background: rgba(255, 255, 255, 0.15);
-    }
-    
-    .rank-badge {
-      background: var(--christmas-gold);
-      color: black;
-      padding: 0.5rem;
-      border-radius: 50%;
-      font-weight: bold;
-      min-width: 40px;
-      text-align: center;
-    }
-    
-    .rank-badge.first {
-      background: #FFD700;
-    }
-    
-    .rank-badge.second {
-      background: #C0C0C0;
-    }
-    
-    .rank-badge.third {
-      background: #CD7F32;
-    }
+
     
     /* Calendar Grid Styles */
     #calendarGrid {
@@ -829,58 +345,14 @@
   <div class="stars" id="stars"></div>
   <div class="snow" id="snow"></div>
 
-  <!-- Login Screen -->
-  <div id="loginScreen" class="login-screen">
-    <div class="login-form">
-      <h1 class="login-title">🎄 Calendario dell'Avvento</h1>
-      <p class="login-subtitle">✨ Costellazioni di Natale ✨</p>
-      
-      <div id="login-form">
-        <input id="usernameInput" type="text" placeholder="👤 Username" class="login-input" autocomplete="username">
-        <input id="passwordInput" type="password" placeholder="🔒 Password" class="login-input" autocomplete="current-password">
-        <button id="loginBtn" class="login-button">🎅 Accedi</button>
-        <div id="loginError" class="login-error" style="display: none;"></div>
-      </div>
-      
-      <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2);">
-        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">Utenti disponibili:</p>
-        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.4;">
-          <strong>mario</strong> / natale2025<br>
-          <strong>lucia</strong> / stella123<br>
-          <strong>andrea</strong> / avvento25
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Main App Content -->
-  <div id="mainApp" class="w-full max-w-6xl relative z-10" style="display: none;">
+  <div id="mainApp" class="w-full max-w-6xl relative z-10">
     <!-- App Header -->
     <div class="app-header">
-      <div class="flex justify-between items-center">
-        <div>
+      <div class="flex justify-center items-center">
+        <div class="text-center">
           <h1 class="header-title text-4xl font-extrabold mb-2">🎄 Calendario dell'Avvento - Costellazioni ✨</h1>
-          <div id="userWelcome" class="text-xl text-white">
-            Benvenuto <strong id="display-name" class="text-yellow-300"></strong>!
-          </div>
-          <div class="flex items-center gap-4 mt-2">
-            <h2 id="totalScore" class="text-lg font-semibold text-white">⭐ Punteggio: 0</h2>
-            <span id="days-completed" class="text-lg font-semibold text-white">📅 Giorni completati: 0/31</span>
-          </div>
-        </div>
-        <div class="header-controls flex gap-3">
-          <button id="leaderboardBtn" class="control-btn leaderboard-btn px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors font-bold">
-            🏆 Classifica
-          </button>
-          <button id="exportBtn" class="control-btn export-btn px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors font-bold">
-            📤 Esporta
-          </button>
-          <button id="importBtn" class="control-btn import-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-bold">
-            📥 Importa
-          </button>
-          <button id="logoutBtn" class="control-btn logout-btn px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
-            🚪 Logout
-          </button>
+          <h2 id="totalScore" class="text-2xl font-semibold text-white">⭐ Punteggio Totale: 0</h2>
         </div>
       </div>
     </div>
@@ -916,74 +388,39 @@
 
     const { useState, useEffect } = React;
 
-    // Sistema utenti hardcoded
-    const USERS = {
-      "mario": { password: "natale2025", displayName: "Mario" },
-      "lucia": { password: "stella123", displayName: "Lucia" },
-      "andrea": { password: "avvento25", displayName: "Andrea" }
-    };
+    // App semplificata - no sistema utenti
 
     // ========================================
-    // SISTEMA BACKUP ROBUSTO - MEMORIA AVANZATA
+    // SISTEMA SALVATAGGIO SEMPLIFICATO - MEMORIA JAVASCRIPT
     // ========================================
-    window.ADVENT_DATA = {
-      currentUser: null,
-      lastSaved: null,
-      autoSaveInterval: null,
-      users: {
-        mario: { displayName: 'Mario', totalScore: 0, progress: {} },
-        lucia: { displayName: 'Lucia', totalScore: 0, progress: {} },
-        andrea: { displayName: 'Andrea', totalScore: 0, progress: {} }
-      }
-    };
-
-    console.log('💾 Sistema memoria avanzato inizializzato:', window.ADVENT_DATA);
+    let gameProgress = {}; // Stato in memoria per i progressi
+    let totalGameScore = 0; // Punteggio totale in memoria
 
     // ========================================
-    // AUTO-SAVE SISTEMA (Simula sessionStorage)
+    // SALVATAGGIO SEMPLIFICATO - MEMORIA JAVASCRIPT
     // ========================================
-    function autoSave() {
-      try {
-        window.ADVENT_DATA.lastSaved = new Date().toISOString();
-        console.log('💾 Auto-salvataggio completato (simulato)', window.ADVENT_DATA.lastSaved);
-        updateSaveIndicator('saved');
-        return true;
-      } catch (error) {
-        console.error('❌ Errore auto-save:', error);
-        updateSaveIndicator('error');
-        return false;
-      }
+    function saveProgress(dayIndex, finalScore, attempts, hintsUsed) {
+      gameProgress[dayIndex] = {
+        solved: true,
+        finalScore: finalScore,
+        attempts: attempts,
+        hintsUsed: hintsUsed,
+        completedAt: new Date().toISOString()
+      };
+      console.log(`💾 Progresso salvato giorno ${dayIndex + 1}:`, gameProgress[dayIndex]);
     }
 
-    // Auto-restore simulato (mantiene dati durante refresh se stesso utente)
-    function autoLoad() {
-      try {
-        if (window.ADVENT_DATA.lastSaved) {
-          console.log('✅ Dati disponibili da sessione precedente:', window.ADVENT_DATA.lastSaved);
-          showToast('💾 Dati della sessione ripristinati automaticamente', 'success');
-          return true;
-        }
-      } catch (error) {
-        console.error('❌ Errore auto-load:', error);
-      }
-      return false;
+    function loadProgress() {
+      return { ...gameProgress }; // Copia dell'oggetto in memoria
     }
 
-    // Avvia auto-save ogni 30 secondi
-    function startAutoSave() {
-      if (window.ADVENT_DATA.autoSaveInterval) {
-        clearInterval(window.ADVENT_DATA.autoSaveInterval);
-      }
-      window.ADVENT_DATA.autoSaveInterval = setInterval(autoSave, 30000);
-      console.log('🔄 Auto-save attivato ogni 30 secondi');
+    function getTotalScore() {
+      return Object.values(gameProgress).reduce((sum, day) => sum + (day.finalScore || 0), 0);
     }
 
-    function stopAutoSave() {
-      if (window.ADVENT_DATA.autoSaveInterval) {
-        clearInterval(window.ADVENT_DATA.autoSaveInterval);
-        window.ADVENT_DATA.autoSaveInterval = null;
-        console.log('⏹️ Auto-save fermato');
-      }
+    function saveDayProgress(dayIndex, dayData) {
+      gameProgress[dayIndex] = dayData;
+      console.log(`💾 Dati giorno ${dayIndex + 1} aggiornati:`, dayData);
     }
 
     // Dati delle costellazioni con informazioni dettagliate (aggiornati con dati reali)
@@ -1100,210 +537,13 @@
       };
     });
 
-    // ========================================
-    // SISTEMA MEMORIA PURA - NO STORAGE API
-    // ========================================
-    
-    function saveProgress(username, dayIndex, finalScore) {
-      if (!window.ADVENT_DATA.users[username]) {
-        window.ADVENT_DATA.users[username] = { displayName: username, totalScore: 0, progress: {} };
-      }
-      
-      window.ADVENT_DATA.users[username].progress[dayIndex] = {
-        solved: true,
-        finalScore: finalScore,
-        completedAt: new Date().toISOString()
-      };
-      
-      // Ricalcola punteggio totale
-      const user = window.ADVENT_DATA.users[username];
-      user.totalScore = Object.values(user.progress)
-        .reduce((sum, day) => sum + (day.finalScore || 0), 0);
-        
-      console.log(`💾 Salvato in memoria ${username}:`, user);
-    }
 
-    function saveUserProgress(username, progress) {
-      if (!window.ADVENT_DATA.users[username]) {
-        window.ADVENT_DATA.users[username] = { displayName: username, totalScore: 0, progress: {} };
-      }
-      
-      window.ADVENT_DATA.users[username].progress = { ...progress };
-      
-      // Ricalcola punteggio totale
-      const user = window.ADVENT_DATA.users[username];
-      user.totalScore = Object.values(user.progress)
-        .reduce((sum, day) => sum + (day.finalScore !== undefined ? day.finalScore : (day.score || 0)), 0);
-        
-      console.log(`💾 Progresso completo salvato per ${username}:`, user);
-    }
 
-    function getProgress(username) {
-      return window.ADVENT_DATA.users[username]?.progress || {};
-    }
 
-    function getUserData(username) {
-      return window.ADVENT_DATA.users[username] || { displayName: username, totalScore: 0, progress: {} };
-    }
 
-    function getLeaderboard() {
-      const leaderboard = [];
-      
-      Object.keys(window.ADVENT_DATA.users).forEach(username => {
-        const user = window.ADVENT_DATA.users[username];
-        const completedDays = Object.keys(user.progress).length;
-        
-        if (completedDays > 0) {
-          leaderboard.push({
-            username,
-            name: user.displayName,
-            score: user.totalScore,
-            days: completedDays
-          });
-        }
-      });
-      
-      console.log('🏆 Classifica da memoria:', leaderboard);
-      return leaderboard.sort((a, b) => b.score - a.score);
-    }
 
-    // ========================================
-    // EXPORT MIGLIORATO CON MODAL ELEGANTE  
-    // ========================================
-    function exportProgressCode() {
-      try {
-        updateSaveIndicator('saving');
-        
-        const exportData = {
-          version: "2.0",
-          timestamp: new Date().toISOString(),
-          generator: "Calendario Avvento Costellazioni",
-          users: window.ADVENT_DATA.users,
-          currentUser: window.ADVENT_DATA.currentUser
-        };
-        
-        const jsonString = JSON.stringify(exportData);
-        const code = btoa(encodeURIComponent(jsonString));
-        
-        console.log('📤 Dati esportati:', {
-          utenti: Object.keys(exportData.users).length,
-          dimensione: code.length + ' caratteri',
-          timestamp: exportData.timestamp
-        });
-        
-        updateSaveIndicator('saved');
-        return code;
-      } catch (error) {
-        console.error('❌ Errore export:', error);
-        updateSaveIndicator('error');
-        throw error;
-      }
-    }
 
-    // ========================================
-    // IMPORT ROBUSTO CON VALIDAZIONE
-    // ========================================
-    function importProgressCode(code) {
-      try {
-        updateSaveIndicator('saving');
-        
-        if (!code || code.trim().length === 0) {
-          throw new Error('Codice vuoto');
-        }
-        
-        // Decodifica e parsing
-        let jsonString;
-        try {
-          jsonString = decodeURIComponent(atob(code.trim()));
-        } catch (e) {
-          // Fallback per codici vecchi
-          jsonString = atob(code.trim());
-        }
-        
-        const importData = JSON.parse(jsonString);
-        
-        // Validazione formato
-        if (!importData.users || typeof importData.users !== 'object') {
-          throw new Error('Formato dati non valido: mancano users');
-        }
-        
-        if (!importData.version) {
-          console.warn('⚠️ Codice senza versione, tentativo import legacy');
-        }
-        
-        console.log('📥 Validazione completata:', {
-          versione: importData.version || 'legacy',
-          utenti_importati: Object.keys(importData.users).length,
-          timestamp: importData.timestamp || 'N/A'
-        });
-        
-        // Merge intelligente con dati esistenti
-        Object.keys(importData.users).forEach(username => {
-          const importUser = importData.users[username];
-          
-          if (!window.ADVENT_DATA.users[username]) {
-            // Nuovo utente
-            window.ADVENT_DATA.users[username] = importUser;
-            console.log(`✅ Nuovo utente importato: ${username}`);
-          } else {
-            // Utente esistente - merge progressi
-            const existingUser = window.ADVENT_DATA.users[username];
-            const existingProgress = existingUser.progress || {};
-            const importedProgress = importUser.progress || {};
-            
-            // Merge con priorità al punteggio più alto per ogni giorno
-            const mergedProgress = { ...existingProgress };
-            Object.keys(importedProgress).forEach(day => {
-              const existing = mergedProgress[day];
-              const imported = importedProgress[day];
-              
-              if (!existing || (imported.finalScore || 0) > (existing.finalScore || 0)) {
-                mergedProgress[day] = imported;
-              }
-            });
-            
-            window.ADVENT_DATA.users[username].progress = mergedProgress;
-            
-            // Ricalcola punteggio totale
-            window.ADVENT_DATA.users[username].totalScore = 
-              Object.values(mergedProgress).reduce((sum, day) => 
-                sum + (day.finalScore !== undefined ? day.finalScore : (day.score || 0)), 0
-              );
-              
-            console.log(`🔄 Utente esistente aggiornato: ${username}`, {
-              giorni_totali: Object.keys(mergedProgress).length,
-              punteggio_finale: window.ADVENT_DATA.users[username].totalScore
-            });
-          }
-        });
-        
-        // Salva timestamp import
-        window.ADVENT_DATA.lastImported = new Date().toISOString();
-        
-        updateSaveIndicator('saved');
-        autoSave(); // Salva subito dopo import
-        
-        console.log('✅ Import completato con successo');
-        return { success: true, usersImported: Object.keys(importData.users).length };
-        
-      } catch (error) {
-        console.error('❌ Errore import:', error.message);
-        updateSaveIndicator('error');
-        return { success: false, error: error.message };
-      }
-    }
 
-    function clearAllData() {
-      window.ADVENT_DATA = {
-        currentUser: null,
-        users: {
-          mario: { displayName: 'Mario', totalScore: 0, progress: {} },
-          lucia: { displayName: 'Lucia', totalScore: 0, progress: {} },
-          andrea: { displayName: 'Andrea', totalScore: 0, progress: {} }
-        }
-      };
-      console.log('🗑️ Tutti i dati resettati');
-    }
 
     // Utility functions
     function shuffleArray(array) {
@@ -1351,261 +591,14 @@
       }, 3000);
     }
 
-    function updateSaveStatus(status) {
-      console.log('💾 Stato salvataggio:', status);
-      updateSaveIndicator(status);
-    }
 
-    // Indicatore visivo dello stato di salvataggio
-    function updateSaveIndicator(status) {
-      let indicator = document.getElementById('saveIndicator');
-      if (!indicator) {
-        // Crea indicatore se non esiste
-        const header = document.querySelector('.app-header .flex.justify-between');
-        if (header) {
-          indicator = document.createElement('div');
-          indicator.id = 'saveIndicator';
-          indicator.className = 'save-indicator';
-          const rightSide = header.querySelector('.header-controls');
-          if (rightSide) {
-            rightSide.parentNode.insertBefore(indicator, rightSide);
-          }
-        }
-      }
-      
-      if (indicator) {
-        indicator.className = 'save-indicator ' + status;
-        switch(status) {
-          case 'saved':
-            indicator.innerHTML = '💾 <span>Salvato</span>';
-            break;
-          case 'saving':
-            indicator.innerHTML = '⏳ <span>Salvataggio...</span>';
-            break;
-          case 'error':
-            indicator.innerHTML = '❌ <span>Errore</span>';
-            break;
-          default:
-            indicator.innerHTML = '💾 <span>Pronto</span>';
-        }
-      }
-    }
 
-    // Login Manager
-    function LoginManager() {
-      useEffect(() => {
-        console.log('🚀 Inizializzazione LoginManager...');
-        
-        // Verifica elementi critici di login
-        const loginBtn = document.getElementById('loginBtn');
-        const usernameInput = document.getElementById('usernameInput');
-        const passwordInput = document.getElementById('passwordInput');
-        const loginError = document.getElementById('loginError');
 
-        console.log('🔍 Elementi login trovati:', {
-          loginBtn: !!loginBtn,
-          usernameInput: !!usernameInput,
-          passwordInput: !!passwordInput,
-          loginError: !!loginError
-        });
 
-        if (!loginBtn || !usernameInput || !passwordInput || !loginError) {
-          console.error('❌ ERRORE CRITICO: Elementi login mancanti!');
-          return;
-        }
+    // App semplificata - inizializzazione diretta
 
-        function handleLogin() {
-          const username = usernameInput.value.trim().toLowerCase();
-          const password = passwordInput.value;
-          
-          console.log('🔐 Tentativo login per:', username);
-          
-          if (USERS[username] && USERS[username].password === password) {
-            console.log('✅ Login valido per:', username);
-            
-            try {
-              // Initialize main app with user FIRST
-              initMainApp(username);
-              
-              showToast(`🎄 Benvenuto ${USERS[username].displayName}! Sistema backup attivo.`, 'success');
-              console.log('🎉 Login completato con successo');
-              
-              // Avvia auto-save immediato
-              setTimeout(() => {
-                autoLoad(); // Verifica se ci sono dati da ripristinare
-                startAutoSave();
-              }, 1000);
-            } catch (error) {
-              console.error('❌ Errore durante il login:', error);
-              showToast('Errore durante l\'accesso', 'error');
-              // Fallback: ricarica la pagina
-              location.reload();
-            }
-          } else {
-            // Login failed
-            loginError.textContent = '❌ Username o password non corretti';
-            loginError.style.display = 'block';
-            
-            // Shake animation for error feedback
-            loginError.style.animation = 'shake 0.5s ease-in-out';
-            
-            setTimeout(() => {
-              loginError.style.display = 'none';
-              loginError.style.animation = '';
-            }, 3000);
-          }
-        }
-
-        console.log('🔗 Aggiunta event listeners login...');
-        loginBtn.addEventListener('click', handleLogin);
-        
-        // Enter key support
-        [usernameInput, passwordInput].forEach(input => {
-          input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-              handleLogin();
-            }
-          });
-        });
-
-        console.log('✅ LoginManager completamente inizializzato');
-        return () => {
-          loginBtn.removeEventListener('click', handleLogin);
-        };
-      }, []);
-
-      return null;
-    }
-
-    // Main App State
-    let currentUser = null;
-    let mainAppInstance = null;
-
-    function initMainApp(username) {
-      console.log('🎯 Inizializzando app principale per:', username);
-      
-      try {
-        // Verifica che tutti gli elementi esistano PRIMA di usarli
-        const loginScreen = document.getElementById('loginScreen');
-        const mainApp = document.getElementById('mainApp');
-        const userWelcome = document.getElementById('userWelcome');
-        const totalScore = document.getElementById('totalScore');
-        const leaderboardBtn = document.getElementById('leaderboardBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const calendarGrid = document.getElementById('calendarGrid');
-        const container = document.getElementById('app');
-        const displayNameEl = document.getElementById('display-name');
-        
-        // Debug: verifica elementi
-        console.log('🔍 Elementi DOM trovati:', {
-          loginScreen: !!loginScreen,
-          mainApp: !!mainApp,
-          userWelcome: !!userWelcome,
-          totalScore: !!totalScore,
-          leaderboardBtn: !!leaderboardBtn,
-          logoutBtn: !!logoutBtn,
-          calendarGrid: !!calendarGrid,
-          container: !!container,
-          displayNameEl: !!displayNameEl
-        });
-        
-        // Solo se TUTTI gli elementi esistono, procedi
-        if (loginScreen && mainApp && userWelcome && totalScore && leaderboardBtn && logoutBtn && container) {
-          console.log('✅ Tutti gli elementi DOM verificati, procedendo...');
-          
-          // Imposta utente corrente
-          currentUser = username;
-          
-          // Nascondi login, mostra app
-          loginScreen.style.display = 'none';
-          mainApp.style.display = 'block';
-          
-          // Update display name
-          if (displayNameEl) {
-            displayNameEl.textContent = USERS[username].displayName;
-            console.log('✅ Nome utente aggiornato:', USERS[username].displayName);
-          }
-          
-          // Aggiungi event listeners SOLO se elementi esistono
-          console.log('🔗 Aggiunta event listeners...');
-          
-          leaderboardBtn.addEventListener('click', () => {
-            console.log('🏆 Clic leaderboard');
-            showLeaderboard();
-          });
-          
-          // Export button functionality
-          const exportBtn = document.getElementById('exportBtn');
-          if (exportBtn) {
-            exportBtn.addEventListener('click', () => {
-              console.log('📤 Export richiesto');
-              exportProgress();
-            });
-          }
-
-          // Import button functionality
-          const importBtn = document.getElementById('importBtn');
-          if (importBtn) {
-            importBtn.addEventListener('click', () => {
-              console.log('📥 Import richiesto');
-              importProgress();
-            });
-          }
-
-          logoutBtn.addEventListener('click', () => {
-            console.log('🚪 Logout richiesto');
-            try {
-              mainApp.style.display = 'none';
-              loginScreen.style.display = 'flex';
-              
-              // Clear form
-              const usernameInput = document.getElementById('usernameInput');
-              const passwordInput = document.getElementById('passwordInput');
-              if (usernameInput) usernameInput.value = '';
-              if (passwordInput) passwordInput.value = '';
-              
-              // Unmount main app
-              if (mainAppInstance) {
-                ReactDOM.unmountComponentAtNode(container);
-                mainAppInstance = null;
-              }
-              
-              currentUser = null;
-              showToast('Logout effettuato', 'info');
-            } catch (logoutError) {
-              console.error('❌ Errore durante logout:', logoutError);
-              location.reload();
-            }
-          });
-          
-          // Render main app component
-          try {
-            console.log('🎨 Rendering componente principale...');
-            mainAppInstance = ReactDOM.createRoot(container);
-            mainAppInstance.render(React.createElement(App, { username }));
-            console.log('✅ App principale renderizzata con successo');
-          } catch (renderError) {
-            console.error('❌ Errore rendering app principale:', renderError);
-            showToast('Errore caricamento interfaccia', 'error');
-            throw renderError;
-          }
-          
-          console.log('✅ App principale inizializzata con successo');
-        } else {
-          throw new Error('Elementi DOM critici mancanti');
-        }
-        
-      } catch (error) {
-        console.error('❌ Errore inizializzazione app:', error);
-        console.error('📍 Stack trace:', error.stack);
-        showToast('Errore critico. Ricaricando...', 'error');
-        // Fallback: ricarica pagina
-        setTimeout(() => location.reload(), 2000);
-      }
-    }
-
-    // Componente principale
-    function App({ username }) {
+    // Componente principale semplificato
+    function App() {
       const [initialized, setInitialized] = useState(false);
       
       const today = new Date();
@@ -1656,299 +649,165 @@
       
 
       const [feedback, setFeedback] = useState("");
-      const [wrongAnswer, setWrongAnswer] = useState(null);
+      
+      // BUG FIX #2: Traccia TUTTE le risposte sbagliate per ogni giorno
+      const [wrongAnswers, setWrongAnswers] = useState({});
+      
       const [totalScore, setTotalScore] = useState(0);
       const [stats, setStats] = useState({});
       
       // BUG FIX #1: Stato per opzioni mescolate una sola volta per modal
       const [shuffledOptions, setShuffledOptions] = useState({});
+      
+      // BUG FIX #1: Traccia TUTTI i tentativi (non solo errori)
+      const [totalAttempts, setTotalAttempts] = useState({});
 
-      // INIZIALIZZAZIONE CON AUTO-RESTORE
+      // INIZIALIZZAZIONE SEMPLIFICATA
       useEffect(() => {
-        function initApp() {
-          console.log('🚀 Inizializzando app per utente:', username);
-          console.log('👤 Utente loggato:', username, '- Nome:', USERS[username]?.displayName);
+        console.log('🚀 Inizializzando calendario semplificato...');
+        
+        try {
+          // Carica progresso dalla memoria JavaScript
+          const savedProgress = loadProgress();
+          console.log('✅ Progresso caricato dalla memoria:', Object.keys(savedProgress).length, 'giorni');
           
-          try {
-            // Imposta utente corrente
-            window.ADVENT_DATA.currentUser = username;
-            
-            // Prova auto-restore prima
-            const restored = autoLoad();
-            
-            // Carica progresso dalla memoria
-            const savedProgress = getProgress(username);
-            console.log('✅ Progresso caricato da memoria:', Object.keys(savedProgress).length, 'giorni');
-            
-            if (restored && Object.keys(savedProgress).length > 0) {
-              console.log('💾 Dati auto-ripristinati per', username);
-              showToast(`💾 Bentornato ${USERS[username]?.displayName}! Dati ripristinati.`, 'success');
-            }
-            
-            setProgress(savedProgress);
-            setInitialized(true);
-            
-            // Avvia auto-save per questo utente
-            startAutoSave();
-            updateSaveIndicator('saved');
-            
-            console.log('✅ App completamente inizializzata con sistema backup robusto');
-            console.log('🎯 Giorni nel progresso salvato:', Object.keys(savedProgress));
-            
-          } catch (error) {
-            console.error('❌ Errore inizializzazione app:', error);
-            setInitError(error.message);
-            // Inizializzazione di fallback - app funziona comunque
-            setProgress({});
-            setInitialized(true);
-            showToast('App avviata in modalità di recupero', 'warning');
+          setProgress(savedProgress);
+          setInitialized(true);
+          
+          if (Object.keys(savedProgress).length > 0) {
+            showToast('💾 Progressi in memoria trovati!', 'success');
           }
+          
+        } catch (error) {
+          console.error('❌ Errore inizializzazione:', error);
+          setProgress({});
+          setInitialized(true);
         }
-        
-        // Avvio immediato con auto-restore
-        initApp();
-        
-        // Cleanup al dismount
-        return () => {
-          stopAutoSave();
-        };
-      }, [username]);
+      }, []);
 
-      // AUTO-SAVE TRIGGER AD OGNI MODIFICA
+      // SALVATAGGIO AUTOMATICO IN MEMORIA
       useEffect(() => {
         if (!initialized) return;
         
-        function saveCurrentProgress() {
-          try {
-            updateSaveIndicator('saving');
-            
-            console.log('=== AUTO-SAVE TRIGGERED ===');
-            
-            // Salva progresso completo per l'utente corrente
-            saveUserProgress(username, progress);
-            
-            const userData = getUserData(username);
-            console.log(`✅ AUTO-SAVED [${username}]:`, {
-              punteggio_totale: userData.totalScore,
-              giorni_completati: Object.values(progress).filter(e => e.solved).length,
-              giorni_nel_progress: Object.keys(progress).length,
-              timestamp: new Date().toISOString()
-            });
-            
-            // Esegui auto-save completo
-            autoSave();
-            
-          } catch (error) {
-            console.error('❌ Errore salvataggio:', error);
-            updateSaveIndicator('error');
-          }
-        }
-        
-        // Salva ad ogni modifica del progresso
-        saveCurrentProgress();
-      }, [progress, initialized, username]);
+        // Aggiorna lo stato globale in memoria
+        gameProgress = { ...progress };
+        console.log('💾 Progresso aggiornato in memoria JavaScript');
+      }, [progress, initialized]);
 
-      // BUG FIX #2 & #3: Calcolo statistiche con debug intensivo
+      // Calcolo statistiche semplificato
       useEffect(() => {
-        console.log('=== CALCOLO STATISTICHE DETTAGLIATO ===');
-        
         let score = 0;
         let completed = 0;
-        let totalAttempts = 0;
-        let totalHints = 0;
         
         Object.entries(progress).forEach(([dayIndex, entry]) => {
-          // BUG FIX #3: Priorità a finalScore per giorni completati
           const entryScore = entry.finalScore !== undefined ? entry.finalScore : (entry.score || 0);
           score += entryScore;
           
-          console.log(`📈 Giorno ${parseInt(dayIndex) + 1}:`, {
-            completato: entry.solved,
-            punteggio_usato: entryScore,
-            punteggio_corrente: entry.score,
-            punteggio_finale: entry.finalScore,
-            tentativi: entry.attempts || 0,
-            indizi: entry.usedHints || 0
-          });
-          
           if (entry.solved) completed++;
-          totalAttempts += entry.attempts || 0;
-          totalHints += entry.usedHints || 0;
         });
         
-        const newStats = {
-          totalScore: score,
-          completedDays: completed,
-          totalAttempts,
-          totalHints,
-          accuracy: totalAttempts > 0 ? Math.round((completed / totalAttempts) * 100) : 0
-        };
-        
-        console.log('🏆 STATISTICHE FINALI:', newStats);
-        console.log('👤 Utente corrente per salvataggio:', currentUser);
-        
-        setStats(newStats);
         setTotalScore(score);
+        
+        console.log('📈 Statistiche aggiornate:', {
+          punteggio: score,
+          completati: completed
+        });
       }, [progress]);
 
-      // Aggiornamento UI
+      // Aggiornamento UI semplificato
       useEffect(() => {
         const totalScoreEl = document.getElementById("totalScore");
-        const daysCompletedEl = document.getElementById("days-completed");
         
         if (totalScoreEl) {
-          totalScoreEl.innerText = `⭐ Punteggio: ${totalScore}`;
+          totalScoreEl.innerText = `⭐ Punteggio Totale: ${totalScore}`;
         }
-        
-        if (daysCompletedEl) {
-          const completed = Object.values(progress).filter(entry => entry.solved).length;
-          daysCompletedEl.innerText = `📅 Giorni completati: ${completed}/31`;
-        }
-        
-        // BUG FIX #3: Log per debug classifica
-        console.log('🔄 UI Aggiornata:', {
-          utente: currentUser,
-          punteggio_totale: totalScore,
-          giorni_completati: Object.values(progress).filter(entry => entry.solved).length,
-          progressi_salvati: Object.keys(progress).length
-        });
-      }, [totalScore, progress]);
+      }, [totalScore]);
 
-      // LOGICA RISPOSTA CON AUTO-SAVE
+      // BUG FIX #1 & #2: LOGICA RISPOSTA CORRETTA
       function handleAnswer(index, choice) {
         const correct = FULL_CONSTELLATIONS[index].name;
+        
         setProgress(prev => {
           const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
           if (entry.solved) return prev;
           
-          updateSaveIndicator('saving');
+          // BUG FIX #1: INCREMENTA SEMPRE totalAttempts
+          setTotalAttempts(prevAttempts => ({
+            ...prevAttempts,
+            [index]: (prevAttempts[index] || 0) + 1
+          }));
           
           if (choice === correct) {
+            // Risposta corretta
             entry.solved = true;
+            entry.attempts = (totalAttempts[index] || 0) + 1; // BUG FIX #1: Salva conteggio corretto
             entry.finalScore = entry.score;
             entry.completedAt = new Date().toISOString();
             
             console.log(`✅ RISPOSTA CORRETTA Giorno ${index + 1}:`, {
-              punteggio_finale: entry.score,
-              tentativi_totali: entry.attempts + 1,
-              indizi_usati: entry.usedHints,
-              completato_alle: entry.completedAt
+              tentativi_totali: entry.attempts,
+              punteggio_finale: entry.score
             });
             
             setFeedback("✅ Corretto! Ottimo lavoro!");
-            setWrongAnswer(null);
+            
+            // BUG FIX #2: Pulisci risposte sbagliate per questo giorno
+            setWrongAnswers(prev => ({ ...prev, [index]: [] }));
             
             const scoreText = entry.score >= 0 ? `+${entry.score}` : `${entry.score}`;
             showToast(`🎆 Giorno ${index + 1} completato! ${scoreText} punti`, 'success');
             
-            // Auto-save immediato per risposte corrette
-            setTimeout(autoSave, 500);
-            
           } else {
+            // Risposta sbagliata
             entry.score = entry.score - 1;
-            entry.attempts += 1;
+            
+            // BUG FIX #2: Aggiungi alla lista delle risposte sbagliate
+            setWrongAnswers(prev => ({
+              ...prev,
+              [index]: [...(prev[index] || []), choice]
+            }));
             
             console.log(`❌ RISPOSTA SBAGLIATA Giorno ${index + 1}:`, {
               risposta_data: choice,
               risposta_corretta: correct,
               punti_rimasti: entry.score,
-              tentativi: entry.attempts
+              tentativi_attuali: (totalAttempts[index] || 0) + 1
             });
             
-            setWrongAnswer(choice);
             const scoreDisplay = entry.score >= 0 ? `+${entry.score}` : `${entry.score}`;
             setFeedback(`❌ Risposta sbagliata! Punti rimasti: ${scoreDisplay}`);
-            
-            // Auto-save anche per risposte sbagliate
-            setTimeout(autoSave, 100);
           }
           
           return { ...prev, [index]: entry };
         });
       }
 
-      // LOGICA INDIZI CON AUTO-SAVE
+      // LOGICA INDIZI SEMPLIFICATA
       function useHint(index) {
         setProgress(prev => {
           const entry = prev[index] || { attempts: 0, solved: false, score: 3, usedHints: 0 };
           if (entry.solved || entry.usedHints >= 3) return prev;
           
-          updateSaveIndicator('saving');
-          
           entry.score = entry.score - 1;
           entry.usedHints += 1;
-          
-          console.log(`💡 INDIZIO USATO Giorno ${index + 1}:`, {
-            indizi_totali: entry.usedHints,
-            punti_dopo_indizio: entry.score,
-            auto_save_triggered: true
-          });
           
           const hint = FULL_CONSTELLATIONS[index].hints[entry.usedHints - 1];
           const scoreDisplay = entry.score >= 0 ? `+${entry.score}` : `${entry.score}`;
           setFeedback(`💡 Indizio: ${hint} (Punti rimasti: ${scoreDisplay})`);
           
-          // Auto-save per indizi
-          setTimeout(autoSave, 100);
-          
           return { ...prev, [index]: entry };
         });
       }
 
-      function exportUserProgress() {
-        try {
-          // Salvataggio finale prima dell'export
-          autoSave();
-          
-          // Usa il sistema export completo con modal
-          exportProgress();
-          
-          console.log('📤 Export avviato con modal user-friendly');
-        } catch (error) {
-          showToast('Errore nella generazione del backup', 'error');
-          console.error('Errore export:', error);
-        }
-      }
-
-      function importUserProgress(backupCode) {
-        // Usa il sistema import completo con modal
-        importProgress();
-        console.log('📥 Import avviato con modal user-friendly');
-      }
-
-      function resetUserProgress() {
-        if (confirm('⚠️ ATTENZIONE: Vuoi resettare TUTTO il progresso?\n\nQuesta azione:\n• Cancellerà tutti i dati di tutti gli utenti\n• Non può essere annullata\n• Fermerà l\'auto-save\n\nContinuare?')) {
-          
-          console.log('🗑️ Reset completo richiesto dall\'utente');
-          
-          // Ferma auto-save
-          stopAutoSave();
-          updateSaveIndicator('saving');
-          
-          // Reset dati
-          clearAllData();
-          setProgress({});
-          
-          // Riavvia auto-save
-          setTimeout(() => {
-            startAutoSave();
-            updateSaveIndicator('saved');
-            showToast('🗑️ Reset completato. Auto-save riavviato.', 'success');
-          }, 1000);
-          
-          console.log('✅ Reset completato, sistema ripristinato');
-        }
-      }
 
 
 
-      // RIMOSSO loading screen problematico - inizializzazione immediata
+
+      // Loading screen semplificato
       if (!initialized) {
-        console.log('⏳ App non ancora inizializzata, mostrando loading...');
         return React.createElement('div', { className: 'text-center py-20' }, 
-          React.createElement('div', { className: 'text-2xl mb-4' }, '⭐ Preparazione calendario...'),
-          React.createElement('div', { className: 'text-lg text-gray-300 mt-2' }, `Ciao ${USERS[username]?.displayName || username}!`),
-          initError && React.createElement('div', { className: 'text-red-400 text-sm mt-4' }, `Errore: ${initError}`)
+          React.createElement('div', { className: 'text-2xl mb-4' }, '⭐ Caricamento calendario...'),
+          React.createElement('div', { className: 'text-lg text-gray-300 mt-2' }, 'Preparazione costellazioni...')
         );
       }
       
@@ -1958,7 +817,7 @@
         React.Fragment,
         null,
         
-        // Banner informativo migliorato
+        // Banner informativo semplificato
         React.createElement(
           "div",
           { className: "info-banner mb-4 p-4 bg-gradient-to-r from-blue-900 to-green-900 bg-opacity-70 rounded-xl border-2 border-blue-400 border-opacity-50" },
@@ -1966,16 +825,13 @@
             React.createElement("span", { className: "text-2xl" }, "💡"),
             React.createElement("div", { className: "flex-1" },
               React.createElement("p", { className: "text-base font-semibold mb-1" }, 
-                "I tuoi progressi vengono salvati automaticamente durante la sessione."
+                "I tuoi progressi vengono salvati automaticamente in questa sessione."
               ),
               React.createElement("p", { className: "text-sm opacity-90" }, 
-                "Usa 'Esporta' per un backup permanente che puoi condividere tra dispositivi. Auto-save ogni 30 secondi."
+                "I progressi sono salvati in memoria durante questa sessione. Sistema semplificato senza login."
               )
             )
-          ),
-          window.ADVENT_DATA.lastSaved && React.createElement("div", { 
-            className: "text-xs text-blue-300 mt-2 text-center opacity-75" 
-          }, `🔄 Ultimo salvataggio automatico: ${new Date(window.ADVENT_DATA.lastSaved).toLocaleString('it-IT')}`)
+          )
         ),
         
         // Messaggio di stato del calendario
@@ -2014,7 +870,6 @@
               if (!locked) {
                 setActiveModal(i);
                 setFeedback("");
-                setWrongAnswer(null);
                 
                 // BUG FIX #1: Mescola opzioni UNA VOLTA all'apertura del modal
                 if (!shuffledOptions[i]) {
@@ -2072,17 +927,20 @@
             !progress[activeModal]?.solved && React.createElement(React.Fragment, null,
               React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
               React.createElement("div", { className: "flex flex-col gap-3" },
-                // BUG FIX #1: Usa opzioni mescolate invece dell'ordine originale
+                // BUG FIX #1 & #2: Opzioni mescolate con risposte multiple sbagliate
                 (shuffledOptions[activeModal] || FULL_CONSTELLATIONS[activeModal].options).map((opt, j) => {
-                  const isWrong = wrongAnswer === opt;
+                  const dayWrongAnswers = wrongAnswers[activeModal] || [];
+                  const isWrong = dayWrongAnswers.includes(opt);
                   const isCorrect = progress[activeModal]?.solved && opt === FULL_CONSTELLATIONS[activeModal].name;
+                  
                   return React.createElement("button", {
                     key: j,
                     onClick: () => handleAnswer(activeModal, opt),
+                    disabled: progress[activeModal]?.solved || isWrong,
                     className: `option-button px-4 py-2 rounded-lg shadow transition-all ${
-                      isCorrect ? 'bg-green-600 hover:bg-green-700' : 
-                      isWrong ? 'bg-red-600 hover:bg-red-700' : 
-                      'bg-blue-600 hover:bg-blue-700'
+                      isCorrect ? 'bg-green-600 hover:bg-green-700 text-white' : 
+                      isWrong ? 'bg-red-600 text-white cursor-not-allowed opacity-75' : 
+                      'bg-blue-600 hover:bg-blue-700 text-white'
                     }`
                   }, opt);
                 })
@@ -2572,97 +1430,48 @@
       }
     }
     
-    // ========================================
-    // INIZIALIZZAZIONE COMPLETA CON BACKUP ROBUSTO
-    // ========================================
+    // Inizializzazione semplificata
     function initializeApp() {
-      console.log('🚀 Inizializzando Calendario dell\'Avvento con sistema backup avanzato...');
+      console.log('🚀 Inizializzando Calendario dell\'Avvento semplificato...');
       
-      // Auto-restore check all'avvio
-      const restored = autoLoad();
-      
-      if (restored) {
-        console.log('💾 Sessione precedente rilevata');
-      } else {
-        console.log('🆕 Nuova sessione inizializzata');
+      // Carica progresso dalla memoria se presente
+      const progress = loadProgress();
+      if (Object.keys(progress).length > 0) {
+        console.log('💾 Progressi trovati in memoria JavaScript:', Object.keys(progress).length, 'giorni');
       }
-      
-      // Avvia auto-save globale (indipendente dal login)
-      console.log('⏰ Sistema auto-save configurato (trigger: ogni 30 secondi)');
-      
-      // Log del sistema di backup
-      console.log('🛡️ Sistema backup robusto attivato:', {
-        auto_save: '30 secondi',
-        modalità_storage: 'Memoria JavaScript Avanzata (compatibile sandboxed)',
-        export_import: 'Modal user-friendly con validazione',
-        persistenza: 'Simulata (mantiene dati durante la sessione)',
-        feedback: 'Indicatori visivi real-time'
-      });
     }
 
-    // Inizializzazione sicura DOM
+    // Inizializzazione DOM semplificata
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('🚀 DOM caricato, inizializzando sistema completo...');
+      console.log('🚀 DOM caricato, avvio calendario semplificato...');
       
-      // Inizializza il sistema di backup
       initializeApp();
       
-      // Verifica elementi critici
-      const criticalElements = ['loginScreen', 'mainApp', 'usernameInput', 'passwordInput', 'loginBtn'];
-      const missing = criticalElements.filter(id => !document.getElementById(id));
-      
-      if (missing.length > 0) {
-        console.error('❌ Elementi DOM critici mancanti:', missing);
-        document.body.innerHTML = '<div style="text-align: center; padding: 2rem; color: white; background: #000;"><h1>❌ Errore caricamento</h1><p>Elementi mancanti: ' + missing.join(', ') + '</p><button onclick="location.reload()">Ricarica Pagina</button></div>';
-        return;
+      // Nascondi elementi non necessari e mostra app
+      const mainApp = document.getElementById('mainApp');
+      if (mainApp) {
+        mainApp.style.display = 'block';
       }
       
-      console.log('✅ Tutti gli elementi critici trovati, inizializzando LoginManager...');
-      
-      // Initialize login screen solo se tutto OK
+      // Avvia app React direttamente
       try {
-        ReactDOM.createRoot(document.createElement('div')).render(React.createElement(LoginManager));
-        console.log('✅ LoginManager inizializzato con successo');
-        
-        // Mostra banner informativo sistema
-        setTimeout(() => {
-          showToast('💾 Sistema backup robusto attivato! Dati auto-salvati ogni 30 secondi.', 'info');
-        }, 2000);
-        
+        const container = document.getElementById('app');
+        if (container) {
+          const root = ReactDOM.createRoot(container);
+          root.render(React.createElement(App));
+          console.log('✅ App calendario inizializzata con successo');
+          
+          setTimeout(() => {
+            showToast('🎄 Calendario dell\'Avvento caricato! Buon divertimento!', 'success');
+          }, 1000);
+        }
       } catch (error) {
-        console.error('❌ Errore inizializzazione LoginManager:', error);
-        showToast('Errore sistema login', 'error');
+        console.error('❌ Errore inizializzazione app:', error);
+        showToast('Errore caricamento calendario', 'error');
       }
     });
     
-    // Event listener per data imported 
-    window.addEventListener('dataImported', () => {
-      console.log('📥 Evento dataImported ricevuto, aggiornamento interfaccia...');
-      // Trigger per aggiornare l'interfaccia dopo import
-      if (currentUser) {
-        const userData = getUserData(currentUser);
-        const totalScoreEl = document.getElementById("totalScore");
-        const daysCompletedEl = document.getElementById("days-completed");
-        
-        if (totalScoreEl) {
-          totalScoreEl.innerText = `⭐ Punteggio: ${userData.totalScore}`;
-        }
-        
-        if (daysCompletedEl) {
-          const completed = Object.values(userData.progress).filter(entry => entry.solved).length;
-          daysCompletedEl.innerText = `📅 Giorni completati: ${completed}/31`;
-        }
-        
-        showToast('✅ Interfaccia aggiornata dopo import!', 'success');
-      }
-    });
-    
-    // Cleanup globale al beforeunload
-    window.addEventListener('beforeunload', () => {
-      console.log('💾 Salvataggio finale prima di chiudere...');
-      autoSave();
-      stopAutoSave();
-    });
+
   </script>
 </body>
 </html>
