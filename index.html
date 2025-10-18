@@ -832,13 +832,13 @@
   <!-- Login Screen -->
   <div id="loginScreen" class="login-screen">
     <div class="login-form">
-      <h1 class="login-title">ðŸŽ„ Calendario dell'Avvento</h1>
-      <p class="login-subtitle">âœ¨ Costellazioni di Natale âœ¨</p>
+      <h1 class="login-title">🎄 Calendario dell'Avvento</h1>
+      <p class="login-subtitle">✨ Costellazioni di Natale ✨</p>
       
       <div id="login-form">
-        <input id="usernameInput" type="text" placeholder="ðŸ‘¤ Username" class="login-input" autocomplete="username">
-        <input id="passwordInput" type="password" placeholder="ðŸ”’ Password" class="login-input" autocomplete="current-password">
-        <button id="loginBtn" class="login-button">ðŸŽ… Accedi</button>
+        <input id="usernameInput" type="text" placeholder="👤 Username" class="login-input" autocomplete="username">
+        <input id="passwordInput" type="password" placeholder="🔒 Password" class="login-input" autocomplete="current-password">
+        <button id="loginBtn" class="login-button">🎅 Accedi</button>
         <div id="loginError" class="login-error" style="display: none;"></div>
       </div>
       
@@ -859,27 +859,27 @@
     <div class="app-header">
       <div class="flex justify-between items-center">
         <div>
-          <h1 class="header-title text-4xl font-extrabold mb-2">ðŸŽ„ Calendario dell'Avvento - Costellazioni âœ¨</h1>
+          <h1 class="header-title text-4xl font-extrabold mb-2">🎄 Calendario dell'Avvento - Costellazioni ✨</h1>
           <div id="userWelcome" class="text-xl text-white">
             Benvenuto <strong id="display-name" class="text-yellow-300"></strong>!
           </div>
           <div class="flex items-center gap-4 mt-2">
-            <h2 id="totalScore" class="text-lg font-semibold text-white">â­ Punteggio: 0</h2>
-            <span id="days-completed" class="text-lg font-semibold text-white">ðŸ“… Giorni completati: 0/31</span>
+            <h2 id="totalScore" class="text-lg font-semibold text-white">⭐ Punteggio: 0</h2>
+            <span id="days-completed" class="text-lg font-semibold text-white">📅 Giorni completati: 0/31</span>
           </div>
         </div>
         <div class="header-controls flex gap-3">
           <button id="leaderboardBtn" class="control-btn leaderboard-btn px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors font-bold">
-            ðŸ† Classifica
+            🏆 Classifica
           </button>
           <button id="exportBtn" class="control-btn export-btn px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors font-bold">
-            ðŸ“¤ Esporta
+            📤 Esporta
           </button>
           <button id="importBtn" class="control-btn import-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-bold">
-            ðŸ“¥ Importa
+            📥 Importa
           </button>
           <button id="logoutBtn" class="control-btn logout-btn px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
-            ðŸšª Logout
+            🚪 Logout
           </button>
         </div>
       </div>
@@ -937,7 +937,7 @@
       }
     };
 
-    console.log('ðŸ’¾ Sistema memoria avanzato inizializzato:', window.ADVENT_DATA);
+    console.log('💾 Sistema memoria avanzato inizializzato:', window.ADVENT_DATA);
 
     // ========================================
     // AUTO-SAVE SISTEMA (Simula sessionStorage)
@@ -945,11 +945,11 @@
     function autoSave() {
       try {
         window.ADVENT_DATA.lastSaved = new Date().toISOString();
-        console.log('ðŸ’¾ Auto-salvataggio completato (simulato)', window.ADVENT_DATA.lastSaved);
+        console.log('💾 Auto-salvataggio completato (simulato)', window.ADVENT_DATA.lastSaved);
         updateSaveIndicator('saved');
         return true;
       } catch (error) {
-        console.error('âŒ Errore auto-save:', error);
+        console.error('❌ Errore auto-save:', error);
         updateSaveIndicator('error');
         return false;
       }
@@ -959,12 +959,12 @@
     function autoLoad() {
       try {
         if (window.ADVENT_DATA.lastSaved) {
-          console.log('âœ… Dati disponibili da sessione precedente:', window.ADVENT_DATA.lastSaved);
-          showToast('ðŸ’¾ Dati della sessione ripristinati automaticamente', 'success');
+          console.log('✅ Dati disponibili da sessione precedente:', window.ADVENT_DATA.lastSaved);
+          showToast('💾 Dati della sessione ripristinati automaticamente', 'success');
           return true;
         }
       } catch (error) {
-        console.error('âŒ Errore auto-load:', error);
+        console.error('❌ Errore auto-load:', error);
       }
       return false;
     }
@@ -975,14 +975,14 @@
         clearInterval(window.ADVENT_DATA.autoSaveInterval);
       }
       window.ADVENT_DATA.autoSaveInterval = setInterval(autoSave, 30000);
-      console.log('ðŸ”„ Auto-save attivato ogni 30 secondi');
+      console.log('🔄 Auto-save attivato ogni 30 secondi');
     }
 
     function stopAutoSave() {
       if (window.ADVENT_DATA.autoSaveInterval) {
         clearInterval(window.ADVENT_DATA.autoSaveInterval);
         window.ADVENT_DATA.autoSaveInterval = null;
-        console.log('â¹ï¸ Auto-save fermato');
+        console.log('⏹️ Auto-save fermato');
       }
     }
 
@@ -991,9 +991,9 @@
       {
         name: "Orsa Maggiore",
         options: ["Orsa Maggiore", "Orsa Minore", "Cassiopea", "Andromeda"],
-        description: "Una delle costellazioni piÃ¹ famose del cielo settentrionale, facilmente riconoscibile per la sua forma caratteristica a 'Grande Carro'.",
+        description: "Una delle costellazioni più famose del cielo settentrionale, facilmente riconoscibile per la sua forma caratteristica a 'Grande Carro'.",
         hints: [
-          "Ãˆ conosciuta anche come 'Grande Carro'",
+          "È conosciuta anche come 'Grande Carro'",
           "Contiene sette stelle principali molto luminose", 
           "Le sue stelle puntano verso la Stella Polare"
         ]
@@ -1001,21 +1001,21 @@
       {
         name: "Cassiopea",
         options: ["Cassiopea", "Andromeda", "Perseo", "Cigno"],
-        description: "Riconoscibile per la sua forma a 'W' o 'M', Ã¨ una costellazione circumpolare facilmente visibile tutto l'anno.",
+        description: "Riconoscibile per la sua forma a 'W' o 'M', è una costellazione circumpolare facilmente visibile tutto l'anno.",
         hints: [
           "Ha la forma di una 'W' o di una 'M'",
-          "Ãˆ circumpolare, sempre visibile alle nostre latitudini",
+          "È circumpolare, sempre visibile alle nostre latitudini",
           "Prende il nome da una regina della mitologia greca"
         ]
       },
       {
         name: "Orione",
         options: ["Orione", "Scorpione", "Leone", "Sagittario"],
-        description: "La costellazione del cacciatore, una delle piÃ¹ spettacolari del cielo invernale, con la famosa Nebulosa di Orione.",
+        description: "La costellazione del cacciatore, una delle più spettacolari del cielo invernale, con la famosa Nebulosa di Orione.",
         hints: [
-          "Ãˆ la costellazione del cacciatore nella mitologia",
+          "È la costellazione del cacciatore nella mitologia",
           "Contiene la famosa cintura di tre stelle",
-          "Ãˆ visibile principalmente in inverno"
+          "È visibile principalmente in inverno"
         ]
       },
       {
@@ -1023,19 +1023,19 @@
         options: ["Andromeda", "Cassiopea", "Perseo", "Pegaso"],
         description: "Costellazione che contiene la famosa Galassia di Andromeda, visibile a occhio nudo in cieli bui.",
         hints: [
-          "Contiene la galassia piÃ¹ vicina alla Via Lattea",
-          "Ãˆ collegata al mito di Perseo e della principessa",
-          "La sua galassia Ã¨ visibile a occhio nudo"
+          "Contiene la galassia più vicina alla Via Lattea",
+          "È collegata al mito di Perseo e della principessa",
+          "La sua galassia è visibile a occhio nudo"
         ]
       },
       {
         name: "Perseo",
         options: ["Perseo", "Andromeda", "Cassiopea", "Auriga"],
-        description: "Costellazione che rappresenta l'eroe della mitologia greca che salvÃ² Andromeda.",
+        description: "Costellazione che rappresenta l'eroe della mitologia greca che salvò Andromeda.",
         hints: [
-          "Ãˆ l'eroe che salvÃ² Andromeda nella mitologia",
+          "È l'eroe che salvò Andromeda nella mitologia",
           "Contiene l'ammasso stellare delle Pleiadi nelle vicinanze",
-          "Ãˆ visibile in autunno e inverno"
+          "È visibile in autunno e inverno"
         ]
       },
       {
@@ -1044,8 +1044,8 @@
         description: "Una grande costellazione estiva, facilmente riconoscibile per la sua forma a croce.",
         hints: [
           "Ha la forma di una grande croce nel cielo",
-          "Ãˆ una delle costellazioni piÃ¹ grandi",
-          "Contiene la stella Deneb, una delle piÃ¹ luminose"
+          "È una delle costellazioni più grandi",
+          "Contiene la stella Deneb, una delle più luminose"
         ]
       },
       {
@@ -1055,17 +1055,17 @@
         hints: [
           "Rappresenta l'aquila di Zeus",
           "Contiene la stella brillante Altair",
-          "Ãˆ parte del triangolo estivo"
+          "È parte del triangolo estivo"
         ]
       },
       {
         name: "Lira",
         options: ["Lira", "Cigno", "Aquila", "Ercole"],
-        description: "Piccola costellazione che contiene Vega, una delle stelle piÃ¹ brillanti del cielo.",
+        description: "Piccola costellazione che contiene Vega, una delle stelle più brillanti del cielo.",
         hints: [
           "Contiene Vega, stella molto brillante",
           "Rappresenta lo strumento musicale di Orfeo",
-          "Ãˆ piccola ma molto riconoscibile"
+          "È piccola ma molto riconoscibile"
         ]
       },
       {
@@ -1074,18 +1074,18 @@
         description: "Una grande costellazione circumpolare che si avvolge attorno al polo nord celeste.",
         hints: [
           "Si avvolge attorno al polo nord celeste",
-          "Ãˆ una costellazione molto estesa",
-          "Ãˆ sempre visibile alle nostre latitudini"
+          "È una costellazione molto estesa",
+          "È sempre visibile alle nostre latitudini"
         ]
       },
       {
         name: "Boote",
         options: ["Boote", "Vergine", "Corona Boreale", "Ercole"],
-        description: "Costellazione primaverile che contiene Arturo, una delle stelle piÃ¹ brillanti.",
+        description: "Costellazione primaverile che contiene Arturo, una delle stelle più brillanti.",
         hints: [
           "Contiene Arturo, stella molto brillante",
-          "Ãˆ chiamato anche il Pastore",
-          "Ãˆ ben visibile in primavera"
+          "È chiamato anche il Pastore",
+          "È ben visibile in primavera"
         ]
       }
     ];
@@ -1120,7 +1120,7 @@
       user.totalScore = Object.values(user.progress)
         .reduce((sum, day) => sum + (day.finalScore || 0), 0);
         
-      console.log(`ðŸ’¾ Salvato in memoria ${username}:`, user);
+      console.log(`💾 Salvato in memoria ${username}:`, user);
     }
 
     function saveUserProgress(username, progress) {
@@ -1135,7 +1135,7 @@
       user.totalScore = Object.values(user.progress)
         .reduce((sum, day) => sum + (day.finalScore !== undefined ? day.finalScore : (day.score || 0)), 0);
         
-      console.log(`ðŸ’¾ Progresso completo salvato per ${username}:`, user);
+      console.log(`💾 Progresso completo salvato per ${username}:`, user);
     }
 
     function getProgress(username) {
@@ -1163,7 +1163,7 @@
         }
       });
       
-      console.log('ðŸ† Classifica da memoria:', leaderboard);
+      console.log('🏆 Classifica da memoria:', leaderboard);
       return leaderboard.sort((a, b) => b.score - a.score);
     }
 
@@ -1185,7 +1185,7 @@
         const jsonString = JSON.stringify(exportData);
         const code = btoa(encodeURIComponent(jsonString));
         
-        console.log('ðŸ“¤ Dati esportati:', {
+        console.log('📤 Dati esportati:', {
           utenti: Object.keys(exportData.users).length,
           dimensione: code.length + ' caratteri',
           timestamp: exportData.timestamp
@@ -1194,7 +1194,7 @@
         updateSaveIndicator('saved');
         return code;
       } catch (error) {
-        console.error('âŒ Errore export:', error);
+        console.error('❌ Errore export:', error);
         updateSaveIndicator('error');
         throw error;
       }
@@ -1228,10 +1228,10 @@
         }
         
         if (!importData.version) {
-          console.warn('âš ï¸ Codice senza versione, tentativo import legacy');
+          console.warn('⚠️ Codice senza versione, tentativo import legacy');
         }
         
-        console.log('ðŸ“¥ Validazione completata:', {
+        console.log('📥 Validazione completata:', {
           versione: importData.version || 'legacy',
           utenti_importati: Object.keys(importData.users).length,
           timestamp: importData.timestamp || 'N/A'
@@ -1244,14 +1244,14 @@
           if (!window.ADVENT_DATA.users[username]) {
             // Nuovo utente
             window.ADVENT_DATA.users[username] = importUser;
-            console.log(`âœ… Nuovo utente importato: ${username}`);
+            console.log(`✅ Nuovo utente importato: ${username}`);
           } else {
             // Utente esistente - merge progressi
             const existingUser = window.ADVENT_DATA.users[username];
             const existingProgress = existingUser.progress || {};
             const importedProgress = importUser.progress || {};
             
-            // Merge con prioritÃ  al punteggio piÃ¹ alto per ogni giorno
+            // Merge con priorità al punteggio più alto per ogni giorno
             const mergedProgress = { ...existingProgress };
             Object.keys(importedProgress).forEach(day => {
               const existing = mergedProgress[day];
@@ -1270,7 +1270,7 @@
                 sum + (day.finalScore !== undefined ? day.finalScore : (day.score || 0)), 0
               );
               
-            console.log(`ðŸ”„ Utente esistente aggiornato: ${username}`, {
+            console.log(`🔄 Utente esistente aggiornato: ${username}`, {
               giorni_totali: Object.keys(mergedProgress).length,
               punteggio_finale: window.ADVENT_DATA.users[username].totalScore
             });
@@ -1283,11 +1283,11 @@
         updateSaveIndicator('saved');
         autoSave(); // Salva subito dopo import
         
-        console.log('âœ… Import completato con successo');
+        console.log('✅ Import completato con successo');
         return { success: true, usersImported: Object.keys(importData.users).length };
         
       } catch (error) {
-        console.error('âŒ Errore import:', error.message);
+        console.error('❌ Errore import:', error.message);
         updateSaveIndicator('error');
         return { success: false, error: error.message };
       }
@@ -1302,7 +1302,7 @@
           andrea: { displayName: 'Andrea', totalScore: 0, progress: {} }
         }
       };
-      console.log('ðŸ—‘ï¸ Tutti i dati resettati');
+      console.log('🗑️ Tutti i dati resettati');
     }
 
     // Utility functions
@@ -1352,7 +1352,7 @@
     }
 
     function updateSaveStatus(status) {
-      console.log('ðŸ’¾ Stato salvataggio:', status);
+      console.log('💾 Stato salvataggio:', status);
       updateSaveIndicator(status);
     }
 
@@ -1377,16 +1377,16 @@
         indicator.className = 'save-indicator ' + status;
         switch(status) {
           case 'saved':
-            indicator.innerHTML = 'ðŸ’¾ <span>Salvato</span>';
+            indicator.innerHTML = '💾 <span>Salvato</span>';
             break;
           case 'saving':
-            indicator.innerHTML = 'â³ <span>Salvataggio...</span>';
+            indicator.innerHTML = '⏳ <span>Salvataggio...</span>';
             break;
           case 'error':
-            indicator.innerHTML = 'âŒ <span>Errore</span>';
+            indicator.innerHTML = '❌ <span>Errore</span>';
             break;
           default:
-            indicator.innerHTML = 'ðŸ’¾ <span>Pronto</span>';
+            indicator.innerHTML = '💾 <span>Pronto</span>';
         }
       }
     }
@@ -1394,7 +1394,7 @@
     // Login Manager
     function LoginManager() {
       useEffect(() => {
-        console.log('ðŸš€ Inizializzazione LoginManager...');
+        console.log('🚀 Inizializzazione LoginManager...');
         
         // Verifica elementi critici di login
         const loginBtn = document.getElementById('loginBtn');
@@ -1402,7 +1402,7 @@
         const passwordInput = document.getElementById('passwordInput');
         const loginError = document.getElementById('loginError');
 
-        console.log('ðŸ” Elementi login trovati:', {
+        console.log('🔍 Elementi login trovati:', {
           loginBtn: !!loginBtn,
           usernameInput: !!usernameInput,
           passwordInput: !!passwordInput,
@@ -1410,7 +1410,7 @@
         });
 
         if (!loginBtn || !usernameInput || !passwordInput || !loginError) {
-          console.error('âŒ ERRORE CRITICO: Elementi login mancanti!');
+          console.error('❌ ERRORE CRITICO: Elementi login mancanti!');
           return;
         }
 
@@ -1418,17 +1418,17 @@
           const username = usernameInput.value.trim().toLowerCase();
           const password = passwordInput.value;
           
-          console.log('ðŸ” Tentativo login per:', username);
+          console.log('🔐 Tentativo login per:', username);
           
           if (USERS[username] && USERS[username].password === password) {
-            console.log('âœ… Login valido per:', username);
+            console.log('✅ Login valido per:', username);
             
             try {
               // Initialize main app with user FIRST
               initMainApp(username);
               
-              showToast(`ðŸŽ„ Benvenuto ${USERS[username].displayName}! Sistema backup attivo.`, 'success');
-              console.log('ðŸŽ‰ Login completato con successo');
+              showToast(`🎄 Benvenuto ${USERS[username].displayName}! Sistema backup attivo.`, 'success');
+              console.log('🎉 Login completato con successo');
               
               // Avvia auto-save immediato
               setTimeout(() => {
@@ -1436,14 +1436,14 @@
                 startAutoSave();
               }, 1000);
             } catch (error) {
-              console.error('âŒ Errore durante il login:', error);
+              console.error('❌ Errore durante il login:', error);
               showToast('Errore durante l\'accesso', 'error');
               // Fallback: ricarica la pagina
               location.reload();
             }
           } else {
             // Login failed
-            loginError.textContent = 'âŒ Username o password non corretti';
+            loginError.textContent = '❌ Username o password non corretti';
             loginError.style.display = 'block';
             
             // Shake animation for error feedback
@@ -1456,7 +1456,7 @@
           }
         }
 
-        console.log('ðŸ”— Aggiunta event listeners login...');
+        console.log('🔗 Aggiunta event listeners login...');
         loginBtn.addEventListener('click', handleLogin);
         
         // Enter key support
@@ -1468,7 +1468,7 @@
           });
         });
 
-        console.log('âœ… LoginManager completamente inizializzato');
+        console.log('✅ LoginManager completamente inizializzato');
         return () => {
           loginBtn.removeEventListener('click', handleLogin);
         };
@@ -1482,7 +1482,7 @@
     let mainAppInstance = null;
 
     function initMainApp(username) {
-      console.log('ðŸŽ¯ Inizializzando app principale per:', username);
+      console.log('🎯 Inizializzando app principale per:', username);
       
       try {
         // Verifica che tutti gli elementi esistano PRIMA di usarli
@@ -1497,7 +1497,7 @@
         const displayNameEl = document.getElementById('display-name');
         
         // Debug: verifica elementi
-        console.log('ðŸ” Elementi DOM trovati:', {
+        console.log('🔍 Elementi DOM trovati:', {
           loginScreen: !!loginScreen,
           mainApp: !!mainApp,
           userWelcome: !!userWelcome,
@@ -1511,7 +1511,7 @@
         
         // Solo se TUTTI gli elementi esistono, procedi
         if (loginScreen && mainApp && userWelcome && totalScore && leaderboardBtn && logoutBtn && container) {
-          console.log('âœ… Tutti gli elementi DOM verificati, procedendo...');
+          console.log('✅ Tutti gli elementi DOM verificati, procedendo...');
           
           // Imposta utente corrente
           currentUser = username;
@@ -1523,14 +1523,14 @@
           // Update display name
           if (displayNameEl) {
             displayNameEl.textContent = USERS[username].displayName;
-            console.log('âœ… Nome utente aggiornato:', USERS[username].displayName);
+            console.log('✅ Nome utente aggiornato:', USERS[username].displayName);
           }
           
           // Aggiungi event listeners SOLO se elementi esistono
-          console.log('ðŸ”— Aggiunta event listeners...');
+          console.log('🔗 Aggiunta event listeners...');
           
           leaderboardBtn.addEventListener('click', () => {
-            console.log('ðŸ† Clic leaderboard');
+            console.log('🏆 Clic leaderboard');
             showLeaderboard();
           });
           
@@ -1538,7 +1538,7 @@
           const exportBtn = document.getElementById('exportBtn');
           if (exportBtn) {
             exportBtn.addEventListener('click', () => {
-              console.log('ðŸ“¤ Export richiesto');
+              console.log('📤 Export richiesto');
               exportProgress();
             });
           }
@@ -1547,13 +1547,13 @@
           const importBtn = document.getElementById('importBtn');
           if (importBtn) {
             importBtn.addEventListener('click', () => {
-              console.log('ðŸ“¥ Import richiesto');
+              console.log('📥 Import richiesto');
               importProgress();
             });
           }
 
           logoutBtn.addEventListener('click', () => {
-            console.log('ðŸšª Logout richiesto');
+            console.log('🚪 Logout richiesto');
             try {
               mainApp.style.display = 'none';
               loginScreen.style.display = 'flex';
@@ -1573,31 +1573,31 @@
               currentUser = null;
               showToast('Logout effettuato', 'info');
             } catch (logoutError) {
-              console.error('âŒ Errore durante logout:', logoutError);
+              console.error('❌ Errore durante logout:', logoutError);
               location.reload();
             }
           });
           
           // Render main app component
           try {
-            console.log('ðŸŽ¨ Rendering componente principale...');
+            console.log('🎨 Rendering componente principale...');
             mainAppInstance = ReactDOM.createRoot(container);
             mainAppInstance.render(React.createElement(App, { username }));
-            console.log('âœ… App principale renderizzata con successo');
+            console.log('✅ App principale renderizzata con successo');
           } catch (renderError) {
-            console.error('âŒ Errore rendering app principale:', renderError);
+            console.error('❌ Errore rendering app principale:', renderError);
             showToast('Errore caricamento interfaccia', 'error');
             throw renderError;
           }
           
-          console.log('âœ… App principale inizializzata con successo');
+          console.log('✅ App principale inizializzata con successo');
         } else {
           throw new Error('Elementi DOM critici mancanti');
         }
         
       } catch (error) {
-        console.error('âŒ Errore inizializzazione app:', error);
-        console.error('ðŸ“ Stack trace:', error.stack);
+        console.error('❌ Errore inizializzazione app:', error);
+        console.error('📍 Stack trace:', error.stack);
         showToast('Errore critico. Ricaricando...', 'error');
         // Fallback: ricarica pagina
         setTimeout(() => location.reload(), 2000);
@@ -1616,29 +1616,29 @@
       // LOGICA CORRETTA PER TESTING - 17 ottobre 2025
       let maxDay;
       
-      console.log("ðŸ“… Data corrente:", today);
-      console.log("ðŸ“… Mese corrente:", currentMonth, "(0=gen, 9=ott, 11=dic)");
-      console.log("ðŸ“… Giorno corrente:", currentDay);
+      console.log("📅 Data corrente:", today);
+      console.log("📅 Mese corrente:", currentMonth, "(0=gen, 9=ott, 11=dic)");
+      console.log("📅 Giorno corrente:", currentDay);
       
       if (currentMonth === 11 && currentYear === 2025) { 
         // Se siamo a dicembre 2025, sblocca fino al giorno corrente
         maxDay = currentDay;
-        console.log("ðŸ—“ï¸ ModalitÃ  dicembre: giorni sbloccati fino al", maxDay);
+        console.log("🗓️ Modalità dicembre: giorni sbloccati fino al", maxDay);
       } else if (currentMonth < 11 || currentYear < 2025) { 
         // Se siamo PRIMA di dicembre (come ora ottobre), sblocca i primi 5 giorni per TESTING
         maxDay = 5; // FISSO per testing
-        console.log("ðŸ§ª ModalitÃ  testing PRE-dicembre: giorni sbloccati:", maxDay);
+        console.log("🧪 Modalità testing PRE-dicembre: giorni sbloccati:", maxDay);
       } else { 
         // Se siamo DOPO dicembre, sblocca tutto
         maxDay = 31;
-        console.log("ðŸŽ‰ ModalitÃ  post-dicembre: tutti i giorni sbloccati");
+        console.log("🎉 Modalità post-dicembre: tutti i giorni sbloccati");
       }
       
-      console.log("âœ… Giorni max disponibili:", maxDay);
+      console.log("✅ Giorni max disponibili:", maxDay);
       
       // FALLBACK DI EMERGENZA come richiesto
       if (typeof maxDay !== 'number' || isNaN(maxDay) || maxDay < 0) {
-        console.warn("âš ï¸ FALLBACK ATTIVATO: Logica date fallita, forzando 5 giorni per testing");
+        console.warn("⚠️ FALLBACK ATTIVATO: Logica date fallita, forzando 5 giorni per testing");
         maxDay = 5;
       }
       
@@ -1666,8 +1666,8 @@
       // INIZIALIZZAZIONE CON AUTO-RESTORE
       useEffect(() => {
         function initApp() {
-          console.log('ðŸš€ Inizializzando app per utente:', username);
-          console.log('ðŸ‘¤ Utente loggato:', username, '- Nome:', USERS[username]?.displayName);
+          console.log('🚀 Inizializzando app per utente:', username);
+          console.log('👤 Utente loggato:', username, '- Nome:', USERS[username]?.displayName);
           
           try {
             // Imposta utente corrente
@@ -1678,11 +1678,11 @@
             
             // Carica progresso dalla memoria
             const savedProgress = getProgress(username);
-            console.log('âœ… Progresso caricato da memoria:', Object.keys(savedProgress).length, 'giorni');
+            console.log('✅ Progresso caricato da memoria:', Object.keys(savedProgress).length, 'giorni');
             
             if (restored && Object.keys(savedProgress).length > 0) {
-              console.log('ðŸ’¾ Dati auto-ripristinati per', username);
-              showToast(`ðŸ’¾ Bentornato ${USERS[username]?.displayName}! Dati ripristinati.`, 'success');
+              console.log('💾 Dati auto-ripristinati per', username);
+              showToast(`💾 Bentornato ${USERS[username]?.displayName}! Dati ripristinati.`, 'success');
             }
             
             setProgress(savedProgress);
@@ -1692,16 +1692,16 @@
             startAutoSave();
             updateSaveIndicator('saved');
             
-            console.log('âœ… App completamente inizializzata con sistema backup robusto');
-            console.log('ðŸŽ¯ Giorni nel progresso salvato:', Object.keys(savedProgress));
+            console.log('✅ App completamente inizializzata con sistema backup robusto');
+            console.log('🎯 Giorni nel progresso salvato:', Object.keys(savedProgress));
             
           } catch (error) {
-            console.error('âŒ Errore inizializzazione app:', error);
+            console.error('❌ Errore inizializzazione app:', error);
             setInitError(error.message);
             // Inizializzazione di fallback - app funziona comunque
             setProgress({});
             setInitialized(true);
-            showToast('App avviata in modalitÃ  di recupero', 'warning');
+            showToast('App avviata in modalità di recupero', 'warning');
           }
         }
         
@@ -1728,7 +1728,7 @@
             saveUserProgress(username, progress);
             
             const userData = getUserData(username);
-            console.log(`âœ… AUTO-SAVED [${username}]:`, {
+            console.log(`✅ AUTO-SAVED [${username}]:`, {
               punteggio_totale: userData.totalScore,
               giorni_completati: Object.values(progress).filter(e => e.solved).length,
               giorni_nel_progress: Object.keys(progress).length,
@@ -1739,7 +1739,7 @@
             autoSave();
             
           } catch (error) {
-            console.error('âŒ Errore salvataggio:', error);
+            console.error('❌ Errore salvataggio:', error);
             updateSaveIndicator('error');
           }
         }
@@ -1758,11 +1758,11 @@
         let totalHints = 0;
         
         Object.entries(progress).forEach(([dayIndex, entry]) => {
-          // BUG FIX #3: PrioritÃ  a finalScore per giorni completati
+          // BUG FIX #3: Priorità a finalScore per giorni completati
           const entryScore = entry.finalScore !== undefined ? entry.finalScore : (entry.score || 0);
           score += entryScore;
           
-          console.log(`ðŸ“ˆ Giorno ${parseInt(dayIndex) + 1}:`, {
+          console.log(`📈 Giorno ${parseInt(dayIndex) + 1}:`, {
             completato: entry.solved,
             punteggio_usato: entryScore,
             punteggio_corrente: entry.score,
@@ -1784,8 +1784,8 @@
           accuracy: totalAttempts > 0 ? Math.round((completed / totalAttempts) * 100) : 0
         };
         
-        console.log('ðŸ† STATISTICHE FINALI:', newStats);
-        console.log('ðŸ‘¤ Utente corrente per salvataggio:', currentUser);
+        console.log('🏆 STATISTICHE FINALI:', newStats);
+        console.log('👤 Utente corrente per salvataggio:', currentUser);
         
         setStats(newStats);
         setTotalScore(score);
@@ -1797,16 +1797,16 @@
         const daysCompletedEl = document.getElementById("days-completed");
         
         if (totalScoreEl) {
-          totalScoreEl.innerText = `â­ Punteggio: ${totalScore}`;
+          totalScoreEl.innerText = `⭐ Punteggio: ${totalScore}`;
         }
         
         if (daysCompletedEl) {
           const completed = Object.values(progress).filter(entry => entry.solved).length;
-          daysCompletedEl.innerText = `ðŸ“… Giorni completati: ${completed}/31`;
+          daysCompletedEl.innerText = `📅 Giorni completati: ${completed}/31`;
         }
         
         // BUG FIX #3: Log per debug classifica
-        console.log('ðŸ”„ UI Aggiornata:', {
+        console.log('🔄 UI Aggiornata:', {
           utente: currentUser,
           punteggio_totale: totalScore,
           giorni_completati: Object.values(progress).filter(entry => entry.solved).length,
@@ -1828,18 +1828,18 @@
             entry.finalScore = entry.score;
             entry.completedAt = new Date().toISOString();
             
-            console.log(`âœ… RISPOSTA CORRETTA Giorno ${index + 1}:`, {
+            console.log(`✅ RISPOSTA CORRETTA Giorno ${index + 1}:`, {
               punteggio_finale: entry.score,
               tentativi_totali: entry.attempts + 1,
               indizi_usati: entry.usedHints,
               completato_alle: entry.completedAt
             });
             
-            setFeedback("âœ… Corretto! Ottimo lavoro!");
+            setFeedback("✅ Corretto! Ottimo lavoro!");
             setWrongAnswer(null);
             
             const scoreText = entry.score >= 0 ? `+${entry.score}` : `${entry.score}`;
-            showToast(`ðŸŽ† Giorno ${index + 1} completato! ${scoreText} punti`, 'success');
+            showToast(`🎆 Giorno ${index + 1} completato! ${scoreText} punti`, 'success');
             
             // Auto-save immediato per risposte corrette
             setTimeout(autoSave, 500);
@@ -1848,7 +1848,7 @@
             entry.score = entry.score - 1;
             entry.attempts += 1;
             
-            console.log(`âŒ RISPOSTA SBAGLIATA Giorno ${index + 1}:`, {
+            console.log(`❌ RISPOSTA SBAGLIATA Giorno ${index + 1}:`, {
               risposta_data: choice,
               risposta_corretta: correct,
               punti_rimasti: entry.score,
@@ -1857,7 +1857,7 @@
             
             setWrongAnswer(choice);
             const scoreDisplay = entry.score >= 0 ? `+${entry.score}` : `${entry.score}`;
-            setFeedback(`âŒ Risposta sbagliata! Punti rimasti: ${scoreDisplay}`);
+            setFeedback(`❌ Risposta sbagliata! Punti rimasti: ${scoreDisplay}`);
             
             // Auto-save anche per risposte sbagliate
             setTimeout(autoSave, 100);
@@ -1878,7 +1878,7 @@
           entry.score = entry.score - 1;
           entry.usedHints += 1;
           
-          console.log(`ðŸ’¡ INDIZIO USATO Giorno ${index + 1}:`, {
+          console.log(`💡 INDIZIO USATO Giorno ${index + 1}:`, {
             indizi_totali: entry.usedHints,
             punti_dopo_indizio: entry.score,
             auto_save_triggered: true
@@ -1886,7 +1886,7 @@
           
           const hint = FULL_CONSTELLATIONS[index].hints[entry.usedHints - 1];
           const scoreDisplay = entry.score >= 0 ? `+${entry.score}` : `${entry.score}`;
-          setFeedback(`ðŸ’¡ Indizio: ${hint} (Punti rimasti: ${scoreDisplay})`);
+          setFeedback(`💡 Indizio: ${hint} (Punti rimasti: ${scoreDisplay})`);
           
           // Auto-save per indizi
           setTimeout(autoSave, 100);
@@ -1903,7 +1903,7 @@
           // Usa il sistema export completo con modal
           exportProgress();
           
-          console.log('ðŸ“¤ Export avviato con modal user-friendly');
+          console.log('📤 Export avviato con modal user-friendly');
         } catch (error) {
           showToast('Errore nella generazione del backup', 'error');
           console.error('Errore export:', error);
@@ -1913,13 +1913,13 @@
       function importUserProgress(backupCode) {
         // Usa il sistema import completo con modal
         importProgress();
-        console.log('ðŸ“¥ Import avviato con modal user-friendly');
+        console.log('📥 Import avviato con modal user-friendly');
       }
 
       function resetUserProgress() {
-        if (confirm('âš ï¸ ATTENZIONE: Vuoi resettare TUTTO il progresso?\n\nQuesta azione:\nâ€¢ CancellerÃ  tutti i dati di tutti gli utenti\nâ€¢ Non puÃ² essere annullata\nâ€¢ FermerÃ  l\'auto-save\n\nContinuare?')) {
+        if (confirm('⚠️ ATTENZIONE: Vuoi resettare TUTTO il progresso?\n\nQuesta azione:\n• Cancellerà tutti i dati di tutti gli utenti\n• Non può essere annullata\n• Fermerà l\'auto-save\n\nContinuare?')) {
           
-          console.log('ðŸ—‘ï¸ Reset completo richiesto dall\'utente');
+          console.log('🗑️ Reset completo richiesto dall\'utente');
           
           // Ferma auto-save
           stopAutoSave();
@@ -1933,10 +1933,10 @@
           setTimeout(() => {
             startAutoSave();
             updateSaveIndicator('saved');
-            showToast('ðŸ—‘ï¸ Reset completato. Auto-save riavviato.', 'success');
+            showToast('🗑️ Reset completato. Auto-save riavviato.', 'success');
           }, 1000);
           
-          console.log('âœ… Reset completato, sistema ripristinato');
+          console.log('✅ Reset completato, sistema ripristinato');
         }
       }
 
@@ -1944,15 +1944,15 @@
 
       // RIMOSSO loading screen problematico - inizializzazione immediata
       if (!initialized) {
-        console.log('â³ App non ancora inizializzata, mostrando loading...');
+        console.log('⏳ App non ancora inizializzata, mostrando loading...');
         return React.createElement('div', { className: 'text-center py-20' }, 
-          React.createElement('div', { className: 'text-2xl mb-4' }, 'â­ Preparazione calendario...'),
+          React.createElement('div', { className: 'text-2xl mb-4' }, '⭐ Preparazione calendario...'),
           React.createElement('div', { className: 'text-lg text-gray-300 mt-2' }, `Ciao ${USERS[username]?.displayName || username}!`),
           initError && React.createElement('div', { className: 'text-red-400 text-sm mt-4' }, `Errore: ${initError}`)
         );
       }
       
-      console.log('âœ… App completamente caricata, rendering calendario con maxDay:', maxDay);
+      console.log('✅ App completamente caricata, rendering calendario con maxDay:', maxDay);
 
       return React.createElement(
         React.Fragment,
@@ -1963,7 +1963,7 @@
           "div",
           { className: "info-banner mb-4 p-4 bg-gradient-to-r from-blue-900 to-green-900 bg-opacity-70 rounded-xl border-2 border-blue-400 border-opacity-50" },
           React.createElement("div", { className: "flex items-center gap-3 text-blue-100" },
-            React.createElement("span", { className: "text-2xl" }, "ðŸ’¡"),
+            React.createElement("span", { className: "text-2xl" }, "💡"),
             React.createElement("div", { className: "flex-1" },
               React.createElement("p", { className: "text-base font-semibold mb-1" }, 
                 "I tuoi progressi vengono salvati automaticamente durante la sessione."
@@ -1975,21 +1975,21 @@
           ),
           window.ADVENT_DATA.lastSaved && React.createElement("div", { 
             className: "text-xs text-blue-300 mt-2 text-center opacity-75" 
-          }, `ðŸ”„ Ultimo salvataggio automatico: ${new Date(window.ADVENT_DATA.lastSaved).toLocaleString('it-IT')}`)
+          }, `🔄 Ultimo salvataggio automatico: ${new Date(window.ADVENT_DATA.lastSaved).toLocaleString('it-IT')}`)
         ),
         
         // Messaggio di stato del calendario
         React.createElement(
           "div",
           { className: "mb-6 p-4 bg-blue-900 bg-opacity-50 rounded-xl border border-blue-400" },
-          React.createElement("h3", { className: "text-lg font-bold text-blue-200 mb-2" }, "ðŸ† Stato del Calendario"),
+          React.createElement("h3", { className: "text-lg font-bold text-blue-200 mb-2" }, "🏆 Stato del Calendario"),
           React.createElement("p", { className: "text-blue-100" }, 
             maxDay > 0 
-              ? `âœ¨ Hai accesso ai primi ${maxDay} giorni! Clicca su un giorno per iniziare la sfida.`
-              : "ðŸ”’ Tutti i giorni sono ancora bloccati. Torna a dicembre per iniziare!"
+              ? `✨ Hai accesso ai primi ${maxDay} giorni! Clicca su un giorno per iniziare la sfida.`
+              : "🔒 Tutti i giorni sono ancora bloccati. Torna a dicembre per iniziare!"
           ),
           React.createElement("p", { className: "text-blue-200 text-sm mt-1" }, 
-            `ðŸ“… Data corrente: ${today.toLocaleDateString('it-IT')} | ModalitÃ : ${currentMonth < 11 ? 'Testing Pre-Dicembre' : currentMonth === 11 ? 'Dicembre Ufficiale' : 'Post-Dicembre'}`
+            `📅 Data corrente: ${today.toLocaleDateString('it-IT')} | Modalità: ${currentMonth < 11 ? 'Testing Pre-Dicembre' : currentMonth === 11 ? 'Dicembre Ufficiale' : 'Post-Dicembre'}`
           )
         ),
         
@@ -2020,7 +2020,7 @@
                 if (!shuffledOptions[i]) {
                   const mixed = shuffleArray([...FULL_CONSTELLATIONS[i].options]);
                   setShuffledOptions(prev => ({ ...prev, [i]: mixed }));
-                  console.log(`ðŸŽ² Opzioni mescolate per giorno ${i + 1}:`, mixed);
+                  console.log(`🎲 Opzioni mescolate per giorno ${i + 1}:`, mixed);
                 }
               }
             }
@@ -2035,7 +2035,7 @@
               },
               React.createElement("h2", null, `Giorno ${index}`),
               React.createElement("div", { className: "day-icon" }, 
-                locked ? "ðŸ”’" : entry.solved ? "ðŸŽ†" : "âœ¨"
+                locked ? "🔒" : entry.solved ? "🎆" : "✨"
               ),
               React.createElement("div", { className: "day-status" },
                 locked 
@@ -2044,9 +2044,9 @@
                     ? (() => {
                         const finalScore = entry.finalScore !== undefined ? entry.finalScore : entry.score;
                         const displayScore = finalScore >= 0 ? `+${finalScore}` : `${finalScore}`;
-                        return `Completato! â­ ${displayScore}`;
+                        return `Completato! ⭐ ${displayScore}`;
                       })()
-                    : "ðŸ”¹ Clicca per iniziare!"
+                    : "🔹 Clicca per iniziare!"
               )
             );
           })
@@ -2056,21 +2056,21 @@
         activeModal !== null && React.createElement(
           "div",
           { className: "full-screen-modal" },
-          React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "Ã—"),
+          React.createElement("button", { className: "close-button", onClick: () => setActiveModal(null) }, "×"),
           React.createElement("div", { className: "modal-content" },
-            React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `âœ¨ Giorno ${activeModal + 1}`),
+            React.createElement("h2", { className: "text-3xl font-bold mb-4" }, `✨ Giorno ${activeModal + 1}`),
             React.createElement("div", { className: "mb-4 text-center" },
               React.createElement("div", { 
                 className: "w-64 h-64 mx-auto bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 rounded-lg flex flex-col items-center justify-center text-white border-2 border-yellow-400 shadow-lg",
                 style: { backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 1px, transparent 1px), radial-gradient(circle at 70% 70%, rgba(255,255,255,0.08) 1px, transparent 1px)' }
               },
-                React.createElement("div", { className: "text-6xl mb-2" }, "âœ¨"),
+                React.createElement("div", { className: "text-6xl mb-2" }, "✨"),
                 React.createElement("div", { className: "text-lg font-bold" }, FULL_CONSTELLATIONS[activeModal].name),
                 React.createElement("div", { className: "text-sm text-gray-300 mt-2 px-4 text-center" }, "Osserva attentamente le stelle di questa costellazione")
               )
             ),
             !progress[activeModal]?.solved && React.createElement(React.Fragment, null,
-              React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione Ã¨ questa?"),
+              React.createElement("p", { className: "mb-4 text-lg" }, "Quale costellazione è questa?"),
               React.createElement("div", { className: "flex flex-col gap-3" },
                 // BUG FIX #1: Usa opzioni mescolate invece dell'ordine originale
                 (shuffledOptions[activeModal] || FULL_CONSTELLATIONS[activeModal].options).map((opt, j) => {
@@ -2094,7 +2094,7 @@
                   (() => {
                     const currentScore = progress[activeModal]?.score ?? 3;
                     const displayScore = currentScore >= 0 ? `+${currentScore}` : `${currentScore}`;  // BUG FIX: NO +-2 ma -2
-                    return `â­ Punti attuali: ${displayScore}`;
+                    return `⭐ Punti attuali: ${displayScore}`;
                   })()
                 ),
                 React.createElement("div", { className: "text-sm text-gray-400 mt-1" }, 
@@ -2106,7 +2106,7 @@
                   })()
                 ),
                 progress[activeModal]?.score < 0 && React.createElement("div", { className: "text-sm text-red-400 font-bold mt-1" }, 
-                  "âš ï¸ Attenzione: sei in punteggio negativo!"
+                  "⚠️ Attenzione: sei in punteggio negativo!"
                 )
               ),
               React.createElement("div", { className: "mt-4 flex justify-between items-center" },
@@ -2114,12 +2114,12 @@
                   onClick: () => useHint(activeModal), 
                   className: "text-sm text-yellow-400 underline hover:text-yellow-300",
                   disabled: (progress[activeModal]?.usedHints || 0) >= 3
-                }, `ðŸ’¡ Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`),
+                }, `💡 Usa indizio (${progress[activeModal]?.usedHints || 0}/3)`),
                 React.createElement("p", { className: "text-sm" }, 
                   (() => {
                     const currentScore = progress[activeModal]?.score ?? 3;
                     const displayScore = currentScore >= 0 ? `+${currentScore}` : `${currentScore}`;  // BUG FIX #2
-                    return `â­ Punti: ${displayScore}`;
+                    return `⭐ Punti: ${displayScore}`;
                   })()
                 )
               )
@@ -2128,10 +2128,10 @@
               React.createElement("h3", { className: "text-xl font-bold text-yellow-400" }, FULL_CONSTELLATIONS[activeModal].name),
               React.createElement("p", { className: "text-gray-300" }, FULL_CONSTELLATIONS[activeModal].description),
               React.createElement("div", { className: "bg-gray-800 p-4 rounded-lg" },
-                React.createElement("h4", { className: "font-semibold mb-2" }, "ðŸ“Š Statistiche:"),
-                React.createElement("p", { className: "text-sm text-gray-300" }, `âŒ Tentativi sbagliati: ${(progress[activeModal]?.attempts || 1) - 1}`),
-                React.createElement("p", { className: "text-sm text-gray-300" }, `ðŸ’¡ Indizi usati: ${progress[activeModal]?.usedHints || 0}`),
-                React.createElement("p", { className: "text-sm text-yellow-300 font-semibold" }, `â­ Punteggio ottenuto: ${progress[activeModal]?.score || 0}`)
+                React.createElement("h4", { className: "font-semibold mb-2" }, "📊 Statistiche:"),
+                React.createElement("p", { className: "text-sm text-gray-300" }, `❌ Tentativi sbagliati: ${(progress[activeModal]?.attempts || 1) - 1}`),
+                React.createElement("p", { className: "text-sm text-gray-300" }, `💡 Indizi usati: ${progress[activeModal]?.usedHints || 0}`),
+                React.createElement("p", { className: "text-sm text-yellow-300 font-semibold" }, `⭐ Punteggio ottenuto: ${progress[activeModal]?.score || 0}`)
               )
             )
           )
@@ -2141,16 +2141,16 @@
         settingsModal && React.createElement(
           "div",
           { className: "full-screen-modal" },
-          React.createElement("button", { className: "close-button", onClick: () => setSettingsModal(false) }, "Ã—"),
+          React.createElement("button", { className: "close-button", onClick: () => setSettingsModal(false) }, "×"),
           React.createElement("div", { className: "modal-content max-w-2xl" },
-            React.createElement("h2", { className: "text-3xl font-bold mb-6" }, "âš™ï¸ Impostazioni"),
+            React.createElement("h2", { className: "text-3xl font-bold mb-6" }, "⚙️ Impostazioni"),
             
             // Sezione utente
             React.createElement("div", { className: "backup-section" },
-              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "ðŸ‘¤ Profilo Utente"),
+              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "👤 Profilo Utente"),
               React.createElement("div", { className: "space-y-3" },
                 React.createElement("div", { className: "text-center" },
-                  React.createElement("div", { className: "text-lg font-semibold text-white mb-2" }, `ðŸ‘¤ ${USERS[username]?.displayName || username}`),
+                  React.createElement("div", { className: "text-lg font-semibold text-white mb-2" }, `👤 ${USERS[username]?.displayName || username}`),
                   React.createElement("p", { className: "text-sm text-gray-400" }, 
                     "Il tuo nome utente e display name sono gestiti dal sistema di login."
                   )
@@ -2160,7 +2160,7 @@
             
             // Statistiche
             React.createElement("div", { className: "backup-section" },
-              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "ðŸ“Š Statistiche"),
+              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "📊 Statistiche"),
               React.createElement("div", { className: "stats-grid" },
                 React.createElement("div", { className: "stat-card" },
                   React.createElement("div", { className: "text-2xl font-bold text-yellow-400" }, stats.totalScore || 0),
@@ -2183,7 +2183,7 @@
             
             // Backup e ripristino
             React.createElement("div", { className: "backup-section" },
-              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "ðŸ’¾ Backup &amp; Ripristino"),
+              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "💾 Backup &amp; Ripristino"),
               React.createElement("p", { className: "text-sm text-gray-400 mb-4" }, 
                 "Usa queste funzioni per salvare o ripristinare il tuo progresso su altri dispositivi. I codici di backup sono sicuri e contengono tutti i tuoi dati."
               ),
@@ -2192,7 +2192,7 @@
                   React.createElement("button", {
                     onClick: exportUserProgress,
                     className: "w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors mb-2"
-                  }, "ðŸ“¤ Genera Codice di Backup"),
+                  }, "📤 Genera Codice di Backup"),
                   React.createElement("p", { className: "text-sm text-gray-400" }, "Copia il codice per salvare il tuo progresso")
                 ),
                 React.createElement("div", null,
@@ -2208,26 +2208,26 @@
                       if (code) importUserProgress(code);
                     },
                     className: "w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
-                  }, "ðŸ“¥ Importa Progresso")
+                  }, "📥 Importa Progresso")
                 ),
                 React.createElement("div", null,
                   React.createElement("button", {
                     onClick: resetUserProgress,
                     className: "w-full px-4 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-                  }, "ðŸ—‘ï¸ Reset Completo"),
-                  React.createElement("p", { className: "text-sm text-gray-400 mt-1" }, "âš ï¸ Questa azione cancellerÃ  tutto il progresso in modo permanente")
+                  }, "🗑️ Reset Completo"),
+                  React.createElement("p", { className: "text-sm text-gray-400 mt-1" }, "⚠️ Questa azione cancellerà tutto il progresso in modo permanente")
                 )
               )
             ),
             
             // Info tecnica
             React.createElement("div", { className: "backup-section" },
-              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "â„¹ï¸ Informazioni"),
+              React.createElement("h3", { className: "text-xl font-semibold mb-4" }, "ℹ️ Informazioni"),
               React.createElement("div", { className: "text-sm text-gray-400 space-y-2" },
-                React.createElement("p", null, `ðŸ—„ï¸ Salvataggio: ${dataManager.fallbackToMemory ? 'Memoria Temporanea' : 'IndexedDB (Persistente)'}`),
-                React.createElement("p", null, `ðŸ“… Ultima sincronizzazione: ${new Date().toLocaleString('it-IT')}`),
-                React.createElement("p", null, `ðŸ“± Versione: 2.0 - Calendario Costellazioni`),
-                React.createElement("p", null, `ðŸŒŸ Giorni disponibili: ${maxDay}/31`)
+                React.createElement("p", null, `🗄️ Salvataggio: ${dataManager.fallbackToMemory ? 'Memoria Temporanea' : 'IndexedDB (Persistente)'}`),
+                React.createElement("p", null, `📅 Ultima sincronizzazione: ${new Date().toLocaleString('it-IT')}`),
+                React.createElement("p", null, `📱 Versione: 2.0 - Calendario Costellazioni`),
+                React.createElement("p", null, `🌟 Giorni disponibili: ${maxDay}/31`)
               )
             )
           )
@@ -2250,11 +2250,11 @@
         
         showExportModal(finalCode);
         
-        console.log('ðŸ“¤ Export completato, modal mostrato');
+        console.log('📤 Export completato, modal mostrato');
         return finalCode;
         
       } catch (error) {
-        console.error('âŒ Errore esportazione:', error);
+        console.error('❌ Errore esportazione:', error);
         showToast('Errore durante l\'esportazione', 'error');
         updateSaveIndicator('error');
       }
@@ -2273,12 +2273,12 @@
       const feedback = document.getElementById('importFeedback');
       
       if (!code) {
-        showImportFeedback('âŒ Inserisci un codice valido', 'error');
+        showImportFeedback('❌ Inserisci un codice valido', 'error');
         return;
       }
       
       updateSaveIndicator('saving');
-      showImportFeedback('ðŸ”„ Importazione in corso...', 'info');
+      showImportFeedback('🔄 Importazione in corso...', 'info');
       
       // Pulizia codice
       const cleanCode = code.replace(/ADVENT_V2_|ADVENT_/g, '');
@@ -2286,14 +2286,14 @@
       const result = importProgressCode(cleanCode);
       
       if (result.success) {
-        showImportFeedback(`âœ… Dati importati con successo! (${result.usersImported} utenti)`, 'success');
+        showImportFeedback(`✅ Dati importati con successo! (${result.usersImported} utenti)`, 'success');
         
         // Auto-chiudi e aggiorna dopo successo
         setTimeout(() => {
           closeImportModal();
           autoSave();
           
-          // Se l'utente corrente Ã¨ stato aggiornato, ricarica interfaccia
+          // Se l'utente corrente è stato aggiornato, ricarica interfaccia
           if (currentUser) {
             window.dispatchEvent(new CustomEvent('dataImported'));
             location.reload();
@@ -2301,7 +2301,7 @@
         }, 1500);
         
       } else {
-        showImportFeedback(`âŒ Errore: ${result.error}`, 'error');
+        showImportFeedback(`❌ Errore: ${result.error}`, 'error');
         updateSaveIndicator('error');
       }
     }
@@ -2322,19 +2322,19 @@
       modal.className = 'backup-modal';
       modal.innerHTML = `
         <div class="backup-content">
-          <h2>ðŸ“¤ Esporta Progressi</h2>
+          <h2>📤 Esporta Progressi</h2>
           <p class="backup-instructions">
             <strong>Copia questo codice e salvalo in un posto sicuro:</strong><br>
             Potrai usarlo per ripristinare i progressi su altri browser o dispositivi.
           </p>
           <textarea readonly id="exportCode" class="backup-code">${code}</textarea>
           <div class="backup-actions">
-            <button onclick="copyBackupCode()" class="btn btn--primary">ðŸ“‹ Copia Codice</button>
+            <button onclick="copyBackupCode()" class="btn btn--primary">📋 Copia Codice</button>
             <button onclick="closeBackupModal()" class="btn btn--secondary">Chiudi</button>
           </div>
-          <p class="backup-note">ðŸ’¡ <strong>Dove salvarlo:</strong> WhatsApp a te stesso, email, note del telefono, cloud drive</p>
+          <p class="backup-note">💡 <strong>Dove salvarlo:</strong> WhatsApp a te stesso, email, note del telefono, cloud drive</p>
           <div class="backup-info">
-            <small>ðŸ”’ Codice sicuro â€¢ â° ${new Date().toLocaleString('it-IT')} â€¢ ðŸ‘¥ ${Object.keys(window.ADVENT_DATA.users).length} utenti</small>
+            <small>🔒 Codice sicuro • ⏰ ${new Date().toLocaleString('it-IT')} • 👥 ${Object.keys(window.ADVENT_DATA.users).length} utenti</small>
           </div>
         </div>
       `;
@@ -2354,17 +2354,17 @@
       modal.className = 'backup-modal';
       modal.innerHTML = `
         <div class="backup-content">
-          <h2>ðŸ“¥ Importa Progressi</h2>
+          <h2>📥 Importa Progressi</h2>
           <p class="backup-instructions">
             <strong>Incolla qui il codice di backup</strong> per ripristinare i progressi:
           </p>
-          <textarea id="importCode" class="backup-code" placeholder="Incolla il codice qui...\n\nPuoi incollare codici che iniziano con:\nâ€¢ ADVENT_V2_...\nâ€¢ ADVENT_...\nâ€¢ Oppure il codice diretto"></textarea>
+          <textarea id="importCode" class="backup-code" placeholder="Incolla il codice qui...\n\nPuoi incollare codici che iniziano con:\n• ADVENT_V2_...\n• ADVENT_...\n• Oppure il codice diretto"></textarea>
           <div id="importFeedback" class="import-feedback"></div>
           <div class="backup-actions">
-            <button onclick="executeImport()" class="btn btn--primary">âœ… Importa Dati</button>
+            <button onclick="executeImport()" class="btn btn--primary">✅ Importa Dati</button>
             <button onclick="closeBackupModal()" class="btn btn--secondary">Annulla</button>
           </div>
-          <p class="backup-note">âš ï¸ I dati attuali verranno <strong>uniti</strong> con quelli importati (mantiene il punteggio migliore per ogni giorno)</p>
+          <p class="backup-note">⚠️ I dati attuali verranno <strong>uniti</strong> con quelli importati (mantiene il punteggio migliore per ogni giorno)</p>
         </div>
       `;
       
@@ -2379,7 +2379,7 @@
         textarea.addEventListener('paste', () => {
           setTimeout(() => {
             if (textarea.value.trim()) {
-              showImportFeedback('ðŸ“‹ Codice incollato! Clicca "Importa Dati" per continuare.', 'info');
+              showImportFeedback('📋 Codice incollato! Clicca "Importa Dati" per continuare.', 'info');
             }
           }, 100);
         });
@@ -2430,12 +2430,12 @@
       
       if (navigator.clipboard) {
         navigator.clipboard.writeText(code).then(() => {
-          showToast('ðŸ“‹ Codice copiato negli appunti!', 'success');
+          showToast('📋 Codice copiato negli appunti!', 'success');
           
           // Cambio temporaneo del bottone
           const btn = event.target;
           const originalText = btn.innerHTML;
-          btn.innerHTML = 'âœ… Copiato!';
+          btn.innerHTML = '✅ Copiato!';
           btn.style.background = '#10b981';
           
           setTimeout(() => {
@@ -2474,12 +2474,12 @@
       try {
         const successful = document.execCommand('copy');
         if (successful) {
-          alert('âœ… Codice copiato negli appunti!');
+          alert('✅ Codice copiato negli appunti!');
         } else {
-          alert('âŒ Impossibile copiare automaticamente. Seleziona e copia manualmente.');
+          alert('❌ Impossibile copiare automaticamente. Seleziona e copia manualmente.');
         }
       } catch (err) {
-        alert('âŒ Impossibile copiare automaticamente. Seleziona e copia manualmente.');
+        alert('❌ Impossibile copiare automaticamente. Seleziona e copia manualmente.');
       }
       
       document.body.removeChild(textArea);
@@ -2491,31 +2491,31 @@
     // ========================================
     function showLeaderboard() {
       if (!currentUser) {
-        console.error('âŒ Nessun utente loggato per la classifica');
+        console.error('❌ Nessun utente loggato per la classifica');
         return;
       }
       
       console.log('=== CARICAMENTO CLASSIFICA DA MEMORIA ===');
-      console.log('ðŸ‘¤ Utente corrente:', currentUser);
+      console.log('👤 Utente corrente:', currentUser);
       
       try {
         // Ottieni classifica dalla memoria
         const leaderboardData = getLeaderboard();
-        console.log('ðŸ“Š Risultati classifica da memoria:', leaderboardData);
+        console.log('📊 Risultati classifica da memoria:', leaderboardData);
         
         // Crea modal classifica
         const modal = document.createElement('div');
         modal.className = 'full-screen-modal';
         
-        console.log('ðŸŽ¨ Creazione modal con dati finali:', leaderboardData);
+        console.log('🎨 Creazione modal con dati finali:', leaderboardData);
         
         const content = leaderboardData.length === 0 ? 
           `<div style="text-align: center; padding: 2rem;">
-            <h3 style="color: #888; margin-bottom: 1rem;">ðŸ¤·â€â™‚ï¸ Nessun dato disponibile</h3>
+            <h3 style="color: #888; margin-bottom: 1rem;">🤷‍♂️ Nessun dato disponibile</h3>
             <p style="color: #666; font-size: 0.9rem;">Completa almeno un giorno per apparire in classifica!</p>
             <div style="margin-top: 1rem; font-size: 0.8rem; color: #555; font-family: monospace;">
               <p>Debug: Utente = ${currentUser}</p>
-              <p>ModalitÃ : Memoria JavaScript pura</p>
+              <p>Modalità: Memoria JavaScript pura</p>
               <p>Utenti nella memoria: ${Object.keys(window.ADVENT_DATA.users).join(', ')}</p>
               <p>Progressi trovati: ${Object.keys(window.ADVENT_DATA.users).map(u => Object.keys(window.ADVENT_DATA.users[u].progress).length).join(', ')}</p>
             </div>
@@ -2542,7 +2542,7 @@
                 </div>
                 <div style="text-align: right;">
                   <div style="font-size: 1.5rem; font-weight: bold; color: ${scoreColor};">
-                    â­ ${scoreText}
+                    ⭐ ${scoreText}
                   </div>
                 </div>
               </div>
@@ -2550,24 +2550,24 @@
           }).join('');
         
         modal.innerHTML = `
-          <button class="close-button" onclick="this.parentElement.remove()">Ã—</button>
+          <button class="close-button" onclick="this.parentElement.remove()">×</button>
           <div class="leaderboard">
-            <h2 class="leaderboard-title">ðŸ† Classifica Generale</h2>
+            <h2 class="leaderboard-title">🏆 Classifica Generale</h2>
             <div style="margin-bottom: 1rem; text-align: center; font-size: 0.9rem; color: #999;">
               Aggiornata: ${new Date().toLocaleTimeString('it-IT')}
             </div>
             <div style="margin-bottom: 1rem; text-align: center; font-size: 0.8rem; color: #666; background: rgba(255,215,0,0.1); padding: 0.5rem; border-radius: 0.5rem;">
-              âš ï¸ Dati salvati solo in questa sessione. Usa 'Esporta' per backup permanente.
+              ⚠️ Dati salvati solo in questa sessione. Usa 'Esporta' per backup permanente.
             </div>
             ${content}
           </div>
         `;
         
         document.body.appendChild(modal);
-        console.log('âœ… Classifica mostrata con successo');
+        console.log('✅ Classifica mostrata con successo');
         
       } catch (error) {
-        console.error('âŒ Errore caricamento classifica:', error);
+        console.error('❌ Errore caricamento classifica:', error);
         showToast('Errore caricamento classifica', 'error');
       }
     }
@@ -2576,24 +2576,24 @@
     // INIZIALIZZAZIONE COMPLETA CON BACKUP ROBUSTO
     // ========================================
     function initializeApp() {
-      console.log('ðŸš€ Inizializzando Calendario dell\'Avvento con sistema backup avanzato...');
+      console.log('🚀 Inizializzando Calendario dell\'Avvento con sistema backup avanzato...');
       
       // Auto-restore check all'avvio
       const restored = autoLoad();
       
       if (restored) {
-        console.log('ðŸ’¾ Sessione precedente rilevata');
+        console.log('💾 Sessione precedente rilevata');
       } else {
-        console.log('ðŸ†• Nuova sessione inizializzata');
+        console.log('🆕 Nuova sessione inizializzata');
       }
       
       // Avvia auto-save globale (indipendente dal login)
-      console.log('â° Sistema auto-save configurato (trigger: ogni 30 secondi)');
+      console.log('⏰ Sistema auto-save configurato (trigger: ogni 30 secondi)');
       
       // Log del sistema di backup
-      console.log('ðŸ›¡ï¸ Sistema backup robusto attivato:', {
+      console.log('🛡️ Sistema backup robusto attivato:', {
         auto_save: '30 secondi',
-        modalitÃ _storage: 'Memoria JavaScript Avanzata (compatibile sandboxed)',
+        modalità_storage: 'Memoria JavaScript Avanzata (compatibile sandboxed)',
         export_import: 'Modal user-friendly con validazione',
         persistenza: 'Simulata (mantiene dati durante la sessione)',
         feedback: 'Indicatori visivi real-time'
@@ -2602,7 +2602,7 @@
 
     // Inizializzazione sicura DOM
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('ðŸš€ DOM caricato, inizializzando sistema completo...');
+      console.log('🚀 DOM caricato, inizializzando sistema completo...');
       
       // Inizializza il sistema di backup
       initializeApp();
@@ -2612,32 +2612,32 @@
       const missing = criticalElements.filter(id => !document.getElementById(id));
       
       if (missing.length > 0) {
-        console.error('âŒ Elementi DOM critici mancanti:', missing);
-        document.body.innerHTML = '<div style="text-align: center; padding: 2rem; color: white; background: #000;"><h1>âŒ Errore caricamento</h1><p>Elementi mancanti: ' + missing.join(', ') + '</p><button onclick="location.reload()">Ricarica Pagina</button></div>';
+        console.error('❌ Elementi DOM critici mancanti:', missing);
+        document.body.innerHTML = '<div style="text-align: center; padding: 2rem; color: white; background: #000;"><h1>❌ Errore caricamento</h1><p>Elementi mancanti: ' + missing.join(', ') + '</p><button onclick="location.reload()">Ricarica Pagina</button></div>';
         return;
       }
       
-      console.log('âœ… Tutti gli elementi critici trovati, inizializzando LoginManager...');
+      console.log('✅ Tutti gli elementi critici trovati, inizializzando LoginManager...');
       
       // Initialize login screen solo se tutto OK
       try {
         ReactDOM.createRoot(document.createElement('div')).render(React.createElement(LoginManager));
-        console.log('âœ… LoginManager inizializzato con successo');
+        console.log('✅ LoginManager inizializzato con successo');
         
         // Mostra banner informativo sistema
         setTimeout(() => {
-          showToast('ðŸ’¾ Sistema backup robusto attivato! Dati auto-salvati ogni 30 secondi.', 'info');
+          showToast('💾 Sistema backup robusto attivato! Dati auto-salvati ogni 30 secondi.', 'info');
         }, 2000);
         
       } catch (error) {
-        console.error('âŒ Errore inizializzazione LoginManager:', error);
+        console.error('❌ Errore inizializzazione LoginManager:', error);
         showToast('Errore sistema login', 'error');
       }
     });
     
     // Event listener per data imported 
     window.addEventListener('dataImported', () => {
-      console.log('ðŸ“¥ Evento dataImported ricevuto, aggiornamento interfaccia...');
+      console.log('📥 Evento dataImported ricevuto, aggiornamento interfaccia...');
       // Trigger per aggiornare l'interfaccia dopo import
       if (currentUser) {
         const userData = getUserData(currentUser);
@@ -2645,21 +2645,21 @@
         const daysCompletedEl = document.getElementById("days-completed");
         
         if (totalScoreEl) {
-          totalScoreEl.innerText = `â­ Punteggio: ${userData.totalScore}`;
+          totalScoreEl.innerText = `⭐ Punteggio: ${userData.totalScore}`;
         }
         
         if (daysCompletedEl) {
           const completed = Object.values(userData.progress).filter(entry => entry.solved).length;
-          daysCompletedEl.innerText = `ðŸ“… Giorni completati: ${completed}/31`;
+          daysCompletedEl.innerText = `📅 Giorni completati: ${completed}/31`;
         }
         
-        showToast('âœ… Interfaccia aggiornata dopo import!', 'success');
+        showToast('✅ Interfaccia aggiornata dopo import!', 'success');
       }
     });
     
     // Cleanup globale al beforeunload
     window.addEventListener('beforeunload', () => {
-      console.log('ðŸ’¾ Salvataggio finale prima di chiudere...');
+      console.log('💾 Salvataggio finale prima di chiudere...');
       autoSave();
       stopAutoSave();
     });
