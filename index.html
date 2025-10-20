@@ -401,9 +401,9 @@
       try {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
-          gameProgress = JSON.parse(savedData);
-          console.log('✅ Progressi caricati da localStorage:', gameProgress);
-          return gameProgress;
+          const loadedData = JSON.parse(savedData);
+          console.log('✅ Progressi caricati da localStorage:', loadedData);
+          return loadedData;
         }
       } catch (error) {
         console.error('❌ Errore nel caricamento da localStorage:', error);
