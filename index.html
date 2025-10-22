@@ -671,6 +671,12 @@
       }
       
       const [progress, setProgress] = useState(gameProgress);
+
+      useEffect(() => {
+        gameProgress = { ...progress };
+        saveProgressToStorage();
+      }, [progress]);
+      
       const [activeModal, setActiveModal] = useState(null);
       const [settingsModal, setSettingsModal] = useState(false);
       const [initError, setInitError] = useState(null);
